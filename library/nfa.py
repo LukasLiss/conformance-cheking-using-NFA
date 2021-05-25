@@ -17,7 +17,7 @@ class Nfa:
         self.end_places = [] # but multiple acepting end places
 
     def add_Place(self, place, is_start_place = False, is_end_place = False) :
-        #check whether place is a place
+        #check whether place is a Place
         #check whether place allready exist
         self.places.append(place)
         if is_start_place :
@@ -26,11 +26,19 @@ class Nfa:
         if is_end_place :
             self.end_places.append(place)
 
+    def remove_Place(self, place) :
+        #check whether place is a Place
+        self.places.remove(place)
+
     def add_Transition(self, transition) :
         #check whether transition is a Transition
         #check whether transition only has places that exist
         #check for duplicate
         self.transitions.append(transition)
+
+    def remove_Transition(self, transition) :
+        #input checks
+        self.transitions.remove(transition)
 
     def is_fitting(self, trace) :
         #print("Fit with: " + self.start_place.label + " " + ''.join(trace))
@@ -63,6 +71,11 @@ class Nfa:
                     return True
 
         return False
+    
+    def log_fittness(self, log):
+        # Check for each trace in the log wether the trace is fiting (replayable)
+        # return the fraction of traces that are fiting (replayable)
+        return False # Placeholder only
 
 
 # Test section
@@ -84,6 +97,7 @@ t3 = Transition("b", p2, p3)
 myNFA.add_Transition(t3)
 t4 = Transition("c", p3, p4)
 myNFA.add_Transition(t4)
+
 
 print(myNFA.places)
 print(myNFA.transitions)
