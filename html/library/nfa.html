@@ -27,17 +27,115 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Place:
+    &#34;&#34;&#34;
+    This class sets the label of the instance.
+
+    Attributes
+    ----------
+    None.
+
+    Methods
+    -------
+    __init__ : constructor
+       sets the string passed as label of that instance.
+
+    &#34;&#34;&#34; 
     def __init__(self, label):
+        &#34;&#34;&#34;
+        Constructor of class Place.
+
+        Parameters
+        ----------
+        label : str
+            any label passed by the user is set in this variable.
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34;       
         self.label = label
 
 class Transition:
+    &#34;&#34;&#34;
+    This class is responsible for the change of state.
+
+    Attributes
+    ----------
+    None.
+
+    Methods
+    -------
+    __init__ : constructor
+       sets the values of activity, start place of the activity and its end place.
+
+    &#34;&#34;&#34; 
     def __init__(self, activity, start_Place, end_Place):
+        &#34;&#34;&#34;
+        Constructor of class Transition that sets values of the instance.
+
+        Parameters
+        ----------
+        activity : str
+            alphabet reflecting one activity of the instance from event log.
+        start_Place : str
+            start state of the activity at hand.
+        end_Place : str
+            end state of the activity at hand.
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34;         
         self.activity = activity
         self.start_Place = start_Place
         self.end_Place = end_Place
 
 class Nfa:
+    &#34;&#34;&#34;
+    This class makes the NFA model and validates by calculating fitness.
+
+    Attributes
+    ----------
+    label : str
+        sets direction of the code by showing what will be the next step now.
+    places : list of str
+        list of str to store activities from event log.
+    transitions : list of str
+        list of str responsible for change of state.
+    start_place : str
+        initial state of the NFA model. (Default: None)
+    end_places : list of str
+        list of str to store multiple ending states.
+    Methods
+    -------
+    __init__ : constructor
+       initialize the attributes and sets the label passed during instance creation.
+    
+    &#34;&#34;&#34; 
     def __init__(self, label):
+        &#34;&#34;&#34;
+        initialize the attributes and sets the label passed during instance creation.
+
+        Parameters
+        ----------
+        label : str
+            sets direction of the code by showing what will be the next step now.
+        places : list of str
+            list of str to store activities from event log.
+        transitions : list of str
+            list of str responsible for change of state.
+        start_place : str
+            initial state of the NFA model. (Default: None)
+        end_places : list of str
+            list of str to store multiple ending states.
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34;      
         self.label = label
         self.places = []
         self.transitions = []
@@ -45,6 +143,23 @@ class Nfa:
         self.end_places = [] # but multiple acepting end places
 
     def add_Place(self, place, is_start_place = False, is_end_place = False) :
+        &#34;&#34;&#34;
+        sets labels. If start and end place values are not given in second and third argument, they are by default taken to be as False.
+
+        Parameters
+        ----------
+        place : str
+            alphabet reflecting label.
+        is_start_Place : bool
+            to check if its the start place. (Default: False)
+        is_end_Place : bool
+            to check if its the end place. (Default: False)
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34; 
         #check whether place is a Place
         #check whether place allready exist
         self.places.append(place)
@@ -55,20 +170,72 @@ class Nfa:
             self.end_places.append(place)
 
     def remove_Place(self, place) :
+        &#34;&#34;&#34;
+        for removing an acitivity from the model.
+
+        Parameters
+        ----------
+        place : str
+            alphabet reflecting label. 
+
+        Returns
+        -------
+        None.
+        &#34;&#34;&#34; 
         #check whether place is a Place
         self.places.remove(place)
 
     def add_Transition(self, transition) :
+        &#34;&#34;&#34;
+        adds an activity in the model alongwith its start and end place.
+
+        Parameters
+        ----------
+        transition : list of str
+            activity, its previous state and the next state.
+        
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34; 
         #check whether transition is a Transition
         #check whether transition only has places that exist
         #check for duplicate
         self.transitions.append(transition)
 
     def remove_Transition(self, transition) :
+        &#34;&#34;&#34;
+        removes an activity from the model alongwith its start and end place.
+
+        Parameters
+        ----------
+        transition : list of str
+            activity, its previous state and the next state.
+        
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34; 
         #input checks
         self.transitions.remove(transition)
 
     def is_fitting(self, trace) :
+        &#34;&#34;&#34;
+        checks if given trace mathces the model.
+
+        Parameters
+        ----------
+        trace : list of str
+            activities of an instance taken from event log.
+        
+        Returns
+        -------
+        bool
+            true if it matches, false otherwise.
+
+        &#34;&#34;&#34; 
         #print(&#34;Fit with: &#34; + self.start_place.label + &#34; &#34; + &#39;&#39;.join(trace))
         #trace is here just a list of activities
         #check input
@@ -85,6 +252,19 @@ class Nfa:
         return False
 
     def __is_subtrace_fitting(self, current_place, trace) :
+        &#34;&#34;&#34;
+        checks if given subtrace mathces the model.
+
+        Parameters
+        ----------
+        trace : list of str
+            activities of an instance taken from event log.
+        
+        Returns
+        -------
+        bool
+            true if it matches, false otherwise.
+        &#34;&#34;&#34; 
         #print(&#34;Sub with: &#34; + current_place.label + &#34; &#34; + &#39;&#39;.join(trace))
         #trace is here just a list of activities
         #check input
@@ -101,6 +281,19 @@ class Nfa:
         return False
     
     def log_fittness(self, log):
+        &#34;&#34;&#34;
+        calculates fitness of the alignment.
+
+        Parameters
+        ----------
+        log : list of str
+            activities of an instance taken from event log.
+        
+        Returns
+        -------
+        bool
+            needs to be discussed.
+        &#34;&#34;&#34; 
         # Check for each trace in the log wether the trace is fiting (replayable)
         # return the fraction of traces that are fiting (replayable)
         return False # Placeholder only
@@ -151,13 +344,87 @@ print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;])) #False</code></pre>
 <span>(</span><span>label)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>This class makes the NFA model and validates by calculating fitness.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>label</code></strong> :&ensp;<code>str</code></dt>
+<dd>sets direction of the code by showing what will be the next step now.</dd>
+<dt><strong><code>places</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>list of str to store activities from event log.</dd>
+<dt><strong><code>transitions</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>list of str responsible for change of state.</dd>
+<dt><strong><code>start_place</code></strong> :&ensp;<code>str</code></dt>
+<dd>initial state of the NFA model. (Default: None)</dd>
+<dt><strong><code>end_places</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>list of str to store multiple ending states.</dd>
+</dl>
+<h2 id="methods">Methods</h2>
+<p><strong>init</strong> : constructor
+initialize the attributes and sets the label passed during instance creation.</p>
+<p>initialize the attributes and sets the label passed during instance creation.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>label</code></strong> :&ensp;<code>str</code></dt>
+<dd>sets direction of the code by showing what will be the next step now.</dd>
+<dt><strong><code>places</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>list of str to store activities from event log.</dd>
+<dt><strong><code>transitions</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>list of str responsible for change of state.</dd>
+<dt><strong><code>start_place</code></strong> :&ensp;<code>str</code></dt>
+<dd>initial state of the NFA model. (Default: None)</dd>
+<dt><strong><code>end_places</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>list of str to store multiple ending states.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Nfa:
+    &#34;&#34;&#34;
+    This class makes the NFA model and validates by calculating fitness.
+
+    Attributes
+    ----------
+    label : str
+        sets direction of the code by showing what will be the next step now.
+    places : list of str
+        list of str to store activities from event log.
+    transitions : list of str
+        list of str responsible for change of state.
+    start_place : str
+        initial state of the NFA model. (Default: None)
+    end_places : list of str
+        list of str to store multiple ending states.
+    Methods
+    -------
+    __init__ : constructor
+       initialize the attributes and sets the label passed during instance creation.
+    
+    &#34;&#34;&#34; 
     def __init__(self, label):
+        &#34;&#34;&#34;
+        initialize the attributes and sets the label passed during instance creation.
+
+        Parameters
+        ----------
+        label : str
+            sets direction of the code by showing what will be the next step now.
+        places : list of str
+            list of str to store activities from event log.
+        transitions : list of str
+            list of str responsible for change of state.
+        start_place : str
+            initial state of the NFA model. (Default: None)
+        end_places : list of str
+            list of str to store multiple ending states.
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34;      
         self.label = label
         self.places = []
         self.transitions = []
@@ -165,6 +432,23 @@ print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;])) #False</code></pre>
         self.end_places = [] # but multiple acepting end places
 
     def add_Place(self, place, is_start_place = False, is_end_place = False) :
+        &#34;&#34;&#34;
+        sets labels. If start and end place values are not given in second and third argument, they are by default taken to be as False.
+
+        Parameters
+        ----------
+        place : str
+            alphabet reflecting label.
+        is_start_Place : bool
+            to check if its the start place. (Default: False)
+        is_end_Place : bool
+            to check if its the end place. (Default: False)
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34; 
         #check whether place is a Place
         #check whether place allready exist
         self.places.append(place)
@@ -175,20 +459,72 @@ print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;])) #False</code></pre>
             self.end_places.append(place)
 
     def remove_Place(self, place) :
+        &#34;&#34;&#34;
+        for removing an acitivity from the model.
+
+        Parameters
+        ----------
+        place : str
+            alphabet reflecting label. 
+
+        Returns
+        -------
+        None.
+        &#34;&#34;&#34; 
         #check whether place is a Place
         self.places.remove(place)
 
     def add_Transition(self, transition) :
+        &#34;&#34;&#34;
+        adds an activity in the model alongwith its start and end place.
+
+        Parameters
+        ----------
+        transition : list of str
+            activity, its previous state and the next state.
+        
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34; 
         #check whether transition is a Transition
         #check whether transition only has places that exist
         #check for duplicate
         self.transitions.append(transition)
 
     def remove_Transition(self, transition) :
+        &#34;&#34;&#34;
+        removes an activity from the model alongwith its start and end place.
+
+        Parameters
+        ----------
+        transition : list of str
+            activity, its previous state and the next state.
+        
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34; 
         #input checks
         self.transitions.remove(transition)
 
     def is_fitting(self, trace) :
+        &#34;&#34;&#34;
+        checks if given trace mathces the model.
+
+        Parameters
+        ----------
+        trace : list of str
+            activities of an instance taken from event log.
+        
+        Returns
+        -------
+        bool
+            true if it matches, false otherwise.
+
+        &#34;&#34;&#34; 
         #print(&#34;Fit with: &#34; + self.start_place.label + &#34; &#34; + &#39;&#39;.join(trace))
         #trace is here just a list of activities
         #check input
@@ -205,6 +541,19 @@ print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;])) #False</code></pre>
         return False
 
     def __is_subtrace_fitting(self, current_place, trace) :
+        &#34;&#34;&#34;
+        checks if given subtrace mathces the model.
+
+        Parameters
+        ----------
+        trace : list of str
+            activities of an instance taken from event log.
+        
+        Returns
+        -------
+        bool
+            true if it matches, false otherwise.
+        &#34;&#34;&#34; 
         #print(&#34;Sub with: &#34; + current_place.label + &#34; &#34; + &#39;&#39;.join(trace))
         #trace is here just a list of activities
         #check input
@@ -221,6 +570,19 @@ print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;])) #False</code></pre>
         return False
     
     def log_fittness(self, log):
+        &#34;&#34;&#34;
+        calculates fitness of the alignment.
+
+        Parameters
+        ----------
+        log : list of str
+            activities of an instance taken from event log.
+        
+        Returns
+        -------
+        bool
+            needs to be discussed.
+        &#34;&#34;&#34; 
         # Check for each trace in the log wether the trace is fiting (replayable)
         # return the fraction of traces that are fiting (replayable)
         return False # Placeholder only</code></pre>
@@ -231,12 +593,40 @@ print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;])) #False</code></pre>
 <span>def <span class="ident">add_Place</span></span>(<span>self, place, is_start_place=False, is_end_place=False)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>sets labels. If start and end place values are not given in second and third argument, they are by default taken to be as False.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>place</code></strong> :&ensp;<code>str</code></dt>
+<dd>alphabet reflecting label.</dd>
+<dt><strong><code>is_start_Place</code></strong> :&ensp;<code>bool</code></dt>
+<dd>to check if its the start place. (Default: False)</dd>
+<dt><strong><code>is_end_Place</code></strong> :&ensp;<code>bool</code></dt>
+<dd>to check if its the end place. (Default: False)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def add_Place(self, place, is_start_place = False, is_end_place = False) :
+    &#34;&#34;&#34;
+    sets labels. If start and end place values are not given in second and third argument, they are by default taken to be as False.
+
+    Parameters
+    ----------
+    place : str
+        alphabet reflecting label.
+    is_start_Place : bool
+        to check if its the start place. (Default: False)
+    is_end_Place : bool
+        to check if its the end place. (Default: False)
+
+    Returns
+    -------
+    None.
+
+    &#34;&#34;&#34; 
     #check whether place is a Place
     #check whether place allready exist
     self.places.append(place)
@@ -251,12 +641,32 @@ print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;])) #False</code></pre>
 <span>def <span class="ident">add_Transition</span></span>(<span>self, transition)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>adds an activity in the model alongwith its start and end place.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>transition</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>activity, its previous state and the next state.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def add_Transition(self, transition) :
+    &#34;&#34;&#34;
+    adds an activity in the model alongwith its start and end place.
+
+    Parameters
+    ----------
+    transition : list of str
+        activity, its previous state and the next state.
+    
+    Returns
+    -------
+    None.
+
+    &#34;&#34;&#34; 
     #check whether transition is a Transition
     #check whether transition only has places that exist
     #check for duplicate
@@ -267,12 +677,36 @@ print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;])) #False</code></pre>
 <span>def <span class="ident">is_fitting</span></span>(<span>self, trace)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>checks if given trace mathces the model.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>trace</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>activities of an instance taken from event log.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>true if it matches, false otherwise.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def is_fitting(self, trace) :
+    &#34;&#34;&#34;
+    checks if given trace mathces the model.
+
+    Parameters
+    ----------
+    trace : list of str
+        activities of an instance taken from event log.
+    
+    Returns
+    -------
+    bool
+        true if it matches, false otherwise.
+
+    &#34;&#34;&#34; 
     #print(&#34;Fit with: &#34; + self.start_place.label + &#34; &#34; + &#39;&#39;.join(trace))
     #trace is here just a list of activities
     #check input
@@ -293,12 +727,35 @@ print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;])) #False</code></pre>
 <span>def <span class="ident">log_fittness</span></span>(<span>self, log)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>calculates fitness of the alignment.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>log</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>activities of an instance taken from event log.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>needs to be discussed.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def log_fittness(self, log):
+    &#34;&#34;&#34;
+    calculates fitness of the alignment.
+
+    Parameters
+    ----------
+    log : list of str
+        activities of an instance taken from event log.
+    
+    Returns
+    -------
+    bool
+        needs to be discussed.
+    &#34;&#34;&#34; 
     # Check for each trace in the log wether the trace is fiting (replayable)
     # return the fraction of traces that are fiting (replayable)
     return False # Placeholder only</code></pre>
@@ -308,12 +765,31 @@ print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;])) #False</code></pre>
 <span>def <span class="ident">remove_Place</span></span>(<span>self, place)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>for removing an acitivity from the model.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>place</code></strong> :&ensp;<code>str</code></dt>
+<dd>alphabet reflecting label.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def remove_Place(self, place) :
+    &#34;&#34;&#34;
+    for removing an acitivity from the model.
+
+    Parameters
+    ----------
+    place : str
+        alphabet reflecting label. 
+
+    Returns
+    -------
+    None.
+    &#34;&#34;&#34; 
     #check whether place is a Place
     self.places.remove(place)</code></pre>
 </details>
@@ -322,12 +798,32 @@ print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;])) #False</code></pre>
 <span>def <span class="ident">remove_Transition</span></span>(<span>self, transition)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>removes an activity from the model alongwith its start and end place.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>transition</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>activity, its previous state and the next state.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def remove_Transition(self, transition) :
+    &#34;&#34;&#34;
+    removes an activity from the model alongwith its start and end place.
+
+    Parameters
+    ----------
+    transition : list of str
+        activity, its previous state and the next state.
+    
+    Returns
+    -------
+    None.
+
+    &#34;&#34;&#34; 
     #input checks
     self.transitions.remove(transition)</code></pre>
 </details>
@@ -339,13 +835,52 @@ print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;])) #False</code></pre>
 <span>(</span><span>label)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>This class sets the label of the instance.</p>
+<h2 id="attributes">Attributes</h2>
+<p>None.</p>
+<h2 id="methods">Methods</h2>
+<p><strong>init</strong> : constructor
+sets the string passed as label of that instance.</p>
+<p>Constructor of class Place.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>label</code></strong> :&ensp;<code>str</code></dt>
+<dd>any label passed by the user is set in this variable.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Place:
+    &#34;&#34;&#34;
+    This class sets the label of the instance.
+
+    Attributes
+    ----------
+    None.
+
+    Methods
+    -------
+    __init__ : constructor
+       sets the string passed as label of that instance.
+
+    &#34;&#34;&#34; 
     def __init__(self, label):
+        &#34;&#34;&#34;
+        Constructor of class Place.
+
+        Parameters
+        ----------
+        label : str
+            any label passed by the user is set in this variable.
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34;       
         self.label = label</code></pre>
 </details>
 </dd>
@@ -354,13 +889,60 @@ print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;])) #False</code></pre>
 <span>(</span><span>activity, start_Place, end_Place)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>This class is responsible for the change of state.</p>
+<h2 id="attributes">Attributes</h2>
+<p>None.</p>
+<h2 id="methods">Methods</h2>
+<p><strong>init</strong> : constructor
+sets the values of activity, start place of the activity and its end place.</p>
+<p>Constructor of class Transition that sets values of the instance.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>activity</code></strong> :&ensp;<code>str</code></dt>
+<dd>alphabet reflecting one activity of the instance from event log.</dd>
+<dt><strong><code>start_Place</code></strong> :&ensp;<code>str</code></dt>
+<dd>start state of the activity at hand.</dd>
+<dt><strong><code>end_Place</code></strong> :&ensp;<code>str</code></dt>
+<dd>end state of the activity at hand.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class Transition:
+    &#34;&#34;&#34;
+    This class is responsible for the change of state.
+
+    Attributes
+    ----------
+    None.
+
+    Methods
+    -------
+    __init__ : constructor
+       sets the values of activity, start place of the activity and its end place.
+
+    &#34;&#34;&#34; 
     def __init__(self, activity, start_Place, end_Place):
+        &#34;&#34;&#34;
+        Constructor of class Transition that sets values of the instance.
+
+        Parameters
+        ----------
+        activity : str
+            alphabet reflecting one activity of the instance from event log.
+        start_Place : str
+            start state of the activity at hand.
+        end_Place : str
+            end state of the activity at hand.
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34;         
         self.activity = activity
         self.start_Place = start_Place
         self.end_Place = end_Place</code></pre>
