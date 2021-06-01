@@ -20,6 +20,15 @@ class Nfa:
         self.start_place = None # here we use the definiton of an NFA with just one start place
         self.end_places = [] # but multiple acepting end places
 
+    def print(self):
+        print("Start place: " + self.start_place.label + str(self.places.index(self.start_place)))
+        for place in self.places:
+            print("Place: " + place.label + "_" + str(self.places.index(place)))
+            if place in self.end_places:
+                print("Endplace")
+            for trans in place.transitions:
+                print("" + trans.start_place.label + "_" + str(self.places.index(trans.start_place)) + " - " + trans.activity + " - " + trans.end_place.label + "_" + str(self.places.index(trans.end_place)))
+
     def add_place(self, place, is_start_place = False, is_end_place = False) :
         #check whether place is a place
         #check whether place allready exist
@@ -134,6 +143,7 @@ def konkat(regex) :
 def prod(regex) :
     factor_nfa = factor(regex)
     if(len(regex) > 0 and regex[0] == "*"):
+        regex.pop(0)
         return star_nfa(factor_nfa)
     return(factor_nfa)
 
@@ -152,10 +162,14 @@ def factor(regex) :
 
 #helping functions
 def unite_nfas(nfas):
+
+    if(len(nfas) == 1):
+        return nfas[0]
+
     united_nfa = Nfa("unite")
-    p_start = Place("u_start")
+    p_start = Place("u_s")
     united_nfa.add_place(p_start, True)
-    p_end = Place("u_end")
+    p_end = Place("u_e")
     united_nfa.add_place(p_end, False, True)
     for nfa in nfas:
         #add places with their transitions
@@ -169,10 +183,14 @@ def unite_nfas(nfas):
     return united_nfa
 
 def konkatonate_nfas(nfas):
-    konkat_nfa = Nfa("unite")
-    p_start = Place("u_start")
+
+    if(len(nfas) == 1):
+        return nfas[0]
+
+    konkat_nfa = Nfa("konkat")
+    p_start = Place("k_s")
     konkat_nfa.add_place(p_start, True)
-    p_end = Place("u_end")
+    p_end = Place("k_e")
     konkat_nfa.add_place(p_end, False, True)
     for nfa in nfas:
         #add places with their transitions
@@ -192,13 +210,35 @@ def konkatonate_nfas(nfas):
     return konkat_nfa
 
 def star_nfa(nfa):
-    return False
+    star_nfa = Nfa("star")
+    p_start = Place("s_s")
+    star_nfa.add_place(p_start, True)
+    p_end = Place("s_e")
+    star_nfa.add_place(p_end, False, True)
+
+    #add all places from nfa
+    for place in nfa.places:
+        star_nfa.add_place(place)
+
+    #one can skip the nfa
+    star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, p_end))
+    #connect new start to the start of the nfa
+    star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, nfa.start_place))
+    #connect new end to the start of the nfa
+    star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_end, nfa.start_place))
+
+    #connect accepting places of the nfa to the new end place
+    for acc_place in nfa.end_places:
+        star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_place, p_end))
+
+    return star_nfa
+
 
 def nfa_from_activity(activity):
-    base_nfa = Nfa("unite")
-    p_start = Place("u_start")
+    base_nfa = Nfa("activity")
+    p_start = Place("a_s")
     base_nfa.add_place(p_start, True)
-    p_end = Place("u_end")
+    p_end = Place("a_e")
     base_nfa.add_place(p_end, False, True)
     base_nfa.add_Transition(Transition(activity, p_start, p_end))
     return base_nfa
@@ -228,16 +268,26 @@ myNFA.add_Transition(t4)
 print(myNFA.places)
 print(myNFA.transitions)
 
-# print(myNFA.is_fitting(["a", "b", "c"])) #True
-# print(myNFA.is_fitting(["a", "b", "b", "b", "c"])) #True
-# print(myNFA.is_fitting(["a", "a", "b", "c"])) #False
-# print(myNFA.is_fitting(["a", "c"])) #False
-# print(myNFA.is_fitting(["a", "b"])) #False
+print(myNFA.is_fitting(["a", "b", "c"])) #True
+print(myNFA.is_fitting(["a", "b", "b", "b", "c"])) #True
+print(myNFA.is_fitting(["a", "a", "b", "c"])) #False
+print(myNFA.is_fitting(["a", "c"])) #False
+print(myNFA.is_fitting(["a", "b"])) #False
 
 myNFA.add_Transition(Transition(SpecialActivities.EPSILON, p2, p4))
 
 print(myNFA.is_fitting(["a"])) #True
 
-myRegexNfa = expression(["a", "b", "c"])
+myRegexNfa = expression(["a", "*", "|", "(", "c", ".", "d", ")", "|", "(", "e", ".", "f", ")"])
+myRegexNfa.print()
+
 print("Regex: ")
-print(myRegexNfa.is_fitting(["a", "b", "c"])) #True
+print(myRegexNfa.is_fitting(["a", "a"])) #True
+print(myRegexNfa.is_fitting(["a",])) #True
+print(myRegexNfa.is_fitting([])) #True
+print(myRegexNfa.is_fitting(["c", "d"])) #True
+print(myRegexNfa.is_fitting(["e", "f"])) #True
+print(myRegexNfa.is_fitting(["a", "c"])) #False
+print(myRegexNfa.is_fitting(["a", "c", "d"])) #False
+print(myRegexNfa.is_fitting(["x",])) #False
+print(myRegexNfa.is_fitting(["c"])) #False
