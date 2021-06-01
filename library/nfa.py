@@ -1,4 +1,7 @@
-class place:
+class SpecialActivities:
+    EPSILON = '\u03B5'
+
+class Place:
     def __init__(self, label):
         self.label = label
         self.transitions = []
@@ -56,7 +59,7 @@ class Nfa:
 
         activity = trace[0]
         for trans in self.start_place.transitions :
-            if trans.activity == activity :
+            if ((trans.activity == activity) or ((trans.activity == SpecialActivities.EPSILON))) :
                 if( self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True) :
                     return True
 
@@ -71,7 +74,7 @@ class Nfa:
 
         activity = trace[0]
         for trans in current_place.transitions : # performance increase possible by having a reference to connected transition of each place, but increases memory usage
-            if trans.activity == activity :
+            if ((trans.activity == activity) or (trans.activity == SpecialActivities.EPSILON)) :
                 if( self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True) :
                     return True
 
@@ -82,17 +85,21 @@ class Nfa:
         # return the fraction of traces that are fiting (replayable)
         return False # placeholder only
 
+    def convert_from_regex(self, regex):
+        #Check whether the nfa model is empty right now
+        return False
+
 
 # Test section
 
 myNFA = Nfa("TestNFA")
-p1 = place("Greating")
+p1 = Place("Greating")
 myNFA.add_place(p1, True)
-p2 = place("Start Small Talk")
+p2 = Place("Start Small Talk")
 myNFA.add_place(p2)
-p3 = place("End Small Talk")
+p3 = Place("End Small Talk")
 myNFA.add_place(p3)
-p4 = place("Good Bye")
+p4 = Place("Good Bye")
 myNFA.add_place(p4, False, True)
 t1 = Transition("a", p1, p2)
 myNFA.add_Transition(t1)
