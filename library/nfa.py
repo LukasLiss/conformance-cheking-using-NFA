@@ -1,18 +1,31 @@
 class SpecialActivities:
+    """
+    This class is the collection of special characters used in regular expressions.
+
+    Attributes
+    ----------
+    Epsilon: str
+        stores the value of epsilon
+
+    """ 
+
     EPSILON = '\u03B5'
 
 class Place:
     """
-    This class sets the label of the instance.
+    This class represents a place in NFA.
 
     Attributes
     ----------
-    None.
+    label : str
+        name of the node / place
+    transitions: list of str
+        collection of transition to other places
 
     Methods
     -------
     __init__ : constructor
-       sets the string passed as label of that instance.
+       sets the string passed as label (place) of that instance and initializes the transitions list.
 
     """ 
     def __init__(self, label):
@@ -22,7 +35,9 @@ class Place:
         Parameters
         ----------
         label : str
-            any label passed by the user is set in this variable.
+            any label passed by the user is set in this variable
+        transitions: list of str
+            collection of transitions to other places
 
         Returns
         -------
@@ -34,11 +49,16 @@ class Place:
 
 class Transition:
     """
-    This class is responsible for the change of state.
+    This class represents transition / edge in NFA model.
 
     Attributes
     ----------
-    None.
+    activity: str 
+        the event that needs to happen in order to transition from start to end place
+    start_place: str
+        connected start place of the transition 
+    end_place: str
+        end place where the transition leads to
 
     Methods
     -------
@@ -54,7 +74,7 @@ class Transition:
         Parameters
         ----------
         activity : str
-            alphabet reflecting one activity of the instance from event log.
+            alphabet reflecting one activity of the instance from event log
         start_place : str
             start state of the activity at hand.
         end_place : str
@@ -71,20 +91,19 @@ class Transition:
 
 class Nfa:
     """
-    This class makes the NFA model and validates by calculating fitness.
+    This class represents the NFA model. It also provides the function that checks the fitness of a log based on NFA model.
 
     Attributes
     ----------
     label : str
-        sets direction of the code by showing what will be the next step now.
+        name of NFA
     places : list of str
-        list of str to store activities from event log.
-    transitions : list of str
-        list of str responsible for change of state.
+        all the places the NFA contains
     start_place : str
-        initial state of the NFA model. (Default: None)
+        the place that is the initial place when the NFA model is initialized. (Default: None)
     end_places : list of str
-        list of str to store multiple ending states.
+        accepted end places in NFA
+
     Methods
     -------
     __init__ : constructor
@@ -93,20 +112,20 @@ class Nfa:
     """ 
     def __init__(self, label):
         """
-        initialize the attributes and sets the label passed during instance creation.
+        Initializes the attributes and sets the label passed during instance creation.
 
         Parameters
         ----------
         label : str
-            sets direction of the code by showing what will be the next step now.
+            name of NFA
         places : list of str
-            list of str to store activities from event log.
+            all the places the NFA contains
         transitions : list of str
-            list of str responsible for change of state.
+            collection of transitions to other places
         start_place : str
-            initial state of the NFA model. (Default: None)
+            the place that is the initial place when the NFA model is initialized. (Default: None)
         end_places : list of str
-            list of str to store multiple ending states.
+            accepted end places in NFA        
 
         Returns
         -------
@@ -120,6 +139,18 @@ class Nfa:
         self.end_places = [] # but multiple acepting end places
 
     def print(self):
+        """
+        This function prints the NFA model.
+
+        Parameters
+        ----------
+        None.   
+
+        Returns
+        -------
+        None.
+
+        """          
         print("Start place: " + self.start_place.label + str(self.places.index(self.start_place)))
         for place in self.places:
             print("Place: " + place.label + "_" + str(self.places.index(place)))
@@ -130,16 +161,16 @@ class Nfa:
 
     def add_place(self, place, is_start_place = False, is_end_place = False) :
         """
-        sets labels. If start and end place values are not given in second and third argument, they are by default taken to be as False.
+        It adds a place to the existing NFA model. If start and end place values are not given in second and third argument, they are by default taken to be False.
 
         Parameters
         ----------
-        place : str
-            alphabet reflecting label.
+        place : Place object
+            the place that will be added to the NFA
         is_start_Place : bool
-            to check if its the start place. (Default: False)
+            to set/define whether its the start place. (Default: False)
         is_end_Place : bool
-            to check if its the end place. (Default: False)
+            to set/define whether its the end place. (Default: False)
 
         Returns
         -------
@@ -159,12 +190,12 @@ class Nfa:
 
     def remove_place(self, place) :
         """
-        for removing an acitivity from the model.
+        This function removes a place from the NFA model.
 
         Parameters
         ----------
-        place : str
-            alphabet reflecting label. 
+        place : Place object
+            the place that needs to be removed from the NFA model. 
 
         Returns
         -------
@@ -176,12 +207,12 @@ class Nfa:
 
     def add_Transition(self, transition) :
         """
-        adds an activity in the model alongwith its start and end place.
+        This function adds a transition to the existing NFA model.
 
         Parameters
         ----------
-        transition : list of str
-            activity, its previous state and the next state.
+        transition : Transition object
+            it is the transition that will be added.
         
         Returns
         -------
@@ -198,12 +229,12 @@ class Nfa:
 
     def remove_Transition(self, transition) :
         """
-        removes an activity from the model alongwith its start and end place.
+        This function removes a transition from the NFA model.
 
         Parameters
         ----------
-        transition : list of str
-            activity, its previous state and the next state.
+        transition : Transition object
+            the transition that is required to be removed from the NFA model.
         
         Returns
         -------
@@ -219,12 +250,12 @@ class Nfa:
     def is_fitting(self, trace) :
       
         """
-        checks if given trace mathces the model.
+        This function checks if the given trace mathces the model. It replays the trace on the model and checks whether it ends up in an accepting end state.
 
         Parameters
         ----------
         trace : list of str
-            activities of an instance taken from event log.
+            activities of a trace/an instance taken from event log.
         
         Returns
         -------
@@ -258,14 +289,15 @@ class Nfa:
         return False
 
     def __is_subtrace_fitting(self, current_place, trace) :
-
         """
-        checks if given subtrace mathces the model.
+        A helping function that checks if the given trace ends up in an accepting end state when started from the current place.
 
         Parameters
         ----------
+        currrent_place: Place object
+            place in NFA model that should be used as the initial place to start replaying the trace from
         trace : list of str
-            activities of an instance taken from event log.
+            activities of a trace/an instance taken from event log
         
         Returns
         -------
@@ -298,33 +330,65 @@ class Nfa:
     
     def log_fittness(self, log):
         """
-        calculates fitness of the alignment.
+        This function calculates fitness of the log (list of traces) when replayed on the NFA model.
 
         Parameters
         ----------
-        log : list of str
-            activities of an instance taken from event log.
+        log : list of list of strings
+            instances/traces taken from event log.
         
         Returns
         -------
-        bool
-            needs to be discussed.
+        variable: float
+            the fitness value.
         """ 
         # Check for each trace in the log wether the trace is fiting (replayable)
         # return the fraction of traces that are fiting (replayable)
-        return False # placeholder only
+        return 1.0 # placeholder only
 
     def convert_from_regex(self, regex):
-        #Check whether the nfa model is empty right now
-        return False
+        """
+        Fucntion that creates and returns the NFA based on the given regular expression.
 
+        Parameters
+        ----------
+        regex : list of characters
+            regular expressions that will be converted to NFA model.
+
+        Returns
+        -------
+        NFA : NFA object
+            the final model that describes the same accepted language as regular expression.
+        """        
+        return expression(regex)
+
+#Grammer used to describe the accepted regular expression:
 # Expression := Konkat { "|" Konkat}
-# Konkat := Prod {(".", "") Prod}      - until now the . is a must
+# Konkat := Prod {(".", "") Prod}  - until now the . is a must
 # Prod := Factor ("*", "")
 # Factor := Activity | "(" Expression ")"
-#Activity := "a" | "b" | ... (all letters)
+# Activity := "a" | "b" | ... (all letters)
 
 def expression(regex) :
+    """
+    Fucntion that returns the NFA model defined by the regular expression interpreted as expression part, defined by the used regular expression grammar which is as follows:
+    Expression := Konkat { "|" Konkat}
+    Konkat := Prod {(".", "") Prod}  - until now the . is a must
+    Prod := Factor ("*", "")
+    Factor := Activity | "(" Expression ")"
+    Activity := "a" | "b" | ... (all letters)
+
+    Parameters
+    ----------
+    regex : list of characters
+        regular expressions that will be converted to NFA model
+
+    Returns
+    -------
+    NFA : NFA object
+        the model that describe the same accepted language as regular expression
+    """        
+
     list_of_konkats = []
     list_of_konkats.append(konkat(regex))
     while(len(regex) > 0 and regex[0] == "|"):
@@ -333,6 +397,19 @@ def expression(regex) :
     return (unite_nfas(list_of_konkats))
 
 def konkat(regex) :
+    """
+    It returns the NFA model defined by the regular expression interpreted as a concatenation part.
+
+    Parameters
+    ----------
+    regex : list of characters
+        regular expressions that will be converted to NFA model
+
+    Returns
+    -------
+    NFA : NFA object
+        returns the NFA model defined by the regular expression interpreted as a concatenation part
+    """         
     list_of_prods = []
     list_of_prods.append(prod(regex))
     while(len(regex) > 0 and regex[0] == "."):
@@ -341,6 +418,19 @@ def konkat(regex) :
     return konkatonate_nfas(list_of_prods)
 
 def prod(regex) :
+    """
+    It returns the NFA model defined by the regular expression interpreted as a product(* operator) part.
+
+    Parameters
+    ----------
+    regex : list of characters
+        regular expressions that will be converted to NFA model
+
+    Returns
+    -------
+    NFA : NFA object
+        returns the NFA model defined by the regular expression interpreted as a product(* operator) part
+    """         
     factor_nfa = factor(regex)
     if(len(regex) > 0 and regex[0] == "*"):
         regex.pop(0)
@@ -348,6 +438,19 @@ def prod(regex) :
     return(factor_nfa)
 
 def factor(regex) :
+    """
+    It represents the grammar rule "factor" as mentioned above. It returns the NFA model defined by the regular expression interpreted as a factor part. It detects the paranthesis.
+
+    Parameters
+    ----------
+    regex : list of characters
+        regular expressions that will be converted to NFA model
+
+    Returns
+    -------
+    NFA : NFA object
+        returns the NFA model defined by the regular expression interpreted as factor part.
+    """  
     if(len(regex) > 0 and regex[0].isalpha()):
         activity = regex.pop(0)
         activity_nfa = nfa_from_activity(activity)
@@ -362,7 +465,19 @@ def factor(regex) :
 
 #helping functions
 def unite_nfas(nfas):
+    """
+    It creates a NFA that accepts the combination (| operator) of given NFAs based on thomson construction.
 
+    Parameters
+    ----------
+    nfas : list of Nfa
+        list of nfa models that will be combined
+
+    Returns
+    -------
+    united_nfa: NFA object
+        the final nfa after consolidation of nfas in the given list of NFAs
+    """ 
     if(len(nfas) == 1):
         return nfas[0]
 
@@ -383,6 +498,19 @@ def unite_nfas(nfas):
     return united_nfa
 
 def konkatonate_nfas(nfas):
+    """
+    It creates a NFA that accepts the combination (. operator; placing one NFA after another NFA) of given NFAs based on thomson construction.
+
+    Parameters
+    ----------
+    nfas : list of Nfa
+        list of nfa models that will be combined
+
+    Returns
+    -------
+    konkat_nfa: NFA object
+        the final nfa after concatenation of nfas in the given list of NFAs
+    """
 
     if(len(nfas) == 1):
         return nfas[0]
@@ -410,6 +538,19 @@ def konkatonate_nfas(nfas):
     return konkat_nfa
 
 def star_nfa(nfa):
+    """
+    It creates a NFA that accepts the combination (* operator) of given NFAs based on thomson construction.
+
+    Parameters
+    ----------
+    nfa : list of Nfa
+        any NFA
+
+    Returns
+    -------
+    star_nfa: NFA object
+        NFA that accepts the language of the given nfa after applying the * operator on the given NFA.
+    """   
     star_nfa = Nfa("star")
     p_start = Place("s_s")
     star_nfa.add_place(p_start, True)
@@ -435,6 +576,19 @@ def star_nfa(nfa):
 
 
 def nfa_from_activity(activity):
+    """
+    It gets an activity from the event log. For a given activity it retuens the NFA that accpets only this activity. This is the base case for the thomson construction.
+
+    Parameters
+    ----------
+    activty : char
+        character that represents an activity from the event log
+
+    Returns
+    -------
+    base_nfa: NFA object
+        the nfa model accepting just the given acitivity from the log.
+    """
     base_nfa = Nfa("activity")
     p_start = Place("a_s")
     base_nfa.add_place(p_start, True)

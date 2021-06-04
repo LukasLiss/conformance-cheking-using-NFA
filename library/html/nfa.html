@@ -1,0 +1,1965 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.9.2" />
+<title>nfa API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>nfa</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SpecialActivities:
+    &#34;&#34;&#34;
+    This class is the collection of special characters used in regular expressions.
+
+    Attributes
+    ----------
+    Epsilon: str
+        stores the value of epsilon
+
+    &#34;&#34;&#34; 
+
+    EPSILON = &#39;\u03B5&#39;
+
+class Place:
+    &#34;&#34;&#34;
+    This class represents a place in NFA.
+
+    Attributes
+    ----------
+    label : str
+        name of the node / place
+    transitions: list of str
+        collection of transition to other places
+
+    Methods
+    -------
+    __init__ : constructor
+       sets the string passed as label (place) of that instance and initializes the transitions list.
+
+    &#34;&#34;&#34; 
+    def __init__(self, label):
+        &#34;&#34;&#34;
+        Constructor of class Place.
+
+        Parameters
+        ----------
+        label : str
+            any label passed by the user is set in this variable
+        transitions: list of str
+            collection of transitions to other places
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34;       
+        self.label = label
+        self.transitions = []
+
+class Transition:
+    &#34;&#34;&#34;
+    This class represents transition / edge in NFA model.
+
+    Attributes
+    ----------
+    activity: str 
+        the event that needs to happen in order to transition from start to end place
+    start_place: str
+        connected start place of the transition 
+    end_place: str
+        end place where the transition leads to
+
+    Methods
+    -------
+    __init__ : constructor
+       sets the values of activity, start place of the activity and its end place.
+
+    &#34;&#34;&#34; 
+    
+    def __init__(self, activity, start_place, end_place):
+        &#34;&#34;&#34;
+        Constructor of class Transition that sets values of the instance.
+
+        Parameters
+        ----------
+        activity : str
+            alphabet reflecting one activity of the instance from event log
+        start_place : str
+            start state of the activity at hand.
+        end_place : str
+            end state of the activity at hand.
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34;         
+        self.activity = activity
+        self.start_place = start_place
+        self.end_place = end_place
+
+class Nfa:
+    &#34;&#34;&#34;
+    This class represents the NFA model. It also provides the function that checks the fitness of a log based on NFA model.
+
+    Attributes
+    ----------
+    label : str
+        name of NFA
+    places : list of str
+        all the places the NFA contains
+    start_place : str
+        the place that is the initial place when the NFA model is initialized. (Default: None)
+    end_places : list of str
+        accepted end places in NFA
+
+    Methods
+    -------
+    __init__ : constructor
+       initialize the attributes and sets the label passed during instance creation.
+    
+    &#34;&#34;&#34; 
+    def __init__(self, label):
+        &#34;&#34;&#34;
+        Initializes the attributes and sets the label passed during instance creation.
+
+        Parameters
+        ----------
+        label : str
+            name of NFA
+        places : list of str
+            all the places the NFA contains
+        transitions : list of str
+            collection of transitions to other places
+        start_place : str
+            the place that is the initial place when the NFA model is initialized. (Default: None)
+        end_places : list of str
+            accepted end places in NFA        
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34;      
+        self.label = label
+        self.places = []
+        self.transitions = []
+        self.start_place = None # here we use the definiton of an NFA with just one start place
+        self.end_places = [] # but multiple acepting end places
+
+    def print(self):
+        &#34;&#34;&#34;
+        This function prints the NFA model.
+
+        Parameters
+        ----------
+        None.   
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34;          
+        print(&#34;Start place: &#34; + self.start_place.label + str(self.places.index(self.start_place)))
+        for place in self.places:
+            print(&#34;Place: &#34; + place.label + &#34;_&#34; + str(self.places.index(place)))
+            if place in self.end_places:
+                print(&#34;Endplace&#34;)
+            for trans in place.transitions:
+                print(&#34;&#34; + trans.start_place.label + &#34;_&#34; + str(self.places.index(trans.start_place)) + &#34; - &#34; + trans.activity + &#34; - &#34; + trans.end_place.label + &#34;_&#34; + str(self.places.index(trans.end_place)))
+
+    def add_place(self, place, is_start_place = False, is_end_place = False) :
+        &#34;&#34;&#34;
+        It adds a place to the existing NFA model. If start and end place values are not given in second and third argument, they are by default taken to be False.
+
+        Parameters
+        ----------
+        place : Place object
+            the place that will be added to the NFA
+        is_start_Place : bool
+            to set/define whether its the start place. (Default: False)
+        is_end_Place : bool
+            to set/define whether its the end place. (Default: False)
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34; 
+        #check whether place is a Place
+
+        #check whether place allready exist
+        self.places.append(place)
+        if is_start_place :
+            #check whether allready a start place is defined
+            self.start_place = place
+        if is_end_place :
+            self.end_places.append(place)
+
+
+    def remove_place(self, place) :
+        &#34;&#34;&#34;
+        This function removes a place from the NFA model.
+
+        Parameters
+        ----------
+        place : Place object
+            the place that needs to be removed from the NFA model. 
+
+        Returns
+        -------
+        None.
+        &#34;&#34;&#34; 
+        #check whether place is a Place
+
+        self.places.remove(place)
+
+    def add_Transition(self, transition) :
+        &#34;&#34;&#34;
+        This function adds a transition to the existing NFA model.
+
+        Parameters
+        ----------
+        transition : Transition object
+            it is the transition that will be added.
+        
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34; 
+        #check whether transition is a Transition
+        #check whether transition only has places that exist
+        #check for duplicate
+        for place in self.places :
+            if place == transition.start_place :
+                place.transitions.append(transition)
+                break
+
+    def remove_Transition(self, transition) :
+        &#34;&#34;&#34;
+        This function removes a transition from the NFA model.
+
+        Parameters
+        ----------
+        transition : Transition object
+            the transition that is required to be removed from the NFA model.
+        
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34; 
+        #input checks
+        for place in self.places :
+            if place == transition.start_place :
+                place.transitions.remove(transition)
+                break
+
+    def is_fitting(self, trace) :
+      
+        &#34;&#34;&#34;
+        This function checks if the given trace mathces the model. It replays the trace on the model and checks whether it ends up in an accepting end state.
+
+        Parameters
+        ----------
+        trace : list of str
+            activities of a trace/an instance taken from event log.
+        
+        Returns
+        -------
+        bool
+            true if it matches, false otherwise.
+
+        &#34;&#34;&#34; 
+        
+        #trace is here just a list of activities
+        #check input
+
+        if(len(trace) == 0) :
+            if self.start_place in self.end_places:
+                return True
+            #check only for epsilon transitions
+            for trans in self.start_place.transitions :
+                if trans.activity == SpecialActivities.EPSILON:
+                    if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                        return True
+            return False
+
+        activity = trace[0]
+        for trans in self.start_place.transitions :
+            if trans.activity == activity :
+                if( self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True) :
+                    return True
+            if trans.activity == SpecialActivities.EPSILON:
+                if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                    return True
+
+        return False
+
+    def __is_subtrace_fitting(self, current_place, trace) :
+        &#34;&#34;&#34;
+        A helping function that checks if the given trace ends up in an accepting end state when started from the current place.
+
+        Parameters
+        ----------
+        currrent_place: Place object
+            place in NFA model that should be used as the initial place to start replaying the trace from
+        trace : list of str
+            activities of a trace/an instance taken from event log
+        
+        Returns
+        -------
+        bool
+            true if it matches, false otherwise.
+        &#34;&#34;&#34; 
+        #trace is here just a list of activities
+        #check input
+
+        if(len(trace) == 0) :
+            if current_place in self.end_places:
+                return True
+            #check only for epsilon transitions
+            for trans in current_place.transitions :
+                if trans.activity == SpecialActivities.EPSILON:
+                    if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                        return True
+            return False
+
+        activity = trace[0]
+        for trans in current_place.transitions :
+            if trans.activity == activity:
+                if( self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True) :
+                    return True
+            if trans.activity == SpecialActivities.EPSILON:
+                if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                    return True
+
+        return False
+    
+    def log_fittness(self, log):
+        &#34;&#34;&#34;
+        This function calculates fitness of the log (list of traces) when replayed on the NFA model.
+
+        Parameters
+        ----------
+        log : list of list of strings
+            instances/traces taken from event log.
+        
+        Returns
+        -------
+        variable: float
+            the fitness value.
+        &#34;&#34;&#34; 
+        # Check for each trace in the log wether the trace is fiting (replayable)
+        # return the fraction of traces that are fiting (replayable)
+        return 1.0 # placeholder only
+
+    def convert_from_regex(self, regex):
+        &#34;&#34;&#34;
+        Fucntion that creates and returns the NFA based on the given regular expression.
+
+        Parameters
+        ----------
+        regex : list of characters
+            regular expressions that will be converted to NFA model.
+
+        Returns
+        -------
+        NFA : NFA object
+            the final model that describes the same accepted language as regular expression.
+        &#34;&#34;&#34;        
+        return expression(regex)
+
+#Grammer used to describe the accepted regular expression:
+# Expression := Konkat { &#34;|&#34; Konkat}
+# Konkat := Prod {(&#34;.&#34;, &#34;&#34;) Prod}  - until now the . is a must
+# Prod := Factor (&#34;*&#34;, &#34;&#34;)
+# Factor := Activity | &#34;(&#34; Expression &#34;)&#34;
+# Activity := &#34;a&#34; | &#34;b&#34; | ... (all letters)
+
+def expression(regex) :
+    &#34;&#34;&#34;
+    Fucntion that returns the NFA model defined by the regular expression interpreted as expression part, defined by the used regular expression grammar which is as follows:
+    Expression := Konkat { &#34;|&#34; Konkat}
+    Konkat := Prod {(&#34;.&#34;, &#34;&#34;) Prod}  - until now the . is a must
+    Prod := Factor (&#34;*&#34;, &#34;&#34;)
+    Factor := Activity | &#34;(&#34; Expression &#34;)&#34;
+    Activity := &#34;a&#34; | &#34;b&#34; | ... (all letters)
+
+    Parameters
+    ----------
+    regex : list of characters
+        regular expressions that will be converted to NFA model
+
+    Returns
+    -------
+    NFA : NFA object
+        the model that describe the same accepted language as regular expression
+    &#34;&#34;&#34;        
+
+    list_of_konkats = []
+    list_of_konkats.append(konkat(regex))
+    while(len(regex) &gt; 0 and regex[0] == &#34;|&#34;):
+        regex.pop(0)
+        list_of_konkats.append(konkat(regex))
+    return (unite_nfas(list_of_konkats))
+
+def konkat(regex) :
+    &#34;&#34;&#34;
+    It returns the NFA model defined by the regular expression interpreted as a concatenation part.
+
+    Parameters
+    ----------
+    regex : list of characters
+        regular expressions that will be converted to NFA model
+
+    Returns
+    -------
+    NFA : NFA object
+        returns the NFA model defined by the regular expression interpreted as a concatenation part
+    &#34;&#34;&#34;         
+    list_of_prods = []
+    list_of_prods.append(prod(regex))
+    while(len(regex) &gt; 0 and regex[0] == &#34;.&#34;):
+        regex.pop(0)
+        list_of_prods.append(prod(regex))
+    return konkatonate_nfas(list_of_prods)
+
+def prod(regex) :
+    &#34;&#34;&#34;
+    It returns the NFA model defined by the regular expression interpreted as a product(* operator) part.
+
+    Parameters
+    ----------
+    regex : list of characters
+        regular expressions that will be converted to NFA model
+
+    Returns
+    -------
+    NFA : NFA object
+        returns the NFA model defined by the regular expression interpreted as a product(* operator) part
+    &#34;&#34;&#34;         
+    factor_nfa = factor(regex)
+    if(len(regex) &gt; 0 and regex[0] == &#34;*&#34;):
+        regex.pop(0)
+        return star_nfa(factor_nfa)
+    return(factor_nfa)
+
+def factor(regex) :
+    &#34;&#34;&#34;
+    It represents the grammar rule &#34;factor&#34; as mentioned above. It returns the NFA model defined by the regular expression interpreted as a factor part. It detects the paranthesis.
+
+    Parameters
+    ----------
+    regex : list of characters
+        regular expressions that will be converted to NFA model
+
+    Returns
+    -------
+    NFA : NFA object
+        returns the NFA model defined by the regular expression interpreted as factor part.
+    &#34;&#34;&#34;  
+    if(len(regex) &gt; 0 and regex[0].isalpha()):
+        activity = regex.pop(0)
+        activity_nfa = nfa_from_activity(activity)
+        return activity_nfa
+    if(len(regex) &gt; 0 and regex[0] == &#34;(&#34;):
+        regex.pop(0)
+        sub_nfa = expression(regex)
+        if(len(regex) &gt; 0 and regex[0] != &#34;(&#34;):
+            print(&#34;Error: Was expecting a closing parenthesis but recived: &#34; + regex[0])
+        regex.pop(0)
+        return sub_nfa
+
+#helping functions
+def unite_nfas(nfas):
+    &#34;&#34;&#34;
+    It creates a NFA that accepts the combination (| operator) of given NFAs based on thomson construction.
+
+    Parameters
+    ----------
+    nfas : list of Nfa
+        list of nfa models that will be combined
+
+    Returns
+    -------
+    united_nfa: NFA object
+        the final nfa after consolidation of nfas in the given list of NFAs
+    &#34;&#34;&#34; 
+    if(len(nfas) == 1):
+        return nfas[0]
+
+    united_nfa = Nfa(&#34;unite&#34;)
+    p_start = Place(&#34;u_s&#34;)
+    united_nfa.add_place(p_start, True)
+    p_end = Place(&#34;u_e&#34;)
+    united_nfa.add_place(p_end, False, True)
+    for nfa in nfas:
+        #add places with their transitions
+        for place in nfa.places:
+            united_nfa.add_place(place)
+        #connect the united start place to the start place of the nfa
+        united_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, nfa.start_place))
+        #connect all accepting places to the united accepting place
+        for acc_place in nfa.end_places:
+            united_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_place, p_end))
+    return united_nfa
+
+def konkatonate_nfas(nfas):
+    &#34;&#34;&#34;
+    It creates a NFA that accepts the combination (. operator; placing one NFA after another NFA) of given NFAs based on thomson construction.
+
+    Parameters
+    ----------
+    nfas : list of Nfa
+        list of nfa models that will be combined
+
+    Returns
+    -------
+    konkat_nfa: NFA object
+        the final nfa after concatenation of nfas in the given list of NFAs
+    &#34;&#34;&#34;
+
+    if(len(nfas) == 1):
+        return nfas[0]
+
+    konkat_nfa = Nfa(&#34;konkat&#34;)
+    p_start = Place(&#34;k_s&#34;)
+    konkat_nfa.add_place(p_start, True)
+    p_end = Place(&#34;k_e&#34;)
+    konkat_nfa.add_place(p_end, False, True)
+    for nfa in nfas:
+        #add places with their transitions
+        for place in nfa.places:
+            konkat_nfa.add_place(place)
+    #connect the accepting places of each nfa in the list to the start place of the following nfa  ---- optimisation potential by not going through the nfas twice
+    for i in range(len(nfas)-1):
+        for acc_plac in nfas[i].end_places:
+            konkat_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_plac, nfas[i+1].start_place))
+
+    #add Transition from new start to start of first nfa in list
+    konkat_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, nfas[0].start_place))
+    #add Transition from last nfa in list to new last place
+    for acc_place in nfas[len(nfas)-1].end_places:
+        konkat_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_place, p_end))
+    
+    return konkat_nfa
+
+def star_nfa(nfa):
+    &#34;&#34;&#34;
+    It creates a NFA that accepts the combination (* operator) of given NFAs based on thomson construction.
+
+    Parameters
+    ----------
+    nfa : list of Nfa
+        any NFA
+
+    Returns
+    -------
+    star_nfa: NFA object
+        NFA that accepts the language of the given nfa after applying the * operator on the given NFA.
+    &#34;&#34;&#34;   
+    star_nfa = Nfa(&#34;star&#34;)
+    p_start = Place(&#34;s_s&#34;)
+    star_nfa.add_place(p_start, True)
+    p_end = Place(&#34;s_e&#34;)
+    star_nfa.add_place(p_end, False, True)
+
+    #add all places from nfa
+    for place in nfa.places:
+        star_nfa.add_place(place)
+
+    #one can skip the nfa
+    star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, p_end))
+    #connect new start to the start of the nfa
+    star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, nfa.start_place))
+    #connect new end to the start of the nfa
+    star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_end, nfa.start_place))
+
+    #connect accepting places of the nfa to the new end place
+    for acc_place in nfa.end_places:
+        star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_place, p_end))
+
+    return star_nfa
+
+
+def nfa_from_activity(activity):
+    &#34;&#34;&#34;
+    It gets an activity from the event log. For a given activity it retuens the NFA that accpets only this activity. This is the base case for the thomson construction.
+
+    Parameters
+    ----------
+    activty : char
+        character that represents an activity from the event log
+
+    Returns
+    -------
+    base_nfa: NFA object
+        the nfa model accepting just the given acitivity from the log.
+    &#34;&#34;&#34;
+    base_nfa = Nfa(&#34;activity&#34;)
+    p_start = Place(&#34;a_s&#34;)
+    base_nfa.add_place(p_start, True)
+    p_end = Place(&#34;a_e&#34;)
+    base_nfa.add_place(p_end, False, True)
+    base_nfa.add_Transition(Transition(activity, p_start, p_end))
+    return base_nfa
+    
+
+# Test section
+
+myNFA = Nfa(&#34;TestNFA&#34;)
+p1 = Place(&#34;Greating&#34;)
+myNFA.add_place(p1, True)
+p2 = Place(&#34;Start Small Talk&#34;)
+myNFA.add_place(p2)
+p3 = Place(&#34;End Small Talk&#34;)
+myNFA.add_place(p3)
+p4 = Place(&#34;Good Bye&#34;)
+myNFA.add_place(p4, False, True)
+t1 = Transition(&#34;a&#34;, p1, p2)
+myNFA.add_Transition(t1)
+t2 = Transition(&#34;b&#34;, p2, p2)
+myNFA.add_Transition(t2)
+t3 = Transition(&#34;b&#34;, p2, p3)
+myNFA.add_Transition(t3)
+t4 = Transition(&#34;c&#34;, p3, p4)
+myNFA.add_Transition(t4)
+
+
+print(myNFA.places)
+print(myNFA.transitions)
+
+print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;, &#34;c&#34;])) #True
+print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;, &#34;b&#34;, &#34;b&#34;, &#34;c&#34;])) #True
+print(myNFA.is_fitting([&#34;a&#34;, &#34;a&#34;, &#34;b&#34;, &#34;c&#34;])) #False
+print(myNFA.is_fitting([&#34;a&#34;, &#34;c&#34;])) #False
+print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;])) #False
+
+myNFA.add_Transition(Transition(SpecialActivities.EPSILON, p2, p4))
+
+print(myNFA.is_fitting([&#34;a&#34;])) #True
+
+myRegexNfa = expression([&#34;a&#34;, &#34;*&#34;, &#34;|&#34;, &#34;(&#34;, &#34;c&#34;, &#34;.&#34;, &#34;d&#34;, &#34;)&#34;, &#34;|&#34;, &#34;(&#34;, &#34;e&#34;, &#34;.&#34;, &#34;f&#34;, &#34;)&#34;])
+myRegexNfa.print()
+
+print(&#34;Regex: &#34;)
+print(myRegexNfa.is_fitting([&#34;a&#34;, &#34;a&#34;])) #True
+print(myRegexNfa.is_fitting([&#34;a&#34;,])) #True
+print(myRegexNfa.is_fitting([])) #True
+print(myRegexNfa.is_fitting([&#34;c&#34;, &#34;d&#34;])) #True
+print(myRegexNfa.is_fitting([&#34;e&#34;, &#34;f&#34;])) #True
+print(myRegexNfa.is_fitting([&#34;a&#34;, &#34;c&#34;])) #False
+print(myRegexNfa.is_fitting([&#34;a&#34;, &#34;c&#34;, &#34;d&#34;])) #False
+print(myRegexNfa.is_fitting([&#34;x&#34;,])) #False
+print(myRegexNfa.is_fitting([&#34;c&#34;])) #False</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="nfa.expression"><code class="name flex">
+<span>def <span class="ident">expression</span></span>(<span>regex)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fucntion that returns the NFA model defined by the regular expression interpreted as expression part, defined by the used regular expression grammar which is as follows:
+Expression := Konkat { "|" Konkat}
+Konkat := Prod {(".", "") Prod}
+- until now the . is a must
+Prod := Factor ("*", "")
+Factor := Activity | "(" Expression ")"
+Activity := "a" | "b" | &hellip; (all letters)</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>regex</code></strong> :&ensp;<code>list</code> of <code>characters</code></dt>
+<dd>regular expressions that will be converted to NFA model</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>NFA</code></strong> :&ensp;<code>NFA object</code></dt>
+<dd>the model that describe the same accepted language as regular expression</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def expression(regex) :
+    &#34;&#34;&#34;
+    Fucntion that returns the NFA model defined by the regular expression interpreted as expression part, defined by the used regular expression grammar which is as follows:
+    Expression := Konkat { &#34;|&#34; Konkat}
+    Konkat := Prod {(&#34;.&#34;, &#34;&#34;) Prod}  - until now the . is a must
+    Prod := Factor (&#34;*&#34;, &#34;&#34;)
+    Factor := Activity | &#34;(&#34; Expression &#34;)&#34;
+    Activity := &#34;a&#34; | &#34;b&#34; | ... (all letters)
+
+    Parameters
+    ----------
+    regex : list of characters
+        regular expressions that will be converted to NFA model
+
+    Returns
+    -------
+    NFA : NFA object
+        the model that describe the same accepted language as regular expression
+    &#34;&#34;&#34;        
+
+    list_of_konkats = []
+    list_of_konkats.append(konkat(regex))
+    while(len(regex) &gt; 0 and regex[0] == &#34;|&#34;):
+        regex.pop(0)
+        list_of_konkats.append(konkat(regex))
+    return (unite_nfas(list_of_konkats))</code></pre>
+</details>
+</dd>
+<dt id="nfa.factor"><code class="name flex">
+<span>def <span class="ident">factor</span></span>(<span>regex)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It represents the grammar rule "factor" as mentioned above. It returns the NFA model defined by the regular expression interpreted as a factor part. It detects the paranthesis.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>regex</code></strong> :&ensp;<code>list</code> of <code>characters</code></dt>
+<dd>regular expressions that will be converted to NFA model</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>NFA</code></strong> :&ensp;<code>NFA object</code></dt>
+<dd>returns the NFA model defined by the regular expression interpreted as factor part.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def factor(regex) :
+    &#34;&#34;&#34;
+    It represents the grammar rule &#34;factor&#34; as mentioned above. It returns the NFA model defined by the regular expression interpreted as a factor part. It detects the paranthesis.
+
+    Parameters
+    ----------
+    regex : list of characters
+        regular expressions that will be converted to NFA model
+
+    Returns
+    -------
+    NFA : NFA object
+        returns the NFA model defined by the regular expression interpreted as factor part.
+    &#34;&#34;&#34;  
+    if(len(regex) &gt; 0 and regex[0].isalpha()):
+        activity = regex.pop(0)
+        activity_nfa = nfa_from_activity(activity)
+        return activity_nfa
+    if(len(regex) &gt; 0 and regex[0] == &#34;(&#34;):
+        regex.pop(0)
+        sub_nfa = expression(regex)
+        if(len(regex) &gt; 0 and regex[0] != &#34;(&#34;):
+            print(&#34;Error: Was expecting a closing parenthesis but recived: &#34; + regex[0])
+        regex.pop(0)
+        return sub_nfa</code></pre>
+</details>
+</dd>
+<dt id="nfa.konkat"><code class="name flex">
+<span>def <span class="ident">konkat</span></span>(<span>regex)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It returns the NFA model defined by the regular expression interpreted as a concatenation part.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>regex</code></strong> :&ensp;<code>list</code> of <code>characters</code></dt>
+<dd>regular expressions that will be converted to NFA model</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>NFA</code></strong> :&ensp;<code>NFA object</code></dt>
+<dd>returns the NFA model defined by the regular expression interpreted as a concatenation part</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def konkat(regex) :
+    &#34;&#34;&#34;
+    It returns the NFA model defined by the regular expression interpreted as a concatenation part.
+
+    Parameters
+    ----------
+    regex : list of characters
+        regular expressions that will be converted to NFA model
+
+    Returns
+    -------
+    NFA : NFA object
+        returns the NFA model defined by the regular expression interpreted as a concatenation part
+    &#34;&#34;&#34;         
+    list_of_prods = []
+    list_of_prods.append(prod(regex))
+    while(len(regex) &gt; 0 and regex[0] == &#34;.&#34;):
+        regex.pop(0)
+        list_of_prods.append(prod(regex))
+    return konkatonate_nfas(list_of_prods)</code></pre>
+</details>
+</dd>
+<dt id="nfa.konkatonate_nfas"><code class="name flex">
+<span>def <span class="ident">konkatonate_nfas</span></span>(<span>nfas)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It creates a NFA that accepts the combination (. operator; placing one NFA after another NFA) of given NFAs based on thomson construction.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>nfas</code></strong> :&ensp;<code>list</code> of <code><a title="nfa.Nfa" href="#nfa.Nfa">Nfa</a></code></dt>
+<dd>list of nfa models that will be combined</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>konkat_nfa</code></strong> :&ensp;<code>NFA object</code></dt>
+<dd>the final nfa after concatenation of nfas in the given list of NFAs</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def konkatonate_nfas(nfas):
+    &#34;&#34;&#34;
+    It creates a NFA that accepts the combination (. operator; placing one NFA after another NFA) of given NFAs based on thomson construction.
+
+    Parameters
+    ----------
+    nfas : list of Nfa
+        list of nfa models that will be combined
+
+    Returns
+    -------
+    konkat_nfa: NFA object
+        the final nfa after concatenation of nfas in the given list of NFAs
+    &#34;&#34;&#34;
+
+    if(len(nfas) == 1):
+        return nfas[0]
+
+    konkat_nfa = Nfa(&#34;konkat&#34;)
+    p_start = Place(&#34;k_s&#34;)
+    konkat_nfa.add_place(p_start, True)
+    p_end = Place(&#34;k_e&#34;)
+    konkat_nfa.add_place(p_end, False, True)
+    for nfa in nfas:
+        #add places with their transitions
+        for place in nfa.places:
+            konkat_nfa.add_place(place)
+    #connect the accepting places of each nfa in the list to the start place of the following nfa  ---- optimisation potential by not going through the nfas twice
+    for i in range(len(nfas)-1):
+        for acc_plac in nfas[i].end_places:
+            konkat_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_plac, nfas[i+1].start_place))
+
+    #add Transition from new start to start of first nfa in list
+    konkat_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, nfas[0].start_place))
+    #add Transition from last nfa in list to new last place
+    for acc_place in nfas[len(nfas)-1].end_places:
+        konkat_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_place, p_end))
+    
+    return konkat_nfa</code></pre>
+</details>
+</dd>
+<dt id="nfa.nfa_from_activity"><code class="name flex">
+<span>def <span class="ident">nfa_from_activity</span></span>(<span>activity)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It gets an activity from the event log. For a given activity it retuens the NFA that accpets only this activity. This is the base case for the thomson construction.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>activty</code></strong> :&ensp;<code>char</code></dt>
+<dd>character that represents an activity from the event log</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>base_nfa</code></strong> :&ensp;<code>NFA object</code></dt>
+<dd>the nfa model accepting just the given acitivity from the log.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nfa_from_activity(activity):
+    &#34;&#34;&#34;
+    It gets an activity from the event log. For a given activity it retuens the NFA that accpets only this activity. This is the base case for the thomson construction.
+
+    Parameters
+    ----------
+    activty : char
+        character that represents an activity from the event log
+
+    Returns
+    -------
+    base_nfa: NFA object
+        the nfa model accepting just the given acitivity from the log.
+    &#34;&#34;&#34;
+    base_nfa = Nfa(&#34;activity&#34;)
+    p_start = Place(&#34;a_s&#34;)
+    base_nfa.add_place(p_start, True)
+    p_end = Place(&#34;a_e&#34;)
+    base_nfa.add_place(p_end, False, True)
+    base_nfa.add_Transition(Transition(activity, p_start, p_end))
+    return base_nfa</code></pre>
+</details>
+</dd>
+<dt id="nfa.prod"><code class="name flex">
+<span>def <span class="ident">prod</span></span>(<span>regex)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It returns the NFA model defined by the regular expression interpreted as a product(* operator) part.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>regex</code></strong> :&ensp;<code>list</code> of <code>characters</code></dt>
+<dd>regular expressions that will be converted to NFA model</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>NFA</code></strong> :&ensp;<code>NFA object</code></dt>
+<dd>returns the NFA model defined by the regular expression interpreted as a product(* operator) part</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def prod(regex) :
+    &#34;&#34;&#34;
+    It returns the NFA model defined by the regular expression interpreted as a product(* operator) part.
+
+    Parameters
+    ----------
+    regex : list of characters
+        regular expressions that will be converted to NFA model
+
+    Returns
+    -------
+    NFA : NFA object
+        returns the NFA model defined by the regular expression interpreted as a product(* operator) part
+    &#34;&#34;&#34;         
+    factor_nfa = factor(regex)
+    if(len(regex) &gt; 0 and regex[0] == &#34;*&#34;):
+        regex.pop(0)
+        return star_nfa(factor_nfa)
+    return(factor_nfa)</code></pre>
+</details>
+</dd>
+<dt id="nfa.star_nfa"><code class="name flex">
+<span>def <span class="ident">star_nfa</span></span>(<span>nfa)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It creates a NFA that accepts the combination (* operator) of given NFAs based on thomson construction.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>nfa</code></strong> :&ensp;<code>list</code> of <code><a title="nfa.Nfa" href="#nfa.Nfa">Nfa</a></code></dt>
+<dd>any NFA</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>star_nfa</code></strong> :&ensp;<code>NFA object</code></dt>
+<dd>NFA that accepts the language of the given nfa after applying the * operator on the given NFA.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def star_nfa(nfa):
+    &#34;&#34;&#34;
+    It creates a NFA that accepts the combination (* operator) of given NFAs based on thomson construction.
+
+    Parameters
+    ----------
+    nfa : list of Nfa
+        any NFA
+
+    Returns
+    -------
+    star_nfa: NFA object
+        NFA that accepts the language of the given nfa after applying the * operator on the given NFA.
+    &#34;&#34;&#34;   
+    star_nfa = Nfa(&#34;star&#34;)
+    p_start = Place(&#34;s_s&#34;)
+    star_nfa.add_place(p_start, True)
+    p_end = Place(&#34;s_e&#34;)
+    star_nfa.add_place(p_end, False, True)
+
+    #add all places from nfa
+    for place in nfa.places:
+        star_nfa.add_place(place)
+
+    #one can skip the nfa
+    star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, p_end))
+    #connect new start to the start of the nfa
+    star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, nfa.start_place))
+    #connect new end to the start of the nfa
+    star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_end, nfa.start_place))
+
+    #connect accepting places of the nfa to the new end place
+    for acc_place in nfa.end_places:
+        star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_place, p_end))
+
+    return star_nfa</code></pre>
+</details>
+</dd>
+<dt id="nfa.unite_nfas"><code class="name flex">
+<span>def <span class="ident">unite_nfas</span></span>(<span>nfas)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It creates a NFA that accepts the combination (| operator) of given NFAs based on thomson construction.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>nfas</code></strong> :&ensp;<code>list</code> of <code><a title="nfa.Nfa" href="#nfa.Nfa">Nfa</a></code></dt>
+<dd>list of nfa models that will be combined</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>united_nfa</code></strong> :&ensp;<code>NFA object</code></dt>
+<dd>the final nfa after consolidation of nfas in the given list of NFAs</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def unite_nfas(nfas):
+    &#34;&#34;&#34;
+    It creates a NFA that accepts the combination (| operator) of given NFAs based on thomson construction.
+
+    Parameters
+    ----------
+    nfas : list of Nfa
+        list of nfa models that will be combined
+
+    Returns
+    -------
+    united_nfa: NFA object
+        the final nfa after consolidation of nfas in the given list of NFAs
+    &#34;&#34;&#34; 
+    if(len(nfas) == 1):
+        return nfas[0]
+
+    united_nfa = Nfa(&#34;unite&#34;)
+    p_start = Place(&#34;u_s&#34;)
+    united_nfa.add_place(p_start, True)
+    p_end = Place(&#34;u_e&#34;)
+    united_nfa.add_place(p_end, False, True)
+    for nfa in nfas:
+        #add places with their transitions
+        for place in nfa.places:
+            united_nfa.add_place(place)
+        #connect the united start place to the start place of the nfa
+        united_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, nfa.start_place))
+        #connect all accepting places to the united accepting place
+        for acc_place in nfa.end_places:
+            united_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_place, p_end))
+    return united_nfa</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="nfa.Nfa"><code class="flex name class">
+<span>class <span class="ident">Nfa</span></span>
+<span>(</span><span>label)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This class represents the NFA model. It also provides the function that checks the fitness of a log based on NFA model.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>label</code></strong> :&ensp;<code>str</code></dt>
+<dd>name of NFA</dd>
+<dt><strong><code>places</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>all the places the NFA contains</dd>
+<dt><strong><code>start_place</code></strong> :&ensp;<code>str</code></dt>
+<dd>the place that is the initial place when the NFA model is initialized. (Default: None)</dd>
+<dt><strong><code>end_places</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>accepted end places in NFA</dd>
+</dl>
+<h2 id="methods">Methods</h2>
+<p><strong>init</strong> : constructor
+initialize the attributes and sets the label passed during instance creation.</p>
+<p>Initializes the attributes and sets the label passed during instance creation.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>label</code></strong> :&ensp;<code>str</code></dt>
+<dd>name of NFA</dd>
+<dt><strong><code>places</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>all the places the NFA contains</dd>
+<dt><strong><code>transitions</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>collection of transitions to other places</dd>
+<dt><strong><code>start_place</code></strong> :&ensp;<code>str</code></dt>
+<dd>the place that is the initial place when the NFA model is initialized. (Default: None)</dd>
+<dt><strong><code>end_places</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>accepted end places in NFA</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Nfa:
+    &#34;&#34;&#34;
+    This class represents the NFA model. It also provides the function that checks the fitness of a log based on NFA model.
+
+    Attributes
+    ----------
+    label : str
+        name of NFA
+    places : list of str
+        all the places the NFA contains
+    start_place : str
+        the place that is the initial place when the NFA model is initialized. (Default: None)
+    end_places : list of str
+        accepted end places in NFA
+
+    Methods
+    -------
+    __init__ : constructor
+       initialize the attributes and sets the label passed during instance creation.
+    
+    &#34;&#34;&#34; 
+    def __init__(self, label):
+        &#34;&#34;&#34;
+        Initializes the attributes and sets the label passed during instance creation.
+
+        Parameters
+        ----------
+        label : str
+            name of NFA
+        places : list of str
+            all the places the NFA contains
+        transitions : list of str
+            collection of transitions to other places
+        start_place : str
+            the place that is the initial place when the NFA model is initialized. (Default: None)
+        end_places : list of str
+            accepted end places in NFA        
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34;      
+        self.label = label
+        self.places = []
+        self.transitions = []
+        self.start_place = None # here we use the definiton of an NFA with just one start place
+        self.end_places = [] # but multiple acepting end places
+
+    def print(self):
+        &#34;&#34;&#34;
+        This function prints the NFA model.
+
+        Parameters
+        ----------
+        None.   
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34;          
+        print(&#34;Start place: &#34; + self.start_place.label + str(self.places.index(self.start_place)))
+        for place in self.places:
+            print(&#34;Place: &#34; + place.label + &#34;_&#34; + str(self.places.index(place)))
+            if place in self.end_places:
+                print(&#34;Endplace&#34;)
+            for trans in place.transitions:
+                print(&#34;&#34; + trans.start_place.label + &#34;_&#34; + str(self.places.index(trans.start_place)) + &#34; - &#34; + trans.activity + &#34; - &#34; + trans.end_place.label + &#34;_&#34; + str(self.places.index(trans.end_place)))
+
+    def add_place(self, place, is_start_place = False, is_end_place = False) :
+        &#34;&#34;&#34;
+        It adds a place to the existing NFA model. If start and end place values are not given in second and third argument, they are by default taken to be False.
+
+        Parameters
+        ----------
+        place : Place object
+            the place that will be added to the NFA
+        is_start_Place : bool
+            to set/define whether its the start place. (Default: False)
+        is_end_Place : bool
+            to set/define whether its the end place. (Default: False)
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34; 
+        #check whether place is a Place
+
+        #check whether place allready exist
+        self.places.append(place)
+        if is_start_place :
+            #check whether allready a start place is defined
+            self.start_place = place
+        if is_end_place :
+            self.end_places.append(place)
+
+
+    def remove_place(self, place) :
+        &#34;&#34;&#34;
+        This function removes a place from the NFA model.
+
+        Parameters
+        ----------
+        place : Place object
+            the place that needs to be removed from the NFA model. 
+
+        Returns
+        -------
+        None.
+        &#34;&#34;&#34; 
+        #check whether place is a Place
+
+        self.places.remove(place)
+
+    def add_Transition(self, transition) :
+        &#34;&#34;&#34;
+        This function adds a transition to the existing NFA model.
+
+        Parameters
+        ----------
+        transition : Transition object
+            it is the transition that will be added.
+        
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34; 
+        #check whether transition is a Transition
+        #check whether transition only has places that exist
+        #check for duplicate
+        for place in self.places :
+            if place == transition.start_place :
+                place.transitions.append(transition)
+                break
+
+    def remove_Transition(self, transition) :
+        &#34;&#34;&#34;
+        This function removes a transition from the NFA model.
+
+        Parameters
+        ----------
+        transition : Transition object
+            the transition that is required to be removed from the NFA model.
+        
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34; 
+        #input checks
+        for place in self.places :
+            if place == transition.start_place :
+                place.transitions.remove(transition)
+                break
+
+    def is_fitting(self, trace) :
+      
+        &#34;&#34;&#34;
+        This function checks if the given trace mathces the model. It replays the trace on the model and checks whether it ends up in an accepting end state.
+
+        Parameters
+        ----------
+        trace : list of str
+            activities of a trace/an instance taken from event log.
+        
+        Returns
+        -------
+        bool
+            true if it matches, false otherwise.
+
+        &#34;&#34;&#34; 
+        
+        #trace is here just a list of activities
+        #check input
+
+        if(len(trace) == 0) :
+            if self.start_place in self.end_places:
+                return True
+            #check only for epsilon transitions
+            for trans in self.start_place.transitions :
+                if trans.activity == SpecialActivities.EPSILON:
+                    if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                        return True
+            return False
+
+        activity = trace[0]
+        for trans in self.start_place.transitions :
+            if trans.activity == activity :
+                if( self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True) :
+                    return True
+            if trans.activity == SpecialActivities.EPSILON:
+                if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                    return True
+
+        return False
+
+    def __is_subtrace_fitting(self, current_place, trace) :
+        &#34;&#34;&#34;
+        A helping function that checks if the given trace ends up in an accepting end state when started from the current place.
+
+        Parameters
+        ----------
+        currrent_place: Place object
+            place in NFA model that should be used as the initial place to start replaying the trace from
+        trace : list of str
+            activities of a trace/an instance taken from event log
+        
+        Returns
+        -------
+        bool
+            true if it matches, false otherwise.
+        &#34;&#34;&#34; 
+        #trace is here just a list of activities
+        #check input
+
+        if(len(trace) == 0) :
+            if current_place in self.end_places:
+                return True
+            #check only for epsilon transitions
+            for trans in current_place.transitions :
+                if trans.activity == SpecialActivities.EPSILON:
+                    if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                        return True
+            return False
+
+        activity = trace[0]
+        for trans in current_place.transitions :
+            if trans.activity == activity:
+                if( self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True) :
+                    return True
+            if trans.activity == SpecialActivities.EPSILON:
+                if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                    return True
+
+        return False
+    
+    def log_fittness(self, log):
+        &#34;&#34;&#34;
+        This function calculates fitness of the log (list of traces) when replayed on the NFA model.
+
+        Parameters
+        ----------
+        log : list of list of strings
+            instances/traces taken from event log.
+        
+        Returns
+        -------
+        variable: float
+            the fitness value.
+        &#34;&#34;&#34; 
+        # Check for each trace in the log wether the trace is fiting (replayable)
+        # return the fraction of traces that are fiting (replayable)
+        return 1.0 # placeholder only
+
+    def convert_from_regex(self, regex):
+        &#34;&#34;&#34;
+        Fucntion that creates and returns the NFA based on the given regular expression.
+
+        Parameters
+        ----------
+        regex : list of characters
+            regular expressions that will be converted to NFA model.
+
+        Returns
+        -------
+        NFA : NFA object
+            the final model that describes the same accepted language as regular expression.
+        &#34;&#34;&#34;        
+        return expression(regex)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="nfa.Nfa.add_Transition"><code class="name flex">
+<span>def <span class="ident">add_Transition</span></span>(<span>self, transition)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This function adds a transition to the existing NFA model.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>transition</code></strong> :&ensp;<code><a title="nfa.Transition" href="#nfa.Transition">Transition</a> object</code></dt>
+<dd>it is the transition that will be added.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_Transition(self, transition) :
+    &#34;&#34;&#34;
+    This function adds a transition to the existing NFA model.
+
+    Parameters
+    ----------
+    transition : Transition object
+        it is the transition that will be added.
+    
+    Returns
+    -------
+    None.
+
+    &#34;&#34;&#34; 
+    #check whether transition is a Transition
+    #check whether transition only has places that exist
+    #check for duplicate
+    for place in self.places :
+        if place == transition.start_place :
+            place.transitions.append(transition)
+            break</code></pre>
+</details>
+</dd>
+<dt id="nfa.Nfa.add_place"><code class="name flex">
+<span>def <span class="ident">add_place</span></span>(<span>self, place, is_start_place=False, is_end_place=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>It adds a place to the existing NFA model. If start and end place values are not given in second and third argument, they are by default taken to be False.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>place</code></strong> :&ensp;<code><a title="nfa.Place" href="#nfa.Place">Place</a> object</code></dt>
+<dd>the place that will be added to the NFA</dd>
+<dt><strong><code>is_start_Place</code></strong> :&ensp;<code>bool</code></dt>
+<dd>to set/define whether its the start place. (Default: False)</dd>
+<dt><strong><code>is_end_Place</code></strong> :&ensp;<code>bool</code></dt>
+<dd>to set/define whether its the end place. (Default: False)</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_place(self, place, is_start_place = False, is_end_place = False) :
+    &#34;&#34;&#34;
+    It adds a place to the existing NFA model. If start and end place values are not given in second and third argument, they are by default taken to be False.
+
+    Parameters
+    ----------
+    place : Place object
+        the place that will be added to the NFA
+    is_start_Place : bool
+        to set/define whether its the start place. (Default: False)
+    is_end_Place : bool
+        to set/define whether its the end place. (Default: False)
+
+    Returns
+    -------
+    None.
+
+    &#34;&#34;&#34; 
+    #check whether place is a Place
+
+    #check whether place allready exist
+    self.places.append(place)
+    if is_start_place :
+        #check whether allready a start place is defined
+        self.start_place = place
+    if is_end_place :
+        self.end_places.append(place)</code></pre>
+</details>
+</dd>
+<dt id="nfa.Nfa.convert_from_regex"><code class="name flex">
+<span>def <span class="ident">convert_from_regex</span></span>(<span>self, regex)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fucntion that creates and returns the NFA based on the given regular expression.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>regex</code></strong> :&ensp;<code>list</code> of <code>characters</code></dt>
+<dd>regular expressions that will be converted to NFA model.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>NFA</code></strong> :&ensp;<code>NFA object</code></dt>
+<dd>the final model that describes the same accepted language as regular expression.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def convert_from_regex(self, regex):
+    &#34;&#34;&#34;
+    Fucntion that creates and returns the NFA based on the given regular expression.
+
+    Parameters
+    ----------
+    regex : list of characters
+        regular expressions that will be converted to NFA model.
+
+    Returns
+    -------
+    NFA : NFA object
+        the final model that describes the same accepted language as regular expression.
+    &#34;&#34;&#34;        
+    return expression(regex)</code></pre>
+</details>
+</dd>
+<dt id="nfa.Nfa.is_fitting"><code class="name flex">
+<span>def <span class="ident">is_fitting</span></span>(<span>self, trace)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This function checks if the given trace mathces the model. It replays the trace on the model and checks whether it ends up in an accepting end state.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>trace</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>activities of a trace/an instance taken from event log.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>true if it matches, false otherwise.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def is_fitting(self, trace) :
+  
+    &#34;&#34;&#34;
+    This function checks if the given trace mathces the model. It replays the trace on the model and checks whether it ends up in an accepting end state.
+
+    Parameters
+    ----------
+    trace : list of str
+        activities of a trace/an instance taken from event log.
+    
+    Returns
+    -------
+    bool
+        true if it matches, false otherwise.
+
+    &#34;&#34;&#34; 
+    
+    #trace is here just a list of activities
+    #check input
+
+    if(len(trace) == 0) :
+        if self.start_place in self.end_places:
+            return True
+        #check only for epsilon transitions
+        for trans in self.start_place.transitions :
+            if trans.activity == SpecialActivities.EPSILON:
+                if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                    return True
+        return False
+
+    activity = trace[0]
+    for trans in self.start_place.transitions :
+        if trans.activity == activity :
+            if( self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True) :
+                return True
+        if trans.activity == SpecialActivities.EPSILON:
+            if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                return True
+
+    return False</code></pre>
+</details>
+</dd>
+<dt id="nfa.Nfa.log_fittness"><code class="name flex">
+<span>def <span class="ident">log_fittness</span></span>(<span>self, log)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This function calculates fitness of the log (list of traces) when replayed on the NFA model.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>log</code></strong> :&ensp;<code>list</code> of <code>list</code> of <code>strings</code></dt>
+<dd>instances/traces taken from event log.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>variable</code></strong> :&ensp;<code>float</code></dt>
+<dd>the fitness value.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_fittness(self, log):
+    &#34;&#34;&#34;
+    This function calculates fitness of the log (list of traces) when replayed on the NFA model.
+
+    Parameters
+    ----------
+    log : list of list of strings
+        instances/traces taken from event log.
+    
+    Returns
+    -------
+    variable: float
+        the fitness value.
+    &#34;&#34;&#34; 
+    # Check for each trace in the log wether the trace is fiting (replayable)
+    # return the fraction of traces that are fiting (replayable)
+    return 1.0 # placeholder only</code></pre>
+</details>
+</dd>
+<dt id="nfa.Nfa.print"><code class="name flex">
+<span>def <span class="ident">print</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This function prints the NFA model.</p>
+<h2 id="parameters">Parameters</h2>
+<p>None.
+</p>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def print(self):
+    &#34;&#34;&#34;
+    This function prints the NFA model.
+
+    Parameters
+    ----------
+    None.   
+
+    Returns
+    -------
+    None.
+
+    &#34;&#34;&#34;          
+    print(&#34;Start place: &#34; + self.start_place.label + str(self.places.index(self.start_place)))
+    for place in self.places:
+        print(&#34;Place: &#34; + place.label + &#34;_&#34; + str(self.places.index(place)))
+        if place in self.end_places:
+            print(&#34;Endplace&#34;)
+        for trans in place.transitions:
+            print(&#34;&#34; + trans.start_place.label + &#34;_&#34; + str(self.places.index(trans.start_place)) + &#34; - &#34; + trans.activity + &#34; - &#34; + trans.end_place.label + &#34;_&#34; + str(self.places.index(trans.end_place)))</code></pre>
+</details>
+</dd>
+<dt id="nfa.Nfa.remove_Transition"><code class="name flex">
+<span>def <span class="ident">remove_Transition</span></span>(<span>self, transition)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This function removes a transition from the NFA model.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>transition</code></strong> :&ensp;<code><a title="nfa.Transition" href="#nfa.Transition">Transition</a> object</code></dt>
+<dd>the transition that is required to be removed from the NFA model.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_Transition(self, transition) :
+    &#34;&#34;&#34;
+    This function removes a transition from the NFA model.
+
+    Parameters
+    ----------
+    transition : Transition object
+        the transition that is required to be removed from the NFA model.
+    
+    Returns
+    -------
+    None.
+
+    &#34;&#34;&#34; 
+    #input checks
+    for place in self.places :
+        if place == transition.start_place :
+            place.transitions.remove(transition)
+            break</code></pre>
+</details>
+</dd>
+<dt id="nfa.Nfa.remove_place"><code class="name flex">
+<span>def <span class="ident">remove_place</span></span>(<span>self, place)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This function removes a place from the NFA model.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>place</code></strong> :&ensp;<code><a title="nfa.Place" href="#nfa.Place">Place</a> object</code></dt>
+<dd>the place that needs to be removed from the NFA model.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove_place(self, place) :
+    &#34;&#34;&#34;
+    This function removes a place from the NFA model.
+
+    Parameters
+    ----------
+    place : Place object
+        the place that needs to be removed from the NFA model. 
+
+    Returns
+    -------
+    None.
+    &#34;&#34;&#34; 
+    #check whether place is a Place
+
+    self.places.remove(place)</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="nfa.Place"><code class="flex name class">
+<span>class <span class="ident">Place</span></span>
+<span>(</span><span>label)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This class represents a place in NFA.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>label</code></strong> :&ensp;<code>str</code></dt>
+<dd>name of the node / place</dd>
+<dt><strong><code>transitions</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>collection of transition to other places</dd>
+</dl>
+<h2 id="methods">Methods</h2>
+<p><strong>init</strong> : constructor
+sets the string passed as label (place) of that instance and initializes the transitions list.</p>
+<p>Constructor of class Place.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>label</code></strong> :&ensp;<code>str</code></dt>
+<dd>any label passed by the user is set in this variable</dd>
+<dt><strong><code>transitions</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>collection of transitions to other places</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Place:
+    &#34;&#34;&#34;
+    This class represents a place in NFA.
+
+    Attributes
+    ----------
+    label : str
+        name of the node / place
+    transitions: list of str
+        collection of transition to other places
+
+    Methods
+    -------
+    __init__ : constructor
+       sets the string passed as label (place) of that instance and initializes the transitions list.
+
+    &#34;&#34;&#34; 
+    def __init__(self, label):
+        &#34;&#34;&#34;
+        Constructor of class Place.
+
+        Parameters
+        ----------
+        label : str
+            any label passed by the user is set in this variable
+        transitions: list of str
+            collection of transitions to other places
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34;       
+        self.label = label
+        self.transitions = []</code></pre>
+</details>
+</dd>
+<dt id="nfa.SpecialActivities"><code class="flex name class">
+<span>class <span class="ident">SpecialActivities</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>This class is the collection of special characters used in regular expressions.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>Epsilon</code></strong> :&ensp;<code>str</code></dt>
+<dd>stores the value of epsilon</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SpecialActivities:
+    &#34;&#34;&#34;
+    This class is the collection of special characters used in regular expressions.
+
+    Attributes
+    ----------
+    Epsilon: str
+        stores the value of epsilon
+
+    &#34;&#34;&#34; 
+
+    EPSILON = &#39;\u03B5&#39;</code></pre>
+</details>
+<h3>Class variables</h3>
+<dl>
+<dt id="nfa.SpecialActivities.EPSILON"><code class="name">var <span class="ident">EPSILON</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
+</dd>
+<dt id="nfa.Transition"><code class="flex name class">
+<span>class <span class="ident">Transition</span></span>
+<span>(</span><span>activity, start_place, end_place)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This class represents transition / edge in NFA model.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>activity</code></strong> :&ensp;<code>str </code></dt>
+<dd>the event that needs to happen in order to transition from start to end place</dd>
+<dt><strong><code>start_place</code></strong> :&ensp;<code>str</code></dt>
+<dd>connected start place of the transition</dd>
+<dt><strong><code>end_place</code></strong> :&ensp;<code>str</code></dt>
+<dd>end place where the transition leads to</dd>
+</dl>
+<h2 id="methods">Methods</h2>
+<p><strong>init</strong> : constructor
+sets the values of activity, start place of the activity and its end place.</p>
+<p>Constructor of class Transition that sets values of the instance.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>activity</code></strong> :&ensp;<code>str</code></dt>
+<dd>alphabet reflecting one activity of the instance from event log</dd>
+<dt><strong><code>start_place</code></strong> :&ensp;<code>str</code></dt>
+<dd>start state of the activity at hand.</dd>
+<dt><strong><code>end_place</code></strong> :&ensp;<code>str</code></dt>
+<dd>end state of the activity at hand.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Transition:
+    &#34;&#34;&#34;
+    This class represents transition / edge in NFA model.
+
+    Attributes
+    ----------
+    activity: str 
+        the event that needs to happen in order to transition from start to end place
+    start_place: str
+        connected start place of the transition 
+    end_place: str
+        end place where the transition leads to
+
+    Methods
+    -------
+    __init__ : constructor
+       sets the values of activity, start place of the activity and its end place.
+
+    &#34;&#34;&#34; 
+    
+    def __init__(self, activity, start_place, end_place):
+        &#34;&#34;&#34;
+        Constructor of class Transition that sets values of the instance.
+
+        Parameters
+        ----------
+        activity : str
+            alphabet reflecting one activity of the instance from event log
+        start_place : str
+            start state of the activity at hand.
+        end_place : str
+            end state of the activity at hand.
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34;         
+        self.activity = activity
+        self.start_place = start_place
+        self.end_place = end_place</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="two-column">
+<li><code><a title="nfa.expression" href="#nfa.expression">expression</a></code></li>
+<li><code><a title="nfa.factor" href="#nfa.factor">factor</a></code></li>
+<li><code><a title="nfa.konkat" href="#nfa.konkat">konkat</a></code></li>
+<li><code><a title="nfa.konkatonate_nfas" href="#nfa.konkatonate_nfas">konkatonate_nfas</a></code></li>
+<li><code><a title="nfa.nfa_from_activity" href="#nfa.nfa_from_activity">nfa_from_activity</a></code></li>
+<li><code><a title="nfa.prod" href="#nfa.prod">prod</a></code></li>
+<li><code><a title="nfa.star_nfa" href="#nfa.star_nfa">star_nfa</a></code></li>
+<li><code><a title="nfa.unite_nfas" href="#nfa.unite_nfas">unite_nfas</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="nfa.Nfa" href="#nfa.Nfa">Nfa</a></code></h4>
+<ul class="two-column">
+<li><code><a title="nfa.Nfa.add_Transition" href="#nfa.Nfa.add_Transition">add_Transition</a></code></li>
+<li><code><a title="nfa.Nfa.add_place" href="#nfa.Nfa.add_place">add_place</a></code></li>
+<li><code><a title="nfa.Nfa.convert_from_regex" href="#nfa.Nfa.convert_from_regex">convert_from_regex</a></code></li>
+<li><code><a title="nfa.Nfa.is_fitting" href="#nfa.Nfa.is_fitting">is_fitting</a></code></li>
+<li><code><a title="nfa.Nfa.log_fittness" href="#nfa.Nfa.log_fittness">log_fittness</a></code></li>
+<li><code><a title="nfa.Nfa.print" href="#nfa.Nfa.print">print</a></code></li>
+<li><code><a title="nfa.Nfa.remove_Transition" href="#nfa.Nfa.remove_Transition">remove_Transition</a></code></li>
+<li><code><a title="nfa.Nfa.remove_place" href="#nfa.Nfa.remove_place">remove_place</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="nfa.Place" href="#nfa.Place">Place</a></code></h4>
+</li>
+<li>
+<h4><code><a title="nfa.SpecialActivities" href="#nfa.SpecialActivities">SpecialActivities</a></code></h4>
+<ul class="">
+<li><code><a title="nfa.SpecialActivities.EPSILON" href="#nfa.SpecialActivities.EPSILON">EPSILON</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="nfa.Transition" href="#nfa.Transition">Transition</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.9.2</a>.</p>
+</footer>
+</body>
+</html>
