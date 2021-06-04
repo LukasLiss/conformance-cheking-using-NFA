@@ -330,7 +330,7 @@ class Nfa:
     
     def log_fittness(self, log):
         """
-        This function calculates fitness of the log (list of traces) when replayed on the NFA model.
+        This function calculates the percentage of perfectly fitting traces in the log (list of traces) when replayed on the NFA model.
 
         Parameters
         ----------
@@ -340,11 +340,15 @@ class Nfa:
         Returns
         -------
         variable: float
-            the fitness value.
+            the percentage of perfectly fitting traces.
         """ 
         # Check for each trace in the log wether the trace is fiting (replayable)
         # return the fraction of traces that are fiting (replayable)
-        return 1.0 # placeholder only
+        num_fitting_traces = 0
+        for trace in log:
+            if(self.is_fitting(trace)):
+                num_fitting_traces += 1
+        return (num_fitting_traces / len(log))
 
     def convert_from_regex(self, regex):
         """
