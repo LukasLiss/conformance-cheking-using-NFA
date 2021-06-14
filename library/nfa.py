@@ -454,7 +454,8 @@ def factor(regex) :
     -------
     NFA : NFA object
         returns the NFA model defined by the regular expression interpreted as factor part.
-    """  
+    """
+    #testing
     if(len(regex) > 0 and regex[0].isalpha()):
         activity = regex.pop(0)
         activity_nfa = nfa_from_activity(activity)
