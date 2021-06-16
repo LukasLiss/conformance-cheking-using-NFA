@@ -49,6 +49,27 @@ class Place:
         self.label = label
         self.transitions = []
 
+class PlaceCombined(Place):
+    def __init__(self, label):
+        """
+        Constructor of class Place.
+
+        Parameters
+        ----------
+        label : str
+            any label passed by the user is set in this variable
+        transitions: list of str
+            collection of transitions to other places
+
+        Returns
+        -------
+        None.
+
+        """
+        super().__init__(label)
+        self.model_place = None
+        self.model_log = None
+
 
 class Transition:
     """
@@ -356,21 +377,64 @@ class Nfa:
                 num_fitting_traces += 1
         return (num_fitting_traces / len(log))
 
-    def convert_from_regex(self, regex):
-        """
-        Fucntion that creates and returns the NFA based on the given regular expression.
+    def compute_alignments(self, log):
+        alignments = []
+        for trace in log:
+            alignments.append(self.align_trace(trace))
+        return alignments
 
-        Parameters
-        ----------
-        regex : list of characters
-            regular expressions that will be converted to NFA model.
+    def align_trace(self, trace):
+        if self.is_fitting(trace):
+            #create a perfectly fitting alignment
+            al = []
+            for event in trace:
+                al.append((event, event))
+            return al
 
-        Returns
-        -------
-        NFA : NFA object
-            the final model that describes the same accepted language as regular expression.
-        """
-        return expression(regex)
+        # for not fittin traces calculate alignment
+        #create the combined nfa
+        combined_nfa = self.construct_combined_nfa(trace)
+
+    def construct_combined_nfa(self, trace):
+        trace_nfa = nfa_from_trace(trace)
+
+def nfa_from_trace(trace):
+    #xxx empty traces are not supported
+    trace_nfa = Nfa("trace_nfa")
+    p_start = Place("t_s")
+    trace_nfa.add_place(p_start, True)
+    p_end = Place("t_e")
+    trace_nfa.add_place(p_end, False, True)
+
+    # add all the transistions to accept only the trace as the language of the nfa
+    current_place = p_start
+    for ev_i in range(len(trace)-1): #xxx check what happens when len = 0 and then -1
+        p_help = Place("t_" + str(ev_i))
+        trace_nfa.add_place(p_help)
+        trans = Transition(trace[ev_i], current_place, p_help)
+        trace_nfa.add_Transition(trans)
+        current_place = p_help
+    trans = Transition(trace[len(trace)-1], current_place, p_end)
+    trace_nfa.add_Transition(trans)
+    return trace_nfa
+
+        
+
+def convert_from_regex(regex):
+    """
+    Fucntion that creates and returns the NFA based on the given regular expression.
+
+    Parameters
+    ----------
+    regex : list of characters
+        regular expressions that will be converted to NFA model.
+
+    Returns
+    -------
+    NFA : NFA object
+        the final model that describes the same accepted language as regular expression.
+    """
+    return expression(regex)
 
 
 # Grammer used to describe the accepted regular expression:
@@ -703,5 +767,9 @@ def re_expression_check(trace):
 # print(myRegexNfa.is_fitting(["a", "c", "d"]))  # False
 # print(myRegexNfa.is_fitting(["x"]))  # False
 # print(myRegexNfa.is_fitting(["c"]))  # False
-x = re_expression_check(["a","b"])
-print(x)
+
+myTrace = ["a", "b", "b", "b", "c", "z"]
+myOtherTrace = ["a", "b"]
+myNfa = nfa_from_trace(myTrace)
+print(myNfa.is_fitting(myTrace)) # True
+print(myNfa.is_fitting(myOtherTrace)) # False
