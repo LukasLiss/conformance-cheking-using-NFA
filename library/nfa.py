@@ -453,12 +453,11 @@ class Nfa:
         # recreate the path to closest accepting place by going back from closest accepting place to the start place
         #xxx hier the cost of the alignment can also be added up
         alignment = []
-        cost_alignment = 0
         place_we_are_at = closest_accepting_place
+        cost_alignment = self.dijkstra_info_of_place(place_info_list, place_we_are_at)[1]
         while place_we_are_at != comb_nfa.start_place:
             info_we_are_at = self.dijkstra_info_of_place(place_info_list, place_we_are_at)
             alignment.insert(0, info_we_are_at[3])
-            cost_alignment += info_we_are_at[1]
             place_we_are_at = info_we_are_at[2]
         
         return (alignment, cost_alignment)
@@ -492,9 +491,12 @@ class Nfa:
                 combined_nfa.add_place(comb_place, is_start, is_end)
         
         # find all transitions that are possible
+        #add transitions that are synchronized moves
         for place in combined_nfa.places: #xxx This loop can be combined with one above for performance increase
             for trans_trace in place.trace_place.transitions:
                 for trans_model in place.model_place.transitions:
+                    if(trans_trace.activity != trans_model.activity):
+                        continue
                     goal_place_trace = trans_trace.end_place
                     goal_place_model = trans_model.end_place
                     #find the goal place in the combined nfa (it is the one that has both goal states as the connected places)
@@ -512,6 +514,46 @@ class Nfa:
                     # add transition in the combined nfa
                     align_elem = (trans_trace.activity, trans_model.activity)
                     comb_transition = TransitionWithCost(trans_trace.activity + "|" + trans_model.activity, place, goal_place_combined, cost, align_elem)
+                    combined_nfa.add_Transition(comb_transition)
+
+        #add transitions that are model moves only
+        for place in combined_nfa.places: #xxx This loop can be combined with one above for performance increase
+            for trans_model in place.model_place.transitions:
+                    goal_place_trace = place.trace_place # stays the same because only move on model
+                    goal_place_model = trans_model.end_place
+                    #find the goal place in the combined nfa (it is the one that has both goal states as the connected places)
+                    goal_place_combined = None
+                    for comb_place in combined_nfa.places:
+                        if ((comb_place.model_place == goal_place_model) and (comb_place.trace_place == goal_place_trace)):
+                            goal_place_combined = comb_place
+                            break
+
+                    # cost of a model move only
+                    cost = 1
+
+                    # add transition in the combined nfa
+                    align_elem = (">>", trans_model.activity)
+                    comb_transition = TransitionWithCost(">>"+ "|" + trans_model.activity, place, goal_place_combined, cost, align_elem)
+                    combined_nfa.add_Transition(comb_transition)
+
+        #add transitions that are trace moves only
+        for place in combined_nfa.places: #xxx This loop can be combined with one above for performance increase
+            for trans_trace in place.trace_place.transitions:
+                    goal_place_trace = trans_trace.end_place # stays the same because only move on model
+                    goal_place_model = place.model_place
+                    #find the goal place in the combined nfa (it is the one that has both goal states as the connected places)
+                    goal_place_combined = None
+                    for comb_place in combined_nfa.places:
+                        if ((comb_place.model_place == goal_place_model) and (comb_place.trace_place == goal_place_trace)):
+                            goal_place_combined = comb_place
+                            break
+
+                    # cost of a trace move only
+                    cost = 1
+
+                    # add transition in the combined nfa
+                    align_elem = (trans_trace.activity, ">>")
+                    comb_transition = TransitionWithCost(trans_trace.activity + "|" + ">>", place, goal_place_combined, cost, align_elem)
                     combined_nfa.add_Transition(comb_transition)
         
         return combined_nfa
@@ -896,6 +938,8 @@ myNFA.add_Transition(t4)
 # combined nfa test
 myTrace = ["a", "b", "b", "b", "c", "z"]
 #print(myNFA.construct_combined_nfa(myTrace))
-print("hello")
 print(myNFA.align_trace(myTrace))
-print("world")
+myTrace = ["a", "z", "b", "b", "c"]
+print(myNFA.align_trace(myTrace))
+myTrace = ["a", "z", "b", "b"]
+print(myNFA.align_trace(myTrace))
