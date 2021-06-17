@@ -412,9 +412,9 @@ class Nfa:
         for place in comb_nfa.places:
             not_visited_places.append(place)
             if place == comb_nfa.start_place:
-                place_info_list.append((place, 0, None, None))
+                place_info_list.append([place, 0, None, None])
             else:
-                place_info_list.append((place, infinity, None, None))
+                place_info_list.append([place, infinity, None, None])
 
         #search until shortest path for each node found
         while (len(not_visited_places) > 0):
@@ -423,8 +423,10 @@ class Nfa:
             cost_current_place = self.dijkstra_info_of_place(place_info_list, current_place)[1]
             for place in not_visited_places: # xxx optimize - too many iterations over the lists
                 # check for smaller cost
-                if(self.dijkstra_info_of_place(place_info_list, place)[1] < cost_current_place):
+                help_cost = self.dijkstra_info_of_place(place_info_list, place)[1]
+                if(help_cost < cost_current_place):
                     current_place = place
+                    cost_current_place = self.dijkstra_info_of_place(place_info_list, current_place)[1]
 
             #check for all transitions if other places can be reached cheaper
             for trans in current_place.transitions:
@@ -433,11 +435,9 @@ class Nfa:
                 if(cost_over_current_to_target < self.dijkstra_info_of_place(place_info_list, transition_target)[1]):
                     #cheaper way found - add to info list
                     info_target = self.dijkstra_info_of_place(place_info_list, transition_target)
-                    help_list = list(info_target)
-                    help_list[1] = cost_over_current_to_target
-                    help_list[2] = current_place
-                    help_list[3] = trans.alignment_element
-                    info_target = tuple(help_list)
+                    info_target[1] = cost_over_current_to_target
+                    info_target[2] = current_place
+                    info_target[3] = trans.alignment_element
 
             #remove the current selected place from list of not visited places
             not_visited_places.remove(current_place)
