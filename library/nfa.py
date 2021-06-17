@@ -68,7 +68,7 @@ class PlaceCombined(Place):
         """
         super().__init__(label)
         self.model_place = None
-        self.model_log = None
+        self.trace_place = None
 
 
 class Transition:
@@ -113,6 +113,11 @@ class Transition:
         self.start_place = start_place
         self.end_place = end_place
 
+class TransitionWithCost(Transition):
+    def __init__(self, activity, start_place, end_place, cost, alignment_element):
+        super().__init__(activity, start_place, end_place)
+        self.cost = cost
+        self.alignment_element = alignment_element
 
 class Nfa:
     """
@@ -395,8 +400,121 @@ class Nfa:
         #create the combined nfa
         combined_nfa = self.construct_combined_nfa(trace)
 
+        #search for shortest path on the combined nfa using dijkstra
+        alignment, cost = self.dijkstra_on_combined_nfa(combined_nfa)
+        return (alignment, cost)
+
+    def dijkstra_on_combined_nfa(self, comb_nfa):
+        infinity = float('inf') # xxx optimize as floats are big in memory
+        #initialize
+        place_info_list = []
+        not_visited_places = [] #(place, actual lowest cost, place from which it was reached, transition alignment with which it was reached)
+        for place in comb_nfa.places:
+            not_visited_places.append(place)
+            if place == comb_nfa.start_place:
+                place_info_list.append((place, 0, None, None))
+            else:
+                place_info_list.append((place, infinity, None, None))
+
+        #search until shortest path for each node found
+        while (len(not_visited_places) > 0):
+            #select current not that has the lowest cost and was not yet visited
+            current_place = not_visited_places[0]
+            cost_current_place = self.dijkstra_info_of_place(place_info_list, current_place)[1]
+            for place in not_visited_places: # xxx optimize - too many iterations over the lists
+                # check for smaller cost
+                if(self.dijkstra_info_of_place(place_info_list, place)[1] < cost_current_place):
+                    current_place = place
+
+            #check for all transitions if other places can be reached cheaper
+            for trans in current_place.transitions:
+                transition_target = trans.end_place
+                cost_over_current_to_target = cost_current_place + trans.cost
+                if(cost_over_current_to_target < self.dijkstra_info_of_place(place_info_list, transition_target)[1]):
+                    #cheaper way found - add to info list
+                    info_target = self.dijkstra_info_of_place(place_info_list, transition_target)
+                    help_list = list(info_target)
+                    help_list[1] = cost_over_current_to_target
+                    help_list[2] = current_place
+                    help_list[3] = trans.alignment_element
+                    info_target = tuple(help_list)
+
+            #remove the current selected place from list of not visited places
+            not_visited_places.remove(current_place)
+        
+        #return the alignments along the cheapest path to an accepting place
+        #find closest accepting place
+        closest_accepting_place = comb_nfa.end_places[0] # xxx there must be an end place
+        cost_to_closest_acc_place = self.dijkstra_info_of_place(place_info_list, closest_accepting_place)[1]
+        for acc_place in comb_nfa.end_places:
+            if self.dijkstra_info_of_place(place_info_list, acc_place)[1] < cost_to_closest_acc_place:
+                closest_accepting_place = acc_place
+                cost_to_closest_acc_place = self.dijkstra_info_of_place(place_info_list, closest_accepting_place)[1]
+        # recreate the path to closest accepting place by going back from closest accepting place to the start place
+        #xxx hier the cost of the alignment can also be added up
+        alignment = []
+        cost_alignment = 0
+        place_we_are_at = closest_accepting_place
+        while place_we_are_at != comb_nfa.start_place:
+            info_we_are_at = self.dijkstra_info_of_place(place_info_list, place_we_are_at)
+            alignment.insert(0, info_we_are_at[3])
+            cost_alignment += info_we_are_at[1]
+            place_we_are_at = info_we_are_at[2]
+        
+        return (alignment, cost_alignment)
+
+
+
+    def dijkstra_info_of_place(self, info_list, place):
+        for info in info_list:
+            if(info[0] == place):
+                return info
+        return None
+
+
     def construct_combined_nfa(self, trace):
         trace_nfa = nfa_from_trace(trace)
+        
+        combined_nfa = Nfa("combined")
+        # create all combined places
+        for trace_place in trace_nfa.places:
+            for model_place in self.places:
+                comb_place = PlaceCombined(trace_place.label + "+" + model_place.label)
+                comb_place.trace_place = trace_place
+                comb_place.model_place = model_place
+                # check for combined start and end places
+                is_start = False
+                if((trace_place == trace_nfa.start_place) and (model_place == self.start_place)):
+                    is_start = True
+                is_end = False
+                if((trace_place in trace_nfa.end_places) and (model_place in self.end_places)):
+                    is_end = True
+                combined_nfa.add_place(comb_place, is_start, is_end)
+        
+        # find all transitions that are possible
+        for place in combined_nfa.places: #xxx This loop can be combined with one above for performance increase
+            for trans_trace in place.trace_place.transitions:
+                for trans_model in place.model_place.transitions:
+                    goal_place_trace = trans_trace.end_place
+                    goal_place_model = trans_model.end_place
+                    #find the goal place in the combined nfa (it is the one that has both goal states as the connected places)
+                    goal_place_combined = None
+                    for comb_place in combined_nfa.places:
+                        if ((comb_place.model_place == goal_place_model) and (comb_place.trace_place == goal_place_trace)):
+                            goal_place_combined = comb_place
+                            break
+
+                    # calculate cost of transition based on wether it is a synchronous move or not
+                    cost = 1
+                    if(trans_trace.activity == trans_model.activity):
+                        cost = 0
+
+                    # add transition in the combined nfa
+                    align_elem = (trans_trace.activity, trans_model.activity)
+                    comb_transition = TransitionWithCost(trans_trace.activity + "|" + trans_model.activity, place, goal_place_combined, cost, align_elem)
+                    combined_nfa.add_Transition(comb_transition)
+        
+        return combined_nfa
 
 def nfa_from_trace(trace):
     #xxx empty traces are not supported
@@ -723,23 +841,23 @@ def re_expression_check(trace):
 
 # Test section
 
-# myNFA = Nfa("TestNFA")
-# p1 = Place("Greating")
-# myNFA.add_place(p1, True)
-# p2 = Place("Start Small Talk")
-# myNFA.add_place(p2)
-# p3 = Place("End Small Talk")
-# myNFA.add_place(p3)
-# p4 = Place("Good Bye")
-# myNFA.add_place(p4, False, True)
-# t1 = Transition("a", p1, p2)
-# myNFA.add_Transition(t1)
-# t2 = Transition("b", p2, p2)
-# myNFA.add_Transition(t2)
-# t3 = Transition("b", p2, p3)
-# myNFA.add_Transition(t3)
-# t4 = Transition("c", p3, p4)
-# myNFA.add_Transition(t4)
+myNFA = Nfa("TestNFA")
+p1 = Place("Greating")
+myNFA.add_place(p1, True)
+p2 = Place("Start Small Talk")
+myNFA.add_place(p2)
+p3 = Place("End Small Talk")
+myNFA.add_place(p3)
+p4 = Place("Good Bye")
+myNFA.add_place(p4, False, True)
+t1 = Transition("a", p1, p2)
+myNFA.add_Transition(t1)
+t2 = Transition("b", p2, p2)
+myNFA.add_Transition(t2)
+t3 = Transition("b", p2, p3)
+myNFA.add_Transition(t3)
+t4 = Transition("c", p3, p4)
+myNFA.add_Transition(t4)
 #
 # print(myNFA.places)
 # print(myNFA.transitions)
@@ -768,8 +886,16 @@ def re_expression_check(trace):
 # print(myRegexNfa.is_fitting(["x"]))  # False
 # print(myRegexNfa.is_fitting(["c"]))  # False
 
+# nfa from trace test
+# myTrace = ["a", "b", "b", "b", "c", "z"]
+# myOtherTrace = ["a", "b"]
+# myNfa = nfa_from_trace(myTrace)
+# print(myNfa.is_fitting(myTrace)) # True
+# print(myNfa.is_fitting(myOtherTrace)) # False
+
+# combined nfa test
 myTrace = ["a", "b", "b", "b", "c", "z"]
-myOtherTrace = ["a", "b"]
-myNfa = nfa_from_trace(myTrace)
-print(myNfa.is_fitting(myTrace)) # True
-print(myNfa.is_fitting(myOtherTrace)) # False
+#print(myNFA.construct_combined_nfa(myTrace))
+print("hello")
+print(myNFA.align_trace(myTrace))
+print("world")
