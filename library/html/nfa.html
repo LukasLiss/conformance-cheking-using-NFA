@@ -35,9 +35,10 @@
     Epsilon: str
         stores the value of epsilon
 
-    &#34;&#34;&#34; 
+    &#34;&#34;&#34;
 
     EPSILON = &#39;\u03B5&#39;
+
 
 class Place:
     &#34;&#34;&#34;
@@ -55,7 +56,8 @@ class Place:
     __init__ : constructor
        sets the string passed as label (place) of that instance and initializes the transitions list.
 
-    &#34;&#34;&#34; 
+    &#34;&#34;&#34;
+
     def __init__(self, label):
         &#34;&#34;&#34;
         Constructor of class Place.
@@ -71,9 +73,31 @@ class Place:
         -------
         None.
 
-        &#34;&#34;&#34;       
+        &#34;&#34;&#34;
         self.label = label
         self.transitions = []
+
+class PlaceCombined(Place):
+    def __init__(self, label):
+        &#34;&#34;&#34;
+        Constructor of class Place.
+
+        Parameters
+        ----------
+        label : str
+            any label passed by the user is set in this variable
+        transitions: list of str
+            collection of transitions to other places
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34;
+        super().__init__(label)
+        self.model_place = None
+        self.trace_place = None
+
 
 class Transition:
     &#34;&#34;&#34;
@@ -93,8 +117,8 @@ class Transition:
     __init__ : constructor
        sets the values of activity, start place of the activity and its end place.
 
-    &#34;&#34;&#34; 
-    
+    &#34;&#34;&#34;
+
     def __init__(self, activity, start_place, end_place):
         &#34;&#34;&#34;
         Constructor of class Transition that sets values of the instance.
@@ -112,10 +136,16 @@ class Transition:
         -------
         None.
 
-        &#34;&#34;&#34;         
+        &#34;&#34;&#34;
         self.activity = activity
         self.start_place = start_place
         self.end_place = end_place
+
+class TransitionWithCost(Transition):
+    def __init__(self, activity, start_place, end_place, cost, alignment_element):
+        super().__init__(activity, start_place, end_place)
+        self.cost = cost
+        self.alignment_element = alignment_element
 
 class Nfa:
     &#34;&#34;&#34;
@@ -137,7 +167,8 @@ class Nfa:
     __init__ : constructor
        initialize the attributes and sets the label passed during instance creation.
     
-    &#34;&#34;&#34; 
+    &#34;&#34;&#34;
+
     def __init__(self, label):
         &#34;&#34;&#34;
         Initializes the attributes and sets the label passed during instance creation.
@@ -159,12 +190,12 @@ class Nfa:
         -------
         None.
 
-        &#34;&#34;&#34;      
+        &#34;&#34;&#34;
         self.label = label
         self.places = []
         self.transitions = []
-        self.start_place = None # here we use the definiton of an NFA with just one start place
-        self.end_places = [] # but multiple acepting end places
+        self.start_place = None  # here we use the definiton of an NFA with just one start place
+        self.end_places = []  # but multiple acepting end places
 
     def print(self):
         &#34;&#34;&#34;
@@ -178,16 +209,18 @@ class Nfa:
         -------
         None.
 
-        &#34;&#34;&#34;          
+        &#34;&#34;&#34;
         print(&#34;Start place: &#34; + self.start_place.label + str(self.places.index(self.start_place)))
         for place in self.places:
             print(&#34;Place: &#34; + place.label + &#34;_&#34; + str(self.places.index(place)))
             if place in self.end_places:
                 print(&#34;Endplace&#34;)
             for trans in place.transitions:
-                print(&#34;&#34; + trans.start_place.label + &#34;_&#34; + str(self.places.index(trans.start_place)) + &#34; - &#34; + trans.activity + &#34; - &#34; + trans.end_place.label + &#34;_&#34; + str(self.places.index(trans.end_place)))
+                print(&#34;&#34; + trans.start_place.label + &#34;_&#34; + str(self.places.index(
+                    trans.start_place)) + &#34; - &#34; + trans.activity + &#34; - &#34; + trans.end_place.label + &#34;_&#34; + str(
+                    self.places.index(trans.end_place)))
 
-    def add_place(self, place, is_start_place = False, is_end_place = False) :
+    def add_place(self, place, is_start_place=False, is_end_place=False):
         &#34;&#34;&#34;
         It adds a place to the existing NFA model. If start and end place values are not given in second and third argument, they are by default taken to be False.
 
@@ -204,19 +237,18 @@ class Nfa:
         -------
         None.
 
-        &#34;&#34;&#34; 
-        #check whether place is a Place
+        &#34;&#34;&#34;
+        # check whether place is a Place
 
-        #check whether place allready exist
+        # check whether place allready exist
         self.places.append(place)
-        if is_start_place :
-            #check whether allready a start place is defined
+        if is_start_place:
+            # check whether allready a start place is defined
             self.start_place = place
-        if is_end_place :
+        if is_end_place:
             self.end_places.append(place)
 
-
-    def remove_place(self, place) :
+    def remove_place(self, place):
         &#34;&#34;&#34;
         This function removes a place from the NFA model.
 
@@ -228,12 +260,12 @@ class Nfa:
         Returns
         -------
         None.
-        &#34;&#34;&#34; 
-        #check whether place is a Place
+        &#34;&#34;&#34;
+        # check whether place is a Place
 
         self.places.remove(place)
 
-    def add_Transition(self, transition) :
+    def add_Transition(self, transition):
         &#34;&#34;&#34;
         This function adds a transition to the existing NFA model.
 
@@ -246,16 +278,16 @@ class Nfa:
         -------
         None.
 
-        &#34;&#34;&#34; 
-        #check whether transition is a Transition
-        #check whether transition only has places that exist
-        #check for duplicate
-        for place in self.places :
-            if place == transition.start_place :
+        &#34;&#34;&#34;
+        # check whether transition is a Transition
+        # check whether transition only has places that exist
+        # check for duplicate
+        for place in self.places:
+            if place == transition.start_place:
                 place.transitions.append(transition)
                 break
 
-    def remove_Transition(self, transition) :
+    def remove_Transition(self, transition):
         &#34;&#34;&#34;
         This function removes a transition from the NFA model.
 
@@ -268,15 +300,15 @@ class Nfa:
         -------
         None.
 
-        &#34;&#34;&#34; 
-        #input checks
-        for place in self.places :
-            if place == transition.start_place :
+        &#34;&#34;&#34;
+        # input checks
+        for place in self.places:
+            if place == transition.start_place:
                 place.transitions.remove(transition)
                 break
 
-    def is_fitting(self, trace) :
-      
+    def is_fitting(self, trace):
+
         &#34;&#34;&#34;
         This function checks if the given trace mathces the model. It replays the trace on the model and checks whether it ends up in an accepting end state.
 
@@ -290,33 +322,33 @@ class Nfa:
         bool
             true if it matches, false otherwise.
 
-        &#34;&#34;&#34; 
-        
-        #trace is here just a list of activities
-        #check input
+        &#34;&#34;&#34;
 
-        if(len(trace) == 0) :
+        # trace is here just a list of activities
+        # check input
+
+        if (len(trace) == 0):
             if self.start_place in self.end_places:
                 return True
-            #check only for epsilon transitions
-            for trans in self.start_place.transitions :
+            # check only for epsilon transitions
+            for trans in self.start_place.transitions:
                 if trans.activity == SpecialActivities.EPSILON:
-                    if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                    if (self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True):
                         return True
             return False
 
         activity = trace[0]
-        for trans in self.start_place.transitions :
-            if trans.activity == activity :
-                if( self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True) :
+        for trans in self.start_place.transitions:
+            if trans.activity == activity:
+                if (self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True):
                     return True
             if trans.activity == SpecialActivities.EPSILON:
-                if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                if (self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True):
                     return True
 
         return False
 
-    def __is_subtrace_fitting(self, current_place, trace) :
+    def __is_subtrace_fitting(self, current_place, trace):
         &#34;&#34;&#34;
         A helping function that checks if the given trace ends up in an accepting end state when started from the current place.
 
@@ -331,34 +363,34 @@ class Nfa:
         -------
         bool
             true if it matches, false otherwise.
-        &#34;&#34;&#34; 
-        #trace is here just a list of activities
-        #check input
+        &#34;&#34;&#34;
+        # trace is here just a list of activities
+        # check input
 
-        if(len(trace) == 0) :
+        if (len(trace) == 0):
             if current_place in self.end_places:
                 return True
-            #check only for epsilon transitions
-            for trans in current_place.transitions :
+            # check only for epsilon transitions
+            for trans in current_place.transitions:
                 if trans.activity == SpecialActivities.EPSILON:
-                    if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                    if (self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True):
                         return True
             return False
 
         activity = trace[0]
-        for trans in current_place.transitions :
+        for trans in current_place.transitions:
             if trans.activity == activity:
-                if( self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True) :
+                if (self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True):
                     return True
             if trans.activity == SpecialActivities.EPSILON:
-                if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                if (self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True):
                     return True
 
         return False
-    
+
     def log_fittness(self, log):
         &#34;&#34;&#34;
-        This function calculates fitness of the log (list of traces) when replayed on the NFA model.
+        This function calculates the percentage of perfectly fitting traces in the log (list of traces) when replayed on the NFA model.
 
         Parameters
         ----------
@@ -368,36 +400,323 @@ class Nfa:
         Returns
         -------
         variable: float
-            the fitness value.
-        &#34;&#34;&#34; 
+            the percentage of perfectly fitting traces.
+        &#34;&#34;&#34;
         # Check for each trace in the log wether the trace is fiting (replayable)
         # return the fraction of traces that are fiting (replayable)
-        return 1.0 # placeholder only
+        num_fitting_traces = 0
+        for trace in log:
+            if (self.is_fitting(trace)):
+                num_fitting_traces += 1
+        return (num_fitting_traces / len(log))
 
-    def convert_from_regex(self, regex):
+    def compute_alignments(self, log): # done
         &#34;&#34;&#34;
-        Fucntion that creates and returns the NFA based on the given regular expression.
+        This function computes optimal alignments for each trace of the given log.
 
         Parameters
         ----------
-        regex : list of characters
-            regular expressions that will be converted to NFA model.
-
+        log : list of list of strings
+            instances/traces taken from event log.
+        
         Returns
         -------
-        NFA : NFA object
-            the final model that describes the same accepted language as regular expression.
-        &#34;&#34;&#34;        
-        return expression(regex)
+        alignments: list of list of tuples of strings
+            list of alignments where each alignmeent is represented by a list of tuples. The first item of the tuple is the move on the trace and the second item is the move on model.
+        &#34;&#34;&#34;
+        alignments = []
+        for trace in log:
+            alignments.append(self.align_trace(trace))
+        return alignments
 
-#Grammer used to describe the accepted regular expression:
+    def align_trace(self, trace): #done
+        &#34;&#34;&#34;
+        This function calculates the alignment for the given trace.
+
+        Parameters
+        ----------
+        trace : list of strings
+            instance taken from event log.
+        
+        Returns
+        -------
+        alignment: list of tuples of strings
+            The first item of the tuple is move on trace and the second item is move on model.
+        cost: integer
+            number of not synchronized moves.
+        &#34;&#34;&#34;
+        if self.is_fitting(trace):
+            #create a perfectly fitting alignment
+            al = []
+            for event in trace:
+                al.append((event, event))
+            return al
+
+        # for not fittin traces calculate alignment
+        #create the combined nfa
+        combined_nfa = self.construct_combined_nfa(trace)
+
+        #search for shortest path on the combined nfa using dijkstra
+        alignment, cost = self.dijkstra_on_combined_nfa(combined_nfa)
+        return (alignment, cost)
+
+    def dijkstra_on_combined_nfa(self, comb_nfa):  #done
+        &#34;&#34;&#34;
+        This function performs dijkstra algorithm on comb_nfa to find the optimal alignment.
+
+        Parameters
+        ----------
+        comb_nfa : Nfa object
+            nfa that consists of places of type PlaceCombined and transitions with cost associated with them.
+        
+        Returns
+        -------
+        alignment: list of tuples of string
+            The first item of the tuple is move on trace and the second is move on model.
+        cost_alignment: integer
+            number of not synchronized moves.
+        &#34;&#34;&#34;
+        infinity = float(&#39;inf&#39;) # xxx optimize as floats are big in memory
+        #initialize
+        place_info_list = []
+        not_visited_places = [] #(place, actual lowest cost, place from which it was reached, transition alignment with which it was reached)
+        for place in comb_nfa.places:
+            not_visited_places.append(place)
+            if place == comb_nfa.start_place:
+                place_info_list.append([place, 0, None, None])
+            else:
+                place_info_list.append([place, infinity, None, None])
+
+        #search until shortest path for each node found
+        while (len(not_visited_places) &gt; 0):
+            #select current not that has the lowest cost and was not yet visited
+            current_place = not_visited_places[0]
+            cost_current_place = self.dijkstra_info_of_place(place_info_list, current_place)[1]
+            for place in not_visited_places: # xxx optimize - too many iterations over the lists
+                # check for smaller cost
+                help_cost = self.dijkstra_info_of_place(place_info_list, place)[1]
+                if(help_cost &lt; cost_current_place):
+                    current_place = place
+                    cost_current_place = self.dijkstra_info_of_place(place_info_list, current_place)[1]
+
+            #check for all transitions if other places can be reached cheaper
+            for trans in current_place.transitions:
+                transition_target = trans.end_place
+                cost_over_current_to_target = cost_current_place + trans.cost
+                if(cost_over_current_to_target &lt; self.dijkstra_info_of_place(place_info_list, transition_target)[1]):
+                    #cheaper way found - add to info list
+                    info_target = self.dijkstra_info_of_place(place_info_list, transition_target)
+                    info_target[1] = cost_over_current_to_target
+                    info_target[2] = current_place
+                    info_target[3] = trans.alignment_element
+
+            #remove the current selected place from list of not visited places
+            not_visited_places.remove(current_place)
+        
+        #return the alignments along the cheapest path to an accepting place
+        #find closest accepting place
+        closest_accepting_place = comb_nfa.end_places[0] # xxx there must be an end place
+        cost_to_closest_acc_place = self.dijkstra_info_of_place(place_info_list, closest_accepting_place)[1]
+        for acc_place in comb_nfa.end_places:
+            if self.dijkstra_info_of_place(place_info_list, acc_place)[1] &lt; cost_to_closest_acc_place:
+                closest_accepting_place = acc_place
+                cost_to_closest_acc_place = self.dijkstra_info_of_place(place_info_list, closest_accepting_place)[1]
+        # recreate the path to closest accepting place by going back from closest accepting place to the start place
+        #xxx hier the cost of the alignment can also be added up
+        alignment = []
+        place_we_are_at = closest_accepting_place
+        cost_alignment = self.dijkstra_info_of_place(place_info_list, place_we_are_at)[1]
+        while place_we_are_at != comb_nfa.start_place:
+            info_we_are_at = self.dijkstra_info_of_place(place_info_list, place_we_are_at)
+            alignment.insert(0, info_we_are_at[3])
+            place_we_are_at = info_we_are_at[2]
+        
+        return (alignment, cost_alignment)
+
+
+
+    def dijkstra_info_of_place(self, info_list, place): #done
+        &#34;&#34;&#34;
+        A helper function which returns information stored by the dijkstra algo for the given place. 
+
+        Parameters
+        ----------
+        info_list : list of lists
+            list of information about places that dijkstra algo has created so far.
+        place : Place object
+            the place one is interested in getting the information about.
+        
+        Returns
+        -------
+        info: list
+            a list containing the place as first element, cost as the second element, previous place in the shortest path as the third element and alignment used to go to the given place as the fourth element.
+        &#34;&#34;&#34;
+        for info in info_list:
+            if(info[0] == place):
+                return info
+        return None
+
+
+    def construct_combined_nfa(self, trace):  #done
+        &#34;&#34;&#34;
+        This function returns/creates an nfa that simulates a parallel execution of the nfa and an nfa that only accepts the given trace.
+
+        Parameters
+        ----------
+        trace : list of strings
+            instance taken from event log.
+        
+        Returns
+        -------
+        combined_nfa: Nfa object
+            nfa that simulates a parallel execution of the nfa and an nfa that only accepts the given trace.
+        &#34;&#34;&#34;
+        trace_nfa = nfa_from_trace(trace)
+        
+        combined_nfa = Nfa(&#34;combined&#34;)
+        # create all combined places
+        for trace_place in trace_nfa.places:
+            for model_place in self.places:
+                comb_place = PlaceCombined(trace_place.label + &#34;+&#34; + model_place.label)
+                comb_place.trace_place = trace_place
+                comb_place.model_place = model_place
+                # check for combined start and end places
+                is_start = False
+                if((trace_place == trace_nfa.start_place) and (model_place == self.start_place)):
+                    is_start = True
+                is_end = False
+                if((trace_place in trace_nfa.end_places) and (model_place in self.end_places)):
+                    is_end = True
+                combined_nfa.add_place(comb_place, is_start, is_end)
+        
+        # find all transitions that are possible
+        #add transitions that are synchronized moves
+        for place in combined_nfa.places: #xxx This loop can be combined with one above for performance increase
+            for trans_trace in place.trace_place.transitions:
+                for trans_model in place.model_place.transitions:
+                    if(trans_trace.activity != trans_model.activity):
+                        continue
+                    goal_place_trace = trans_trace.end_place
+                    goal_place_model = trans_model.end_place
+                    #find the goal place in the combined nfa (it is the one that has both goal states as the connected places)
+                    goal_place_combined = None
+                    for comb_place in combined_nfa.places:
+                        if ((comb_place.model_place == goal_place_model) and (comb_place.trace_place == goal_place_trace)):
+                            goal_place_combined = comb_place
+                            break
+
+                    # calculate cost of transition based on wether it is a synchronous move or not
+                    cost = 1
+                    if(trans_trace.activity == trans_model.activity):
+                        cost = 0
+
+                    # add transition in the combined nfa
+                    align_elem = (trans_trace.activity, trans_model.activity)
+                    comb_transition = TransitionWithCost(trans_trace.activity + &#34;|&#34; + trans_model.activity, place, goal_place_combined, cost, align_elem)
+                    combined_nfa.add_Transition(comb_transition)
+
+        #add transitions that are model moves only
+        for place in combined_nfa.places: #xxx This loop can be combined with one above for performance increase
+            for trans_model in place.model_place.transitions:
+                    goal_place_trace = place.trace_place # stays the same because only move on model
+                    goal_place_model = trans_model.end_place
+                    #find the goal place in the combined nfa (it is the one that has both goal states as the connected places)
+                    goal_place_combined = None
+                    for comb_place in combined_nfa.places:
+                        if ((comb_place.model_place == goal_place_model) and (comb_place.trace_place == goal_place_trace)):
+                            goal_place_combined = comb_place
+                            break
+
+                    # cost of a model move only
+                    cost = 1
+
+                    # add transition in the combined nfa
+                    align_elem = (&#34;&gt;&gt;&#34;, trans_model.activity)
+                    comb_transition = TransitionWithCost(&#34;&gt;&gt;&#34;+ &#34;|&#34; + trans_model.activity, place, goal_place_combined, cost, align_elem)
+                    combined_nfa.add_Transition(comb_transition)
+
+        #add transitions that are trace moves only
+        for place in combined_nfa.places: #xxx This loop can be combined with one above for performance increase
+            for trans_trace in place.trace_place.transitions:
+                    goal_place_trace = trans_trace.end_place # stays the same because only move on model
+                    goal_place_model = place.model_place
+                    #find the goal place in the combined nfa (it is the one that has both goal states as the connected places)
+                    goal_place_combined = None
+                    for comb_place in combined_nfa.places:
+                        if ((comb_place.model_place == goal_place_model) and (comb_place.trace_place == goal_place_trace)):
+                            goal_place_combined = comb_place
+                            break
+
+                    # cost of a trace move only
+                    cost = 1
+
+                    # add transition in the combined nfa
+                    align_elem = (trans_trace.activity, &#34;&gt;&gt;&#34;)
+                    comb_transition = TransitionWithCost(trans_trace.activity + &#34;|&#34; + &#34;&gt;&gt;&#34;, place, goal_place_combined, cost, align_elem)
+                    combined_nfa.add_Transition(comb_transition)
+        
+        return combined_nfa
+
+def nfa_from_trace(trace):  #done
+    &#34;&#34;&#34;
+    This function creates an nfa that only accepts the given trace.
+
+    Parameters
+    ----------
+    trace : list of strings
+        instance taken from event log.
+
+    Returns
+    -------
+    trace_nfa : NFA object
+        nfa that only accepts the given trace.
+    &#34;&#34;&#34;
+    #xxx empty traces are not supported
+    trace_nfa = Nfa(&#34;trace_nfa&#34;)
+    p_start = Place(&#34;t_s&#34;)
+    trace_nfa.add_place(p_start, True)
+    p_end = Place(&#34;t_e&#34;)
+    trace_nfa.add_place(p_end, False, True)
+
+    # add all the transistions to accept only the trace as the language of the nfa
+    current_place = p_start
+    for ev_i in range(len(trace)-1): #xxx check what happens when len = 0 and then -1
+        p_help = Place(&#34;t_&#34; + str(ev_i))
+        trace_nfa.add_place(p_help)
+        trans = Transition(trace[ev_i], current_place, p_help)
+        trace_nfa.add_Transition(trans)
+        current_place = p_help
+    trans = Transition(trace[len(trace)-1], current_place, p_end)
+    trace_nfa.add_Transition(trans)
+    return trace_nfa
+
+        
+
+def convert_from_regex(regex):
+    &#34;&#34;&#34;
+    Fucntion that creates and returns the NFA based on the given regular expression.
+
+    Parameters
+    ----------
+    regex : list of characters
+        regular expressions that will be converted to NFA model.
+
+    Returns
+    -------
+    NFA : NFA object
+        the final model that describes the same accepted language as regular expression.
+    &#34;&#34;&#34;
+    return expression(regex)
+
+
+# Grammer used to describe the accepted regular expression:
 # Expression := Konkat { &#34;|&#34; Konkat}
 # Konkat := Prod {(&#34;.&#34;, &#34;&#34;) Prod}  - until now the . is a must
 # Prod := Factor (&#34;*&#34;, &#34;&#34;)
 # Factor := Activity | &#34;(&#34; Expression &#34;)&#34;
 # Activity := &#34;a&#34; | &#34;b&#34; | ... (all letters)
 
-def expression(regex) :
+def expression(regex):
     &#34;&#34;&#34;
     Fucntion that returns the NFA model defined by the regular expression interpreted as expression part, defined by the used regular expression grammar which is as follows:
     Expression := Konkat { &#34;|&#34; Konkat}
@@ -415,16 +734,17 @@ def expression(regex) :
     -------
     NFA : NFA object
         the model that describe the same accepted language as regular expression
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
 
     list_of_konkats = []
     list_of_konkats.append(konkat(regex))
-    while(len(regex) &gt; 0 and regex[0] == &#34;|&#34;):
+    while (len(regex) &gt; 0 and regex[0] == &#34;|&#34;):
         regex.pop(0)
         list_of_konkats.append(konkat(regex))
     return (unite_nfas(list_of_konkats))
 
-def konkat(regex) :
+
+def konkat(regex):
     &#34;&#34;&#34;
     It returns the NFA model defined by the regular expression interpreted as a concatenation part.
 
@@ -437,15 +757,16 @@ def konkat(regex) :
     -------
     NFA : NFA object
         returns the NFA model defined by the regular expression interpreted as a concatenation part
-    &#34;&#34;&#34;         
+    &#34;&#34;&#34;
     list_of_prods = []
     list_of_prods.append(prod(regex))
-    while(len(regex) &gt; 0 and regex[0] == &#34;.&#34;):
+    while (len(regex) &gt; 0 and regex[0] == &#34;.&#34;):
         regex.pop(0)
         list_of_prods.append(prod(regex))
     return konkatonate_nfas(list_of_prods)
 
-def prod(regex) :
+
+def prod(regex):
     &#34;&#34;&#34;
     It returns the NFA model defined by the regular expression interpreted as a product(* operator) part.
 
@@ -458,14 +779,15 @@ def prod(regex) :
     -------
     NFA : NFA object
         returns the NFA model defined by the regular expression interpreted as a product(* operator) part
-    &#34;&#34;&#34;         
+    &#34;&#34;&#34;
     factor_nfa = factor(regex)
-    if(len(regex) &gt; 0 and regex[0] == &#34;*&#34;):
+    if (len(regex) &gt; 0 and regex[0] == &#34;*&#34;):
         regex.pop(0)
         return star_nfa(factor_nfa)
-    return(factor_nfa)
+    return (factor_nfa)
 
-def factor(regex) :
+
+def factor(regex):
     &#34;&#34;&#34;
     It represents the grammar rule &#34;factor&#34; as mentioned above. It returns the NFA model defined by the regular expression interpreted as a factor part. It detects the paranthesis.
 
@@ -478,20 +800,22 @@ def factor(regex) :
     -------
     NFA : NFA object
         returns the NFA model defined by the regular expression interpreted as factor part.
-    &#34;&#34;&#34;  
-    if(len(regex) &gt; 0 and regex[0].isalpha()):
+    &#34;&#34;&#34;
+    # testing push
+    if (len(regex) &gt; 0 and regex[0].isalpha()):
         activity = regex.pop(0)
         activity_nfa = nfa_from_activity(activity)
         return activity_nfa
-    if(len(regex) &gt; 0 and regex[0] == &#34;(&#34;):
+    if (len(regex) &gt; 0 and regex[0] == &#34;(&#34;):
         regex.pop(0)
         sub_nfa = expression(regex)
-        if(len(regex) &gt; 0 and regex[0] != &#34;(&#34;):
+        if (len(regex) &gt; 0 and regex[0] != &#34;(&#34;):
             print(&#34;Error: Was expecting a closing parenthesis but recived: &#34; + regex[0])
         regex.pop(0)
         return sub_nfa
 
-#helping functions
+
+# helping functions
 def unite_nfas(nfas):
     &#34;&#34;&#34;
     It creates a NFA that accepts the combination (| operator) of given NFAs based on thomson construction.
@@ -505,8 +829,8 @@ def unite_nfas(nfas):
     -------
     united_nfa: NFA object
         the final nfa after consolidation of nfas in the given list of NFAs
-    &#34;&#34;&#34; 
-    if(len(nfas) == 1):
+    &#34;&#34;&#34;
+    if (len(nfas) == 1):
         return nfas[0]
 
     united_nfa = Nfa(&#34;unite&#34;)
@@ -515,15 +839,16 @@ def unite_nfas(nfas):
     p_end = Place(&#34;u_e&#34;)
     united_nfa.add_place(p_end, False, True)
     for nfa in nfas:
-        #add places with their transitions
+        # add places with their transitions
         for place in nfa.places:
             united_nfa.add_place(place)
-        #connect the united start place to the start place of the nfa
+        # connect the united start place to the start place of the nfa
         united_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, nfa.start_place))
-        #connect all accepting places to the united accepting place
+        # connect all accepting places to the united accepting place
         for acc_place in nfa.end_places:
             united_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_place, p_end))
     return united_nfa
+
 
 def konkatonate_nfas(nfas):
     &#34;&#34;&#34;
@@ -540,7 +865,7 @@ def konkatonate_nfas(nfas):
         the final nfa after concatenation of nfas in the given list of NFAs
     &#34;&#34;&#34;
 
-    if(len(nfas) == 1):
+    if (len(nfas) == 1):
         return nfas[0]
 
     konkat_nfa = Nfa(&#34;konkat&#34;)
@@ -549,21 +874,22 @@ def konkatonate_nfas(nfas):
     p_end = Place(&#34;k_e&#34;)
     konkat_nfa.add_place(p_end, False, True)
     for nfa in nfas:
-        #add places with their transitions
+        # add places with their transitions
         for place in nfa.places:
             konkat_nfa.add_place(place)
-    #connect the accepting places of each nfa in the list to the start place of the following nfa  ---- optimisation potential by not going through the nfas twice
-    for i in range(len(nfas)-1):
+    # connect the accepting places of each nfa in the list to the start place of the following nfa  ---- optimisation potential by not going through the nfas twice
+    for i in range(len(nfas) - 1):
         for acc_plac in nfas[i].end_places:
-            konkat_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_plac, nfas[i+1].start_place))
+            konkat_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_plac, nfas[i + 1].start_place))
 
-    #add Transition from new start to start of first nfa in list
+    # add Transition from new start to start of first nfa in list
     konkat_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, nfas[0].start_place))
-    #add Transition from last nfa in list to new last place
-    for acc_place in nfas[len(nfas)-1].end_places:
+    # add Transition from last nfa in list to new last place
+    for acc_place in nfas[len(nfas) - 1].end_places:
         konkat_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_place, p_end))
-    
+
     return konkat_nfa
+
 
 def star_nfa(nfa):
     &#34;&#34;&#34;
@@ -578,25 +904,25 @@ def star_nfa(nfa):
     -------
     star_nfa: NFA object
         NFA that accepts the language of the given nfa after applying the * operator on the given NFA.
-    &#34;&#34;&#34;   
+    &#34;&#34;&#34;
     star_nfa = Nfa(&#34;star&#34;)
     p_start = Place(&#34;s_s&#34;)
     star_nfa.add_place(p_start, True)
     p_end = Place(&#34;s_e&#34;)
     star_nfa.add_place(p_end, False, True)
 
-    #add all places from nfa
+    # add all places from nfa
     for place in nfa.places:
         star_nfa.add_place(place)
 
-    #one can skip the nfa
+    # one can skip the nfa
     star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, p_end))
-    #connect new start to the start of the nfa
+    # connect new start to the start of the nfa
     star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, nfa.start_place))
-    #connect new end to the start of the nfa
+    # connect new end to the start of the nfa
     star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_end, nfa.start_place))
 
-    #connect accepting places of the nfa to the new end place
+    # connect accepting places of the nfa to the new end place
     for acc_place in nfa.end_places:
         star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_place, p_end))
 
@@ -624,7 +950,74 @@ def nfa_from_activity(activity):
     base_nfa.add_place(p_end, False, True)
     base_nfa.add_Transition(Transition(activity, p_start, p_end))
     return base_nfa
-    
+
+
+def trace_check(trace): #done
+    &#34;&#34;&#34;
+    Fucntion that checks whether the given trace is valid or not.
+
+    Parameters
+    ----------
+    trace : list of strings
+        instance taken from event log.
+
+    Returns
+    -------
+    bool
+        true if the given trace fulfills criteria for trace and false in case it does not.
+    &#34;&#34;&#34;
+    if not isinstance(trace, list):
+        print(&#34;Input is not a list&#34;)
+        return False
+    for i in trace:
+        if not i.isalnum():
+            print(&#34;Only alphanumeric values are allowed&#34;)
+            return False
+        if i.isalnum and not len(i) == 1:
+            print(&#34;Only single characters are allowed&#34;)
+            return False
+
+    return True
+
+def re_expression_check(reg): #done
+    &#34;&#34;&#34;
+    Fucntion that checks whether the input is a regular expression.
+
+    Parameters
+    ----------
+    reg : list of characters
+        regular expressions that will be validated.
+
+    Returns
+    -------
+    bool
+        true if given list of strings fulfills crtieria of reg expression and false if it does not.
+    &#34;&#34;&#34;
+    special_characters = [&#34;+&#34;, &#34;*&#34;, &#34;|&#34;, &#34;.&#34;, &#34;(&#34;, &#34;)&#34;]
+    count1 = 0
+
+    if not isinstance(reg, list):
+        print(&#34;Input is not a list&#34;)
+        return False
+    for i in reg:
+        if (i.isalnum() or i in special_characters) and not len(i) == 1:
+            print(&#34;Only single characters are allowed&#34;)
+            return False
+
+        if not i.isalnum() and i not in special_characters:
+            print(&#34;Only alphanumeric values with given set of special characters [ + | * . ( ) ] are allowed&#34;)
+            return False
+        if i == &#34;(&#34;:
+            count1 += 1
+        if i == &#34;)&#34;:
+            count1 -= 1
+        if count1 &lt; 0:
+            print(&#34;Invalid Expression: Missing opening bracket&#34;)
+            return False
+    if count1 != 0:
+        print(&#34;Invalid Expression: Closing bracket not found&#34;)
+        return False
+    return True
 
 # Test section
 
@@ -645,34 +1038,49 @@ t3 = Transition(&#34;b&#34;, p2, p3)
 myNFA.add_Transition(t3)
 t4 = Transition(&#34;c&#34;, p3, p4)
 myNFA.add_Transition(t4)
+#
+# print(myNFA.places)
+# print(myNFA.transitions)
+#
+# print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;, &#34;c&#34;]))  # True
+# print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;, &#34;b&#34;, &#34;b&#34;, &#34;c&#34;]))  # True
+# print(myNFA.is_fitting([&#34;a&#34;, &#34;a&#34;, &#34;b&#34;, &#34;c&#34;]))  # False
+# print(myNFA.is_fitting([&#34;a&#34;, &#34;c&#34;]))  # False
+# print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;]))  # False
+#
+# myNFA.add_Transition(Transition(SpecialActivities.EPSILON, p2, p4))
+#
+# print(myNFA.is_fitting([&#34;a&#34;]))  # True
+#
+# myRegexNfa = expression([&#34;a&#34;, &#34;*&#34;, &#34;|&#34;, &#34;(&#34;, &#34;c&#34;, &#34;.&#34;, &#34;d&#34;, &#34;)&#34;, &#34;|&#34;, &#34;(&#34;, &#34;e&#34;, &#34;.&#34;, &#34;f&#34;, &#34;)&#34;])
+# myRegexNfa.print()
+#
+# print(&#34;Regex: &#34;)
+# print(myRegexNfa.is_fitting([&#34;a&#34;, &#34;a&#34;]))  # True
+# print(myRegexNfa.is_fitting([&#34;a&#34;]))  # True
+# print(myRegexNfa.is_fitting([]))  # True
+# print(myRegexNfa.is_fitting([&#34;c&#34;, &#34;d&#34;]))  # True
+# print(myRegexNfa.is_fitting([&#34;e&#34;, &#34;f&#34;]))  # True
+# print(myRegexNfa.is_fitting([&#34;a&#34;, &#34;c&#34;]))  # False
+# print(myRegexNfa.is_fitting([&#34;a&#34;, &#34;c&#34;, &#34;d&#34;]))  # False
+# print(myRegexNfa.is_fitting([&#34;x&#34;]))  # False
+# print(myRegexNfa.is_fitting([&#34;c&#34;]))  # False
 
+# nfa from trace test
+# myTrace = [&#34;a&#34;, &#34;b&#34;, &#34;b&#34;, &#34;b&#34;, &#34;c&#34;, &#34;z&#34;]
+# myOtherTrace = [&#34;a&#34;, &#34;b&#34;]
+# myNfa = nfa_from_trace(myTrace)
+# print(myNfa.is_fitting(myTrace)) # True
+# print(myNfa.is_fitting(myOtherTrace)) # False
 
-print(myNFA.places)
-print(myNFA.transitions)
-
-print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;, &#34;c&#34;])) #True
-print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;, &#34;b&#34;, &#34;b&#34;, &#34;c&#34;])) #True
-print(myNFA.is_fitting([&#34;a&#34;, &#34;a&#34;, &#34;b&#34;, &#34;c&#34;])) #False
-print(myNFA.is_fitting([&#34;a&#34;, &#34;c&#34;])) #False
-print(myNFA.is_fitting([&#34;a&#34;, &#34;b&#34;])) #False
-
-myNFA.add_Transition(Transition(SpecialActivities.EPSILON, p2, p4))
-
-print(myNFA.is_fitting([&#34;a&#34;])) #True
-
-myRegexNfa = expression([&#34;a&#34;, &#34;*&#34;, &#34;|&#34;, &#34;(&#34;, &#34;c&#34;, &#34;.&#34;, &#34;d&#34;, &#34;)&#34;, &#34;|&#34;, &#34;(&#34;, &#34;e&#34;, &#34;.&#34;, &#34;f&#34;, &#34;)&#34;])
-myRegexNfa.print()
-
-print(&#34;Regex: &#34;)
-print(myRegexNfa.is_fitting([&#34;a&#34;, &#34;a&#34;])) #True
-print(myRegexNfa.is_fitting([&#34;a&#34;,])) #True
-print(myRegexNfa.is_fitting([])) #True
-print(myRegexNfa.is_fitting([&#34;c&#34;, &#34;d&#34;])) #True
-print(myRegexNfa.is_fitting([&#34;e&#34;, &#34;f&#34;])) #True
-print(myRegexNfa.is_fitting([&#34;a&#34;, &#34;c&#34;])) #False
-print(myRegexNfa.is_fitting([&#34;a&#34;, &#34;c&#34;, &#34;d&#34;])) #False
-print(myRegexNfa.is_fitting([&#34;x&#34;,])) #False
-print(myRegexNfa.is_fitting([&#34;c&#34;])) #False</code></pre>
+# combined nfa test
+myTrace = [&#34;a&#34;, &#34;b&#34;, &#34;b&#34;, &#34;b&#34;, &#34;c&#34;, &#34;z&#34;]
+#print(myNFA.construct_combined_nfa(myTrace))
+print(myNFA.align_trace(myTrace))
+myTrace = [&#34;a&#34;, &#34;z&#34;, &#34;b&#34;, &#34;b&#34;, &#34;c&#34;]
+print(myNFA.align_trace(myTrace))
+myTrace = [&#34;a&#34;, &#34;z&#34;, &#34;b&#34;, &#34;b&#34;]
+print(myNFA.align_trace(myTrace))</code></pre>
 </details>
 </section>
 <section>
@@ -682,6 +1090,42 @@ print(myRegexNfa.is_fitting([&#34;c&#34;])) #False</code></pre>
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="nfa.convert_from_regex"><code class="name flex">
+<span>def <span class="ident">convert_from_regex</span></span>(<span>regex)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fucntion that creates and returns the NFA based on the given regular expression.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>regex</code></strong> :&ensp;<code>list</code> of <code>characters</code></dt>
+<dd>regular expressions that will be converted to NFA model.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>NFA</code></strong> :&ensp;<code>NFA object</code></dt>
+<dd>the final model that describes the same accepted language as regular expression.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def convert_from_regex(regex):
+    &#34;&#34;&#34;
+    Fucntion that creates and returns the NFA based on the given regular expression.
+
+    Parameters
+    ----------
+    regex : list of characters
+        regular expressions that will be converted to NFA model.
+
+    Returns
+    -------
+    NFA : NFA object
+        the final model that describes the same accepted language as regular expression.
+    &#34;&#34;&#34;
+    return expression(regex)</code></pre>
+</details>
+</dd>
 <dt id="nfa.expression"><code class="name flex">
 <span>def <span class="ident">expression</span></span>(<span>regex)</span>
 </code></dt>
@@ -707,7 +1151,7 @@ Activity := "a" | "b" | &hellip; (all letters)</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def expression(regex) :
+<pre><code class="python">def expression(regex):
     &#34;&#34;&#34;
     Fucntion that returns the NFA model defined by the regular expression interpreted as expression part, defined by the used regular expression grammar which is as follows:
     Expression := Konkat { &#34;|&#34; Konkat}
@@ -725,11 +1169,11 @@ Activity := "a" | "b" | &hellip; (all letters)</p>
     -------
     NFA : NFA object
         the model that describe the same accepted language as regular expression
-    &#34;&#34;&#34;        
+    &#34;&#34;&#34;
 
     list_of_konkats = []
     list_of_konkats.append(konkat(regex))
-    while(len(regex) &gt; 0 and regex[0] == &#34;|&#34;):
+    while (len(regex) &gt; 0 and regex[0] == &#34;|&#34;):
         regex.pop(0)
         list_of_konkats.append(konkat(regex))
     return (unite_nfas(list_of_konkats))</code></pre>
@@ -754,7 +1198,7 @@ Activity := "a" | "b" | &hellip; (all letters)</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def factor(regex) :
+<pre><code class="python">def factor(regex):
     &#34;&#34;&#34;
     It represents the grammar rule &#34;factor&#34; as mentioned above. It returns the NFA model defined by the regular expression interpreted as a factor part. It detects the paranthesis.
 
@@ -767,15 +1211,16 @@ Activity := "a" | "b" | &hellip; (all letters)</p>
     -------
     NFA : NFA object
         returns the NFA model defined by the regular expression interpreted as factor part.
-    &#34;&#34;&#34;  
-    if(len(regex) &gt; 0 and regex[0].isalpha()):
+    &#34;&#34;&#34;
+    # testing push
+    if (len(regex) &gt; 0 and regex[0].isalpha()):
         activity = regex.pop(0)
         activity_nfa = nfa_from_activity(activity)
         return activity_nfa
-    if(len(regex) &gt; 0 and regex[0] == &#34;(&#34;):
+    if (len(regex) &gt; 0 and regex[0] == &#34;(&#34;):
         regex.pop(0)
         sub_nfa = expression(regex)
-        if(len(regex) &gt; 0 and regex[0] != &#34;(&#34;):
+        if (len(regex) &gt; 0 and regex[0] != &#34;(&#34;):
             print(&#34;Error: Was expecting a closing parenthesis but recived: &#34; + regex[0])
         regex.pop(0)
         return sub_nfa</code></pre>
@@ -800,7 +1245,7 @@ Activity := "a" | "b" | &hellip; (all letters)</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def konkat(regex) :
+<pre><code class="python">def konkat(regex):
     &#34;&#34;&#34;
     It returns the NFA model defined by the regular expression interpreted as a concatenation part.
 
@@ -813,10 +1258,10 @@ Activity := "a" | "b" | &hellip; (all letters)</p>
     -------
     NFA : NFA object
         returns the NFA model defined by the regular expression interpreted as a concatenation part
-    &#34;&#34;&#34;         
+    &#34;&#34;&#34;
     list_of_prods = []
     list_of_prods.append(prod(regex))
-    while(len(regex) &gt; 0 and regex[0] == &#34;.&#34;):
+    while (len(regex) &gt; 0 and regex[0] == &#34;.&#34;):
         regex.pop(0)
         list_of_prods.append(prod(regex))
     return konkatonate_nfas(list_of_prods)</code></pre>
@@ -856,7 +1301,7 @@ Activity := "a" | "b" | &hellip; (all letters)</p>
         the final nfa after concatenation of nfas in the given list of NFAs
     &#34;&#34;&#34;
 
-    if(len(nfas) == 1):
+    if (len(nfas) == 1):
         return nfas[0]
 
     konkat_nfa = Nfa(&#34;konkat&#34;)
@@ -865,20 +1310,20 @@ Activity := "a" | "b" | &hellip; (all letters)</p>
     p_end = Place(&#34;k_e&#34;)
     konkat_nfa.add_place(p_end, False, True)
     for nfa in nfas:
-        #add places with their transitions
+        # add places with their transitions
         for place in nfa.places:
             konkat_nfa.add_place(place)
-    #connect the accepting places of each nfa in the list to the start place of the following nfa  ---- optimisation potential by not going through the nfas twice
-    for i in range(len(nfas)-1):
+    # connect the accepting places of each nfa in the list to the start place of the following nfa  ---- optimisation potential by not going through the nfas twice
+    for i in range(len(nfas) - 1):
         for acc_plac in nfas[i].end_places:
-            konkat_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_plac, nfas[i+1].start_place))
+            konkat_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_plac, nfas[i + 1].start_place))
 
-    #add Transition from new start to start of first nfa in list
+    # add Transition from new start to start of first nfa in list
     konkat_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, nfas[0].start_place))
-    #add Transition from last nfa in list to new last place
-    for acc_place in nfas[len(nfas)-1].end_places:
+    # add Transition from last nfa in list to new last place
+    for acc_place in nfas[len(nfas) - 1].end_places:
         konkat_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_place, p_end))
-    
+
     return konkat_nfa</code></pre>
 </details>
 </dd>
@@ -924,6 +1369,59 @@ Activity := "a" | "b" | &hellip; (all letters)</p>
     return base_nfa</code></pre>
 </details>
 </dd>
+<dt id="nfa.nfa_from_trace"><code class="name flex">
+<span>def <span class="ident">nfa_from_trace</span></span>(<span>trace)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This function creates an nfa that only accepts the given trace.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>trace</code></strong> :&ensp;<code>list</code> of <code>strings</code></dt>
+<dd>instance taken from event log.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>trace_nfa</code></strong> :&ensp;<code>NFA object</code></dt>
+<dd>nfa that only accepts the given trace.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def nfa_from_trace(trace):  #done
+    &#34;&#34;&#34;
+    This function creates an nfa that only accepts the given trace.
+
+    Parameters
+    ----------
+    trace : list of strings
+        instance taken from event log.
+
+    Returns
+    -------
+    trace_nfa : NFA object
+        nfa that only accepts the given trace.
+    &#34;&#34;&#34;
+    #xxx empty traces are not supported
+    trace_nfa = Nfa(&#34;trace_nfa&#34;)
+    p_start = Place(&#34;t_s&#34;)
+    trace_nfa.add_place(p_start, True)
+    p_end = Place(&#34;t_e&#34;)
+    trace_nfa.add_place(p_end, False, True)
+
+    # add all the transistions to accept only the trace as the language of the nfa
+    current_place = p_start
+    for ev_i in range(len(trace)-1): #xxx check what happens when len = 0 and then -1
+        p_help = Place(&#34;t_&#34; + str(ev_i))
+        trace_nfa.add_place(p_help)
+        trans = Transition(trace[ev_i], current_place, p_help)
+        trace_nfa.add_Transition(trans)
+        current_place = p_help
+    trans = Transition(trace[len(trace)-1], current_place, p_end)
+    trace_nfa.add_Transition(trans)
+    return trace_nfa</code></pre>
+</details>
+</dd>
 <dt id="nfa.prod"><code class="name flex">
 <span>def <span class="ident">prod</span></span>(<span>regex)</span>
 </code></dt>
@@ -943,7 +1441,7 @@ Activity := "a" | "b" | &hellip; (all letters)</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def prod(regex) :
+<pre><code class="python">def prod(regex):
     &#34;&#34;&#34;
     It returns the NFA model defined by the regular expression interpreted as a product(* operator) part.
 
@@ -956,12 +1454,72 @@ Activity := "a" | "b" | &hellip; (all letters)</p>
     -------
     NFA : NFA object
         returns the NFA model defined by the regular expression interpreted as a product(* operator) part
-    &#34;&#34;&#34;         
+    &#34;&#34;&#34;
     factor_nfa = factor(regex)
-    if(len(regex) &gt; 0 and regex[0] == &#34;*&#34;):
+    if (len(regex) &gt; 0 and regex[0] == &#34;*&#34;):
         regex.pop(0)
         return star_nfa(factor_nfa)
-    return(factor_nfa)</code></pre>
+    return (factor_nfa)</code></pre>
+</details>
+</dd>
+<dt id="nfa.re_expression_check"><code class="name flex">
+<span>def <span class="ident">re_expression_check</span></span>(<span>reg)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fucntion that checks whether the input is a regular expression.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>reg</code></strong> :&ensp;<code>list</code> of <code>characters</code></dt>
+<dd>regular expressions that will be validated.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>true if given list of strings fulfills crtieria of reg expression and false if it does not.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def re_expression_check(reg): #done
+    &#34;&#34;&#34;
+    Fucntion that checks whether the input is a regular expression.
+
+    Parameters
+    ----------
+    reg : list of characters
+        regular expressions that will be validated.
+
+    Returns
+    -------
+    bool
+        true if given list of strings fulfills crtieria of reg expression and false if it does not.
+    &#34;&#34;&#34;
+    special_characters = [&#34;+&#34;, &#34;*&#34;, &#34;|&#34;, &#34;.&#34;, &#34;(&#34;, &#34;)&#34;]
+    count1 = 0
+
+    if not isinstance(reg, list):
+        print(&#34;Input is not a list&#34;)
+        return False
+    for i in reg:
+        if (i.isalnum() or i in special_characters) and not len(i) == 1:
+            print(&#34;Only single characters are allowed&#34;)
+            return False
+
+        if not i.isalnum() and i not in special_characters:
+            print(&#34;Only alphanumeric values with given set of special characters [ + | * . ( ) ] are allowed&#34;)
+            return False
+        if i == &#34;(&#34;:
+            count1 += 1
+        if i == &#34;)&#34;:
+            count1 -= 1
+        if count1 &lt; 0:
+            print(&#34;Invalid Expression: Missing opening bracket&#34;)
+            return False
+    if count1 != 0:
+        print(&#34;Invalid Expression: Closing bracket not found&#34;)
+        return False
+    return True</code></pre>
 </details>
 </dd>
 <dt id="nfa.star_nfa"><code class="name flex">
@@ -996,29 +1554,76 @@ Activity := "a" | "b" | &hellip; (all letters)</p>
     -------
     star_nfa: NFA object
         NFA that accepts the language of the given nfa after applying the * operator on the given NFA.
-    &#34;&#34;&#34;   
+    &#34;&#34;&#34;
     star_nfa = Nfa(&#34;star&#34;)
     p_start = Place(&#34;s_s&#34;)
     star_nfa.add_place(p_start, True)
     p_end = Place(&#34;s_e&#34;)
     star_nfa.add_place(p_end, False, True)
 
-    #add all places from nfa
+    # add all places from nfa
     for place in nfa.places:
         star_nfa.add_place(place)
 
-    #one can skip the nfa
+    # one can skip the nfa
     star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, p_end))
-    #connect new start to the start of the nfa
+    # connect new start to the start of the nfa
     star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, nfa.start_place))
-    #connect new end to the start of the nfa
+    # connect new end to the start of the nfa
     star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_end, nfa.start_place))
 
-    #connect accepting places of the nfa to the new end place
+    # connect accepting places of the nfa to the new end place
     for acc_place in nfa.end_places:
         star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_place, p_end))
 
     return star_nfa</code></pre>
+</details>
+</dd>
+<dt id="nfa.trace_check"><code class="name flex">
+<span>def <span class="ident">trace_check</span></span>(<span>trace)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Fucntion that checks whether the given trace is valid or not.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>trace</code></strong> :&ensp;<code>list</code> of <code>strings</code></dt>
+<dd>instance taken from event log.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>bool</code></dt>
+<dd>true if the given trace fulfills criteria for trace and false in case it does not.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def trace_check(trace): #done
+    &#34;&#34;&#34;
+    Fucntion that checks whether the given trace is valid or not.
+
+    Parameters
+    ----------
+    trace : list of strings
+        instance taken from event log.
+
+    Returns
+    -------
+    bool
+        true if the given trace fulfills criteria for trace and false in case it does not.
+    &#34;&#34;&#34;
+    if not isinstance(trace, list):
+        print(&#34;Input is not a list&#34;)
+        return False
+    for i in trace:
+        if not i.isalnum():
+            print(&#34;Only alphanumeric values are allowed&#34;)
+            return False
+        if i.isalnum and not len(i) == 1:
+            print(&#34;Only single characters are allowed&#34;)
+            return False
+
+    return True</code></pre>
 </details>
 </dd>
 <dt id="nfa.unite_nfas"><code class="name flex">
@@ -1053,8 +1658,8 @@ Activity := "a" | "b" | &hellip; (all letters)</p>
     -------
     united_nfa: NFA object
         the final nfa after consolidation of nfas in the given list of NFAs
-    &#34;&#34;&#34; 
-    if(len(nfas) == 1):
+    &#34;&#34;&#34;
+    if (len(nfas) == 1):
         return nfas[0]
 
     united_nfa = Nfa(&#34;unite&#34;)
@@ -1063,12 +1668,12 @@ Activity := "a" | "b" | &hellip; (all letters)</p>
     p_end = Place(&#34;u_e&#34;)
     united_nfa.add_place(p_end, False, True)
     for nfa in nfas:
-        #add places with their transitions
+        # add places with their transitions
         for place in nfa.places:
             united_nfa.add_place(place)
-        #connect the united start place to the start place of the nfa
+        # connect the united start place to the start place of the nfa
         united_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, nfa.start_place))
-        #connect all accepting places to the united accepting place
+        # connect all accepting places to the united accepting place
         for acc_place in nfa.end_places:
             united_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_place, p_end))
     return united_nfa</code></pre>
@@ -1139,7 +1744,8 @@ initialize the attributes and sets the label passed during instance creation.</p
     __init__ : constructor
        initialize the attributes and sets the label passed during instance creation.
     
-    &#34;&#34;&#34; 
+    &#34;&#34;&#34;
+
     def __init__(self, label):
         &#34;&#34;&#34;
         Initializes the attributes and sets the label passed during instance creation.
@@ -1161,12 +1767,12 @@ initialize the attributes and sets the label passed during instance creation.</p
         -------
         None.
 
-        &#34;&#34;&#34;      
+        &#34;&#34;&#34;
         self.label = label
         self.places = []
         self.transitions = []
-        self.start_place = None # here we use the definiton of an NFA with just one start place
-        self.end_places = [] # but multiple acepting end places
+        self.start_place = None  # here we use the definiton of an NFA with just one start place
+        self.end_places = []  # but multiple acepting end places
 
     def print(self):
         &#34;&#34;&#34;
@@ -1180,16 +1786,18 @@ initialize the attributes and sets the label passed during instance creation.</p
         -------
         None.
 
-        &#34;&#34;&#34;          
+        &#34;&#34;&#34;
         print(&#34;Start place: &#34; + self.start_place.label + str(self.places.index(self.start_place)))
         for place in self.places:
             print(&#34;Place: &#34; + place.label + &#34;_&#34; + str(self.places.index(place)))
             if place in self.end_places:
                 print(&#34;Endplace&#34;)
             for trans in place.transitions:
-                print(&#34;&#34; + trans.start_place.label + &#34;_&#34; + str(self.places.index(trans.start_place)) + &#34; - &#34; + trans.activity + &#34; - &#34; + trans.end_place.label + &#34;_&#34; + str(self.places.index(trans.end_place)))
+                print(&#34;&#34; + trans.start_place.label + &#34;_&#34; + str(self.places.index(
+                    trans.start_place)) + &#34; - &#34; + trans.activity + &#34; - &#34; + trans.end_place.label + &#34;_&#34; + str(
+                    self.places.index(trans.end_place)))
 
-    def add_place(self, place, is_start_place = False, is_end_place = False) :
+    def add_place(self, place, is_start_place=False, is_end_place=False):
         &#34;&#34;&#34;
         It adds a place to the existing NFA model. If start and end place values are not given in second and third argument, they are by default taken to be False.
 
@@ -1206,19 +1814,18 @@ initialize the attributes and sets the label passed during instance creation.</p
         -------
         None.
 
-        &#34;&#34;&#34; 
-        #check whether place is a Place
+        &#34;&#34;&#34;
+        # check whether place is a Place
 
-        #check whether place allready exist
+        # check whether place allready exist
         self.places.append(place)
-        if is_start_place :
-            #check whether allready a start place is defined
+        if is_start_place:
+            # check whether allready a start place is defined
             self.start_place = place
-        if is_end_place :
+        if is_end_place:
             self.end_places.append(place)
 
-
-    def remove_place(self, place) :
+    def remove_place(self, place):
         &#34;&#34;&#34;
         This function removes a place from the NFA model.
 
@@ -1230,12 +1837,12 @@ initialize the attributes and sets the label passed during instance creation.</p
         Returns
         -------
         None.
-        &#34;&#34;&#34; 
-        #check whether place is a Place
+        &#34;&#34;&#34;
+        # check whether place is a Place
 
         self.places.remove(place)
 
-    def add_Transition(self, transition) :
+    def add_Transition(self, transition):
         &#34;&#34;&#34;
         This function adds a transition to the existing NFA model.
 
@@ -1248,16 +1855,16 @@ initialize the attributes and sets the label passed during instance creation.</p
         -------
         None.
 
-        &#34;&#34;&#34; 
-        #check whether transition is a Transition
-        #check whether transition only has places that exist
-        #check for duplicate
-        for place in self.places :
-            if place == transition.start_place :
+        &#34;&#34;&#34;
+        # check whether transition is a Transition
+        # check whether transition only has places that exist
+        # check for duplicate
+        for place in self.places:
+            if place == transition.start_place:
                 place.transitions.append(transition)
                 break
 
-    def remove_Transition(self, transition) :
+    def remove_Transition(self, transition):
         &#34;&#34;&#34;
         This function removes a transition from the NFA model.
 
@@ -1270,15 +1877,15 @@ initialize the attributes and sets the label passed during instance creation.</p
         -------
         None.
 
-        &#34;&#34;&#34; 
-        #input checks
-        for place in self.places :
-            if place == transition.start_place :
+        &#34;&#34;&#34;
+        # input checks
+        for place in self.places:
+            if place == transition.start_place:
                 place.transitions.remove(transition)
                 break
 
-    def is_fitting(self, trace) :
-      
+    def is_fitting(self, trace):
+
         &#34;&#34;&#34;
         This function checks if the given trace mathces the model. It replays the trace on the model and checks whether it ends up in an accepting end state.
 
@@ -1292,33 +1899,33 @@ initialize the attributes and sets the label passed during instance creation.</p
         bool
             true if it matches, false otherwise.
 
-        &#34;&#34;&#34; 
-        
-        #trace is here just a list of activities
-        #check input
+        &#34;&#34;&#34;
 
-        if(len(trace) == 0) :
+        # trace is here just a list of activities
+        # check input
+
+        if (len(trace) == 0):
             if self.start_place in self.end_places:
                 return True
-            #check only for epsilon transitions
-            for trans in self.start_place.transitions :
+            # check only for epsilon transitions
+            for trans in self.start_place.transitions:
                 if trans.activity == SpecialActivities.EPSILON:
-                    if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                    if (self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True):
                         return True
             return False
 
         activity = trace[0]
-        for trans in self.start_place.transitions :
-            if trans.activity == activity :
-                if( self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True) :
+        for trans in self.start_place.transitions:
+            if trans.activity == activity:
+                if (self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True):
                     return True
             if trans.activity == SpecialActivities.EPSILON:
-                if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                if (self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True):
                     return True
 
         return False
 
-    def __is_subtrace_fitting(self, current_place, trace) :
+    def __is_subtrace_fitting(self, current_place, trace):
         &#34;&#34;&#34;
         A helping function that checks if the given trace ends up in an accepting end state when started from the current place.
 
@@ -1333,34 +1940,34 @@ initialize the attributes and sets the label passed during instance creation.</p
         -------
         bool
             true if it matches, false otherwise.
-        &#34;&#34;&#34; 
-        #trace is here just a list of activities
-        #check input
+        &#34;&#34;&#34;
+        # trace is here just a list of activities
+        # check input
 
-        if(len(trace) == 0) :
+        if (len(trace) == 0):
             if current_place in self.end_places:
                 return True
-            #check only for epsilon transitions
-            for trans in current_place.transitions :
+            # check only for epsilon transitions
+            for trans in current_place.transitions:
                 if trans.activity == SpecialActivities.EPSILON:
-                    if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                    if (self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True):
                         return True
             return False
 
         activity = trace[0]
-        for trans in current_place.transitions :
+        for trans in current_place.transitions:
             if trans.activity == activity:
-                if( self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True) :
+                if (self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True):
                     return True
             if trans.activity == SpecialActivities.EPSILON:
-                if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                if (self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True):
                     return True
 
         return False
-    
+
     def log_fittness(self, log):
         &#34;&#34;&#34;
-        This function calculates fitness of the log (list of traces) when replayed on the NFA model.
+        This function calculates the percentage of perfectly fitting traces in the log (list of traces) when replayed on the NFA model.
 
         Parameters
         ----------
@@ -1370,27 +1977,262 @@ initialize the attributes and sets the label passed during instance creation.</p
         Returns
         -------
         variable: float
-            the fitness value.
-        &#34;&#34;&#34; 
+            the percentage of perfectly fitting traces.
+        &#34;&#34;&#34;
         # Check for each trace in the log wether the trace is fiting (replayable)
         # return the fraction of traces that are fiting (replayable)
-        return 1.0 # placeholder only
+        num_fitting_traces = 0
+        for trace in log:
+            if (self.is_fitting(trace)):
+                num_fitting_traces += 1
+        return (num_fitting_traces / len(log))
 
-    def convert_from_regex(self, regex):
+    def compute_alignments(self, log): # done
         &#34;&#34;&#34;
-        Fucntion that creates and returns the NFA based on the given regular expression.
+        This function computes optimal alignments for each trace of the given log.
 
         Parameters
         ----------
-        regex : list of characters
-            regular expressions that will be converted to NFA model.
-
+        log : list of list of strings
+            instances/traces taken from event log.
+        
         Returns
         -------
-        NFA : NFA object
-            the final model that describes the same accepted language as regular expression.
-        &#34;&#34;&#34;        
-        return expression(regex)</code></pre>
+        alignments: list of list of tuples of strings
+            list of alignments where each alignmeent is represented by a list of tuples. The first item of the tuple is the move on the trace and the second item is the move on model.
+        &#34;&#34;&#34;
+        alignments = []
+        for trace in log:
+            alignments.append(self.align_trace(trace))
+        return alignments
+
+    def align_trace(self, trace): #done
+        &#34;&#34;&#34;
+        This function calculates the alignment for the given trace.
+
+        Parameters
+        ----------
+        trace : list of strings
+            instance taken from event log.
+        
+        Returns
+        -------
+        alignment: list of tuples of strings
+            The first item of the tuple is move on trace and the second item is move on model.
+        cost: integer
+            number of not synchronized moves.
+        &#34;&#34;&#34;
+        if self.is_fitting(trace):
+            #create a perfectly fitting alignment
+            al = []
+            for event in trace:
+                al.append((event, event))
+            return al
+
+        # for not fittin traces calculate alignment
+        #create the combined nfa
+        combined_nfa = self.construct_combined_nfa(trace)
+
+        #search for shortest path on the combined nfa using dijkstra
+        alignment, cost = self.dijkstra_on_combined_nfa(combined_nfa)
+        return (alignment, cost)
+
+    def dijkstra_on_combined_nfa(self, comb_nfa):  #done
+        &#34;&#34;&#34;
+        This function performs dijkstra algorithm on comb_nfa to find the optimal alignment.
+
+        Parameters
+        ----------
+        comb_nfa : Nfa object
+            nfa that consists of places of type PlaceCombined and transitions with cost associated with them.
+        
+        Returns
+        -------
+        alignment: list of tuples of string
+            The first item of the tuple is move on trace and the second is move on model.
+        cost_alignment: integer
+            number of not synchronized moves.
+        &#34;&#34;&#34;
+        infinity = float(&#39;inf&#39;) # xxx optimize as floats are big in memory
+        #initialize
+        place_info_list = []
+        not_visited_places = [] #(place, actual lowest cost, place from which it was reached, transition alignment with which it was reached)
+        for place in comb_nfa.places:
+            not_visited_places.append(place)
+            if place == comb_nfa.start_place:
+                place_info_list.append([place, 0, None, None])
+            else:
+                place_info_list.append([place, infinity, None, None])
+
+        #search until shortest path for each node found
+        while (len(not_visited_places) &gt; 0):
+            #select current not that has the lowest cost and was not yet visited
+            current_place = not_visited_places[0]
+            cost_current_place = self.dijkstra_info_of_place(place_info_list, current_place)[1]
+            for place in not_visited_places: # xxx optimize - too many iterations over the lists
+                # check for smaller cost
+                help_cost = self.dijkstra_info_of_place(place_info_list, place)[1]
+                if(help_cost &lt; cost_current_place):
+                    current_place = place
+                    cost_current_place = self.dijkstra_info_of_place(place_info_list, current_place)[1]
+
+            #check for all transitions if other places can be reached cheaper
+            for trans in current_place.transitions:
+                transition_target = trans.end_place
+                cost_over_current_to_target = cost_current_place + trans.cost
+                if(cost_over_current_to_target &lt; self.dijkstra_info_of_place(place_info_list, transition_target)[1]):
+                    #cheaper way found - add to info list
+                    info_target = self.dijkstra_info_of_place(place_info_list, transition_target)
+                    info_target[1] = cost_over_current_to_target
+                    info_target[2] = current_place
+                    info_target[3] = trans.alignment_element
+
+            #remove the current selected place from list of not visited places
+            not_visited_places.remove(current_place)
+        
+        #return the alignments along the cheapest path to an accepting place
+        #find closest accepting place
+        closest_accepting_place = comb_nfa.end_places[0] # xxx there must be an end place
+        cost_to_closest_acc_place = self.dijkstra_info_of_place(place_info_list, closest_accepting_place)[1]
+        for acc_place in comb_nfa.end_places:
+            if self.dijkstra_info_of_place(place_info_list, acc_place)[1] &lt; cost_to_closest_acc_place:
+                closest_accepting_place = acc_place
+                cost_to_closest_acc_place = self.dijkstra_info_of_place(place_info_list, closest_accepting_place)[1]
+        # recreate the path to closest accepting place by going back from closest accepting place to the start place
+        #xxx hier the cost of the alignment can also be added up
+        alignment = []
+        place_we_are_at = closest_accepting_place
+        cost_alignment = self.dijkstra_info_of_place(place_info_list, place_we_are_at)[1]
+        while place_we_are_at != comb_nfa.start_place:
+            info_we_are_at = self.dijkstra_info_of_place(place_info_list, place_we_are_at)
+            alignment.insert(0, info_we_are_at[3])
+            place_we_are_at = info_we_are_at[2]
+        
+        return (alignment, cost_alignment)
+
+
+
+    def dijkstra_info_of_place(self, info_list, place): #done
+        &#34;&#34;&#34;
+        A helper function which returns information stored by the dijkstra algo for the given place. 
+
+        Parameters
+        ----------
+        info_list : list of lists
+            list of information about places that dijkstra algo has created so far.
+        place : Place object
+            the place one is interested in getting the information about.
+        
+        Returns
+        -------
+        info: list
+            a list containing the place as first element, cost as the second element, previous place in the shortest path as the third element and alignment used to go to the given place as the fourth element.
+        &#34;&#34;&#34;
+        for info in info_list:
+            if(info[0] == place):
+                return info
+        return None
+
+
+    def construct_combined_nfa(self, trace):  #done
+        &#34;&#34;&#34;
+        This function returns/creates an nfa that simulates a parallel execution of the nfa and an nfa that only accepts the given trace.
+
+        Parameters
+        ----------
+        trace : list of strings
+            instance taken from event log.
+        
+        Returns
+        -------
+        combined_nfa: Nfa object
+            nfa that simulates a parallel execution of the nfa and an nfa that only accepts the given trace.
+        &#34;&#34;&#34;
+        trace_nfa = nfa_from_trace(trace)
+        
+        combined_nfa = Nfa(&#34;combined&#34;)
+        # create all combined places
+        for trace_place in trace_nfa.places:
+            for model_place in self.places:
+                comb_place = PlaceCombined(trace_place.label + &#34;+&#34; + model_place.label)
+                comb_place.trace_place = trace_place
+                comb_place.model_place = model_place
+                # check for combined start and end places
+                is_start = False
+                if((trace_place == trace_nfa.start_place) and (model_place == self.start_place)):
+                    is_start = True
+                is_end = False
+                if((trace_place in trace_nfa.end_places) and (model_place in self.end_places)):
+                    is_end = True
+                combined_nfa.add_place(comb_place, is_start, is_end)
+        
+        # find all transitions that are possible
+        #add transitions that are synchronized moves
+        for place in combined_nfa.places: #xxx This loop can be combined with one above for performance increase
+            for trans_trace in place.trace_place.transitions:
+                for trans_model in place.model_place.transitions:
+                    if(trans_trace.activity != trans_model.activity):
+                        continue
+                    goal_place_trace = trans_trace.end_place
+                    goal_place_model = trans_model.end_place
+                    #find the goal place in the combined nfa (it is the one that has both goal states as the connected places)
+                    goal_place_combined = None
+                    for comb_place in combined_nfa.places:
+                        if ((comb_place.model_place == goal_place_model) and (comb_place.trace_place == goal_place_trace)):
+                            goal_place_combined = comb_place
+                            break
+
+                    # calculate cost of transition based on wether it is a synchronous move or not
+                    cost = 1
+                    if(trans_trace.activity == trans_model.activity):
+                        cost = 0
+
+                    # add transition in the combined nfa
+                    align_elem = (trans_trace.activity, trans_model.activity)
+                    comb_transition = TransitionWithCost(trans_trace.activity + &#34;|&#34; + trans_model.activity, place, goal_place_combined, cost, align_elem)
+                    combined_nfa.add_Transition(comb_transition)
+
+        #add transitions that are model moves only
+        for place in combined_nfa.places: #xxx This loop can be combined with one above for performance increase
+            for trans_model in place.model_place.transitions:
+                    goal_place_trace = place.trace_place # stays the same because only move on model
+                    goal_place_model = trans_model.end_place
+                    #find the goal place in the combined nfa (it is the one that has both goal states as the connected places)
+                    goal_place_combined = None
+                    for comb_place in combined_nfa.places:
+                        if ((comb_place.model_place == goal_place_model) and (comb_place.trace_place == goal_place_trace)):
+                            goal_place_combined = comb_place
+                            break
+
+                    # cost of a model move only
+                    cost = 1
+
+                    # add transition in the combined nfa
+                    align_elem = (&#34;&gt;&gt;&#34;, trans_model.activity)
+                    comb_transition = TransitionWithCost(&#34;&gt;&gt;&#34;+ &#34;|&#34; + trans_model.activity, place, goal_place_combined, cost, align_elem)
+                    combined_nfa.add_Transition(comb_transition)
+
+        #add transitions that are trace moves only
+        for place in combined_nfa.places: #xxx This loop can be combined with one above for performance increase
+            for trans_trace in place.trace_place.transitions:
+                    goal_place_trace = trans_trace.end_place # stays the same because only move on model
+                    goal_place_model = place.model_place
+                    #find the goal place in the combined nfa (it is the one that has both goal states as the connected places)
+                    goal_place_combined = None
+                    for comb_place in combined_nfa.places:
+                        if ((comb_place.model_place == goal_place_model) and (comb_place.trace_place == goal_place_trace)):
+                            goal_place_combined = comb_place
+                            break
+
+                    # cost of a trace move only
+                    cost = 1
+
+                    # add transition in the combined nfa
+                    align_elem = (trans_trace.activity, &#34;&gt;&gt;&#34;)
+                    comb_transition = TransitionWithCost(trans_trace.activity + &#34;|&#34; + &#34;&gt;&gt;&#34;, place, goal_place_combined, cost, align_elem)
+                    combined_nfa.add_Transition(comb_transition)
+        
+        return combined_nfa</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
@@ -1410,7 +2252,7 @@ initialize the attributes and sets the label passed during instance creation.</p
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def add_Transition(self, transition) :
+<pre><code class="python">def add_Transition(self, transition):
     &#34;&#34;&#34;
     This function adds a transition to the existing NFA model.
 
@@ -1423,12 +2265,12 @@ initialize the attributes and sets the label passed during instance creation.</p
     -------
     None.
 
-    &#34;&#34;&#34; 
-    #check whether transition is a Transition
-    #check whether transition only has places that exist
-    #check for duplicate
-    for place in self.places :
-        if place == transition.start_place :
+    &#34;&#34;&#34;
+    # check whether transition is a Transition
+    # check whether transition only has places that exist
+    # check for duplicate
+    for place in self.places:
+        if place == transition.start_place:
             place.transitions.append(transition)
             break</code></pre>
 </details>
@@ -1453,7 +2295,7 @@ initialize the attributes and sets the label passed during instance creation.</p
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def add_place(self, place, is_start_place = False, is_end_place = False) :
+<pre><code class="python">def add_place(self, place, is_start_place=False, is_end_place=False):
     &#34;&#34;&#34;
     It adds a place to the existing NFA model. If start and end place values are not given in second and third argument, they are by default taken to be False.
 
@@ -1470,52 +2312,366 @@ initialize the attributes and sets the label passed during instance creation.</p
     -------
     None.
 
-    &#34;&#34;&#34; 
-    #check whether place is a Place
+    &#34;&#34;&#34;
+    # check whether place is a Place
 
-    #check whether place allready exist
+    # check whether place allready exist
     self.places.append(place)
-    if is_start_place :
-        #check whether allready a start place is defined
+    if is_start_place:
+        # check whether allready a start place is defined
         self.start_place = place
-    if is_end_place :
+    if is_end_place:
         self.end_places.append(place)</code></pre>
 </details>
 </dd>
-<dt id="nfa.Nfa.convert_from_regex"><code class="name flex">
-<span>def <span class="ident">convert_from_regex</span></span>(<span>self, regex)</span>
+<dt id="nfa.Nfa.align_trace"><code class="name flex">
+<span>def <span class="ident">align_trace</span></span>(<span>self, trace)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Fucntion that creates and returns the NFA based on the given regular expression.</p>
+<div class="desc"><p>This function calculates the alignment for the given trace.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
-<dt><strong><code>regex</code></strong> :&ensp;<code>list</code> of <code>characters</code></dt>
-<dd>regular expressions that will be converted to NFA model.</dd>
+<dt><strong><code>trace</code></strong> :&ensp;<code>list</code> of <code>strings</code></dt>
+<dd>instance taken from event log.</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
-<dt><strong><code>NFA</code></strong> :&ensp;<code>NFA object</code></dt>
-<dd>the final model that describes the same accepted language as regular expression.</dd>
+<dt><strong><code>alignment</code></strong> :&ensp;<code>list</code> of <code>tuples</code> of <code>strings</code></dt>
+<dd>The first item of the tuple is move on trace and the second item is move on model.</dd>
+<dt><strong><code>cost</code></strong> :&ensp;<code>integer</code></dt>
+<dd>number of not synchronized moves.</dd>
 </dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def convert_from_regex(self, regex):
+<pre><code class="python">def align_trace(self, trace): #done
     &#34;&#34;&#34;
-    Fucntion that creates and returns the NFA based on the given regular expression.
+    This function calculates the alignment for the given trace.
 
     Parameters
     ----------
-    regex : list of characters
-        regular expressions that will be converted to NFA model.
-
+    trace : list of strings
+        instance taken from event log.
+    
     Returns
     -------
-    NFA : NFA object
-        the final model that describes the same accepted language as regular expression.
-    &#34;&#34;&#34;        
-    return expression(regex)</code></pre>
+    alignment: list of tuples of strings
+        The first item of the tuple is move on trace and the second item is move on model.
+    cost: integer
+        number of not synchronized moves.
+    &#34;&#34;&#34;
+    if self.is_fitting(trace):
+        #create a perfectly fitting alignment
+        al = []
+        for event in trace:
+            al.append((event, event))
+        return al
+
+    # for not fittin traces calculate alignment
+    #create the combined nfa
+    combined_nfa = self.construct_combined_nfa(trace)
+
+    #search for shortest path on the combined nfa using dijkstra
+    alignment, cost = self.dijkstra_on_combined_nfa(combined_nfa)
+    return (alignment, cost)</code></pre>
+</details>
+</dd>
+<dt id="nfa.Nfa.compute_alignments"><code class="name flex">
+<span>def <span class="ident">compute_alignments</span></span>(<span>self, log)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This function computes optimal alignments for each trace of the given log.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>log</code></strong> :&ensp;<code>list</code> of <code>list</code> of <code>strings</code></dt>
+<dd>instances/traces taken from event log.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>alignments</code></strong> :&ensp;<code>list</code> of <code>list</code> of <code>tuples</code> of <code>strings</code></dt>
+<dd>list of alignments where each alignmeent is represented by a list of tuples. The first item of the tuple is the move on the trace and the second item is the move on model.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_alignments(self, log): # done
+    &#34;&#34;&#34;
+    This function computes optimal alignments for each trace of the given log.
+
+    Parameters
+    ----------
+    log : list of list of strings
+        instances/traces taken from event log.
+    
+    Returns
+    -------
+    alignments: list of list of tuples of strings
+        list of alignments where each alignmeent is represented by a list of tuples. The first item of the tuple is the move on the trace and the second item is the move on model.
+    &#34;&#34;&#34;
+    alignments = []
+    for trace in log:
+        alignments.append(self.align_trace(trace))
+    return alignments</code></pre>
+</details>
+</dd>
+<dt id="nfa.Nfa.construct_combined_nfa"><code class="name flex">
+<span>def <span class="ident">construct_combined_nfa</span></span>(<span>self, trace)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This function returns/creates an nfa that simulates a parallel execution of the nfa and an nfa that only accepts the given trace.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>trace</code></strong> :&ensp;<code>list</code> of <code>strings</code></dt>
+<dd>instance taken from event log.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>combined_nfa</code></strong> :&ensp;<code><a title="nfa.Nfa" href="#nfa.Nfa">Nfa</a> object</code></dt>
+<dd>nfa that simulates a parallel execution of the nfa and an nfa that only accepts the given trace.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def construct_combined_nfa(self, trace):  #done
+    &#34;&#34;&#34;
+    This function returns/creates an nfa that simulates a parallel execution of the nfa and an nfa that only accepts the given trace.
+
+    Parameters
+    ----------
+    trace : list of strings
+        instance taken from event log.
+    
+    Returns
+    -------
+    combined_nfa: Nfa object
+        nfa that simulates a parallel execution of the nfa and an nfa that only accepts the given trace.
+    &#34;&#34;&#34;
+    trace_nfa = nfa_from_trace(trace)
+    
+    combined_nfa = Nfa(&#34;combined&#34;)
+    # create all combined places
+    for trace_place in trace_nfa.places:
+        for model_place in self.places:
+            comb_place = PlaceCombined(trace_place.label + &#34;+&#34; + model_place.label)
+            comb_place.trace_place = trace_place
+            comb_place.model_place = model_place
+            # check for combined start and end places
+            is_start = False
+            if((trace_place == trace_nfa.start_place) and (model_place == self.start_place)):
+                is_start = True
+            is_end = False
+            if((trace_place in trace_nfa.end_places) and (model_place in self.end_places)):
+                is_end = True
+            combined_nfa.add_place(comb_place, is_start, is_end)
+    
+    # find all transitions that are possible
+    #add transitions that are synchronized moves
+    for place in combined_nfa.places: #xxx This loop can be combined with one above for performance increase
+        for trans_trace in place.trace_place.transitions:
+            for trans_model in place.model_place.transitions:
+                if(trans_trace.activity != trans_model.activity):
+                    continue
+                goal_place_trace = trans_trace.end_place
+                goal_place_model = trans_model.end_place
+                #find the goal place in the combined nfa (it is the one that has both goal states as the connected places)
+                goal_place_combined = None
+                for comb_place in combined_nfa.places:
+                    if ((comb_place.model_place == goal_place_model) and (comb_place.trace_place == goal_place_trace)):
+                        goal_place_combined = comb_place
+                        break
+
+                # calculate cost of transition based on wether it is a synchronous move or not
+                cost = 1
+                if(trans_trace.activity == trans_model.activity):
+                    cost = 0
+
+                # add transition in the combined nfa
+                align_elem = (trans_trace.activity, trans_model.activity)
+                comb_transition = TransitionWithCost(trans_trace.activity + &#34;|&#34; + trans_model.activity, place, goal_place_combined, cost, align_elem)
+                combined_nfa.add_Transition(comb_transition)
+
+    #add transitions that are model moves only
+    for place in combined_nfa.places: #xxx This loop can be combined with one above for performance increase
+        for trans_model in place.model_place.transitions:
+                goal_place_trace = place.trace_place # stays the same because only move on model
+                goal_place_model = trans_model.end_place
+                #find the goal place in the combined nfa (it is the one that has both goal states as the connected places)
+                goal_place_combined = None
+                for comb_place in combined_nfa.places:
+                    if ((comb_place.model_place == goal_place_model) and (comb_place.trace_place == goal_place_trace)):
+                        goal_place_combined = comb_place
+                        break
+
+                # cost of a model move only
+                cost = 1
+
+                # add transition in the combined nfa
+                align_elem = (&#34;&gt;&gt;&#34;, trans_model.activity)
+                comb_transition = TransitionWithCost(&#34;&gt;&gt;&#34;+ &#34;|&#34; + trans_model.activity, place, goal_place_combined, cost, align_elem)
+                combined_nfa.add_Transition(comb_transition)
+
+    #add transitions that are trace moves only
+    for place in combined_nfa.places: #xxx This loop can be combined with one above for performance increase
+        for trans_trace in place.trace_place.transitions:
+                goal_place_trace = trans_trace.end_place # stays the same because only move on model
+                goal_place_model = place.model_place
+                #find the goal place in the combined nfa (it is the one that has both goal states as the connected places)
+                goal_place_combined = None
+                for comb_place in combined_nfa.places:
+                    if ((comb_place.model_place == goal_place_model) and (comb_place.trace_place == goal_place_trace)):
+                        goal_place_combined = comb_place
+                        break
+
+                # cost of a trace move only
+                cost = 1
+
+                # add transition in the combined nfa
+                align_elem = (trans_trace.activity, &#34;&gt;&gt;&#34;)
+                comb_transition = TransitionWithCost(trans_trace.activity + &#34;|&#34; + &#34;&gt;&gt;&#34;, place, goal_place_combined, cost, align_elem)
+                combined_nfa.add_Transition(comb_transition)
+    
+    return combined_nfa</code></pre>
+</details>
+</dd>
+<dt id="nfa.Nfa.dijkstra_info_of_place"><code class="name flex">
+<span>def <span class="ident">dijkstra_info_of_place</span></span>(<span>self, info_list, place)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A helper function which returns information stored by the dijkstra algo for the given place. </p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>info_list</code></strong> :&ensp;<code>list</code> of <code>lists</code></dt>
+<dd>list of information about places that dijkstra algo has created so far.</dd>
+<dt><strong><code>place</code></strong> :&ensp;<code><a title="nfa.Place" href="#nfa.Place">Place</a> object</code></dt>
+<dd>the place one is interested in getting the information about.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>info</code></strong> :&ensp;<code>list</code></dt>
+<dd>a list containing the place as first element, cost as the second element, previous place in the shortest path as the third element and alignment used to go to the given place as the fourth element.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dijkstra_info_of_place(self, info_list, place): #done
+    &#34;&#34;&#34;
+    A helper function which returns information stored by the dijkstra algo for the given place. 
+
+    Parameters
+    ----------
+    info_list : list of lists
+        list of information about places that dijkstra algo has created so far.
+    place : Place object
+        the place one is interested in getting the information about.
+    
+    Returns
+    -------
+    info: list
+        a list containing the place as first element, cost as the second element, previous place in the shortest path as the third element and alignment used to go to the given place as the fourth element.
+    &#34;&#34;&#34;
+    for info in info_list:
+        if(info[0] == place):
+            return info
+    return None</code></pre>
+</details>
+</dd>
+<dt id="nfa.Nfa.dijkstra_on_combined_nfa"><code class="name flex">
+<span>def <span class="ident">dijkstra_on_combined_nfa</span></span>(<span>self, comb_nfa)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This function performs dijkstra algorithm on comb_nfa to find the optimal alignment.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>comb_nfa</code></strong> :&ensp;<code><a title="nfa.Nfa" href="#nfa.Nfa">Nfa</a> object</code></dt>
+<dd>nfa that consists of places of type PlaceCombined and transitions with cost associated with them.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><strong><code>alignment</code></strong> :&ensp;<code>list</code> of <code>tuples</code> of <code>string</code></dt>
+<dd>The first item of the tuple is move on trace and the second is move on model.</dd>
+<dt><strong><code>cost_alignment</code></strong> :&ensp;<code>integer</code></dt>
+<dd>number of not synchronized moves.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def dijkstra_on_combined_nfa(self, comb_nfa):  #done
+    &#34;&#34;&#34;
+    This function performs dijkstra algorithm on comb_nfa to find the optimal alignment.
+
+    Parameters
+    ----------
+    comb_nfa : Nfa object
+        nfa that consists of places of type PlaceCombined and transitions with cost associated with them.
+    
+    Returns
+    -------
+    alignment: list of tuples of string
+        The first item of the tuple is move on trace and the second is move on model.
+    cost_alignment: integer
+        number of not synchronized moves.
+    &#34;&#34;&#34;
+    infinity = float(&#39;inf&#39;) # xxx optimize as floats are big in memory
+    #initialize
+    place_info_list = []
+    not_visited_places = [] #(place, actual lowest cost, place from which it was reached, transition alignment with which it was reached)
+    for place in comb_nfa.places:
+        not_visited_places.append(place)
+        if place == comb_nfa.start_place:
+            place_info_list.append([place, 0, None, None])
+        else:
+            place_info_list.append([place, infinity, None, None])
+
+    #search until shortest path for each node found
+    while (len(not_visited_places) &gt; 0):
+        #select current not that has the lowest cost and was not yet visited
+        current_place = not_visited_places[0]
+        cost_current_place = self.dijkstra_info_of_place(place_info_list, current_place)[1]
+        for place in not_visited_places: # xxx optimize - too many iterations over the lists
+            # check for smaller cost
+            help_cost = self.dijkstra_info_of_place(place_info_list, place)[1]
+            if(help_cost &lt; cost_current_place):
+                current_place = place
+                cost_current_place = self.dijkstra_info_of_place(place_info_list, current_place)[1]
+
+        #check for all transitions if other places can be reached cheaper
+        for trans in current_place.transitions:
+            transition_target = trans.end_place
+            cost_over_current_to_target = cost_current_place + trans.cost
+            if(cost_over_current_to_target &lt; self.dijkstra_info_of_place(place_info_list, transition_target)[1]):
+                #cheaper way found - add to info list
+                info_target = self.dijkstra_info_of_place(place_info_list, transition_target)
+                info_target[1] = cost_over_current_to_target
+                info_target[2] = current_place
+                info_target[3] = trans.alignment_element
+
+        #remove the current selected place from list of not visited places
+        not_visited_places.remove(current_place)
+    
+    #return the alignments along the cheapest path to an accepting place
+    #find closest accepting place
+    closest_accepting_place = comb_nfa.end_places[0] # xxx there must be an end place
+    cost_to_closest_acc_place = self.dijkstra_info_of_place(place_info_list, closest_accepting_place)[1]
+    for acc_place in comb_nfa.end_places:
+        if self.dijkstra_info_of_place(place_info_list, acc_place)[1] &lt; cost_to_closest_acc_place:
+            closest_accepting_place = acc_place
+            cost_to_closest_acc_place = self.dijkstra_info_of_place(place_info_list, closest_accepting_place)[1]
+    # recreate the path to closest accepting place by going back from closest accepting place to the start place
+    #xxx hier the cost of the alignment can also be added up
+    alignment = []
+    place_we_are_at = closest_accepting_place
+    cost_alignment = self.dijkstra_info_of_place(place_info_list, place_we_are_at)[1]
+    while place_we_are_at != comb_nfa.start_place:
+        info_we_are_at = self.dijkstra_info_of_place(place_info_list, place_we_are_at)
+        alignment.insert(0, info_we_are_at[3])
+        place_we_are_at = info_we_are_at[2]
+    
+    return (alignment, cost_alignment)</code></pre>
 </details>
 </dd>
 <dt id="nfa.Nfa.is_fitting"><code class="name flex">
@@ -1537,8 +2693,8 @@ initialize the attributes and sets the label passed during instance creation.</p
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def is_fitting(self, trace) :
-  
+<pre><code class="python">def is_fitting(self, trace):
+
     &#34;&#34;&#34;
     This function checks if the given trace mathces the model. It replays the trace on the model and checks whether it ends up in an accepting end state.
 
@@ -1552,28 +2708,28 @@ initialize the attributes and sets the label passed during instance creation.</p
     bool
         true if it matches, false otherwise.
 
-    &#34;&#34;&#34; 
-    
-    #trace is here just a list of activities
-    #check input
+    &#34;&#34;&#34;
 
-    if(len(trace) == 0) :
+    # trace is here just a list of activities
+    # check input
+
+    if (len(trace) == 0):
         if self.start_place in self.end_places:
             return True
-        #check only for epsilon transitions
-        for trans in self.start_place.transitions :
+        # check only for epsilon transitions
+        for trans in self.start_place.transitions:
             if trans.activity == SpecialActivities.EPSILON:
-                if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+                if (self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True):
                     return True
         return False
 
     activity = trace[0]
-    for trans in self.start_place.transitions :
-        if trans.activity == activity :
-            if( self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True) :
+    for trans in self.start_place.transitions:
+        if trans.activity == activity:
+            if (self.__is_subtrace_fitting(trans.end_place, trace[1:]) == True):
                 return True
         if trans.activity == SpecialActivities.EPSILON:
-            if( self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True) :
+            if (self.__is_subtrace_fitting(trans.end_place, trace[0:]) == True):
                 return True
 
     return False</code></pre>
@@ -1583,7 +2739,7 @@ initialize the attributes and sets the label passed during instance creation.</p
 <span>def <span class="ident">log_fittness</span></span>(<span>self, log)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>This function calculates fitness of the log (list of traces) when replayed on the NFA model.</p>
+<div class="desc"><p>This function calculates the percentage of perfectly fitting traces in the log (list of traces) when replayed on the NFA model.</p>
 <h2 id="parameters">Parameters</h2>
 <dl>
 <dt><strong><code>log</code></strong> :&ensp;<code>list</code> of <code>list</code> of <code>strings</code></dt>
@@ -1592,7 +2748,7 @@ initialize the attributes and sets the label passed during instance creation.</p
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><strong><code>variable</code></strong> :&ensp;<code>float</code></dt>
-<dd>the fitness value.</dd>
+<dd>the percentage of perfectly fitting traces.</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -1600,7 +2756,7 @@ initialize the attributes and sets the label passed during instance creation.</p
 </summary>
 <pre><code class="python">def log_fittness(self, log):
     &#34;&#34;&#34;
-    This function calculates fitness of the log (list of traces) when replayed on the NFA model.
+    This function calculates the percentage of perfectly fitting traces in the log (list of traces) when replayed on the NFA model.
 
     Parameters
     ----------
@@ -1610,11 +2766,15 @@ initialize the attributes and sets the label passed during instance creation.</p
     Returns
     -------
     variable: float
-        the fitness value.
-    &#34;&#34;&#34; 
+        the percentage of perfectly fitting traces.
+    &#34;&#34;&#34;
     # Check for each trace in the log wether the trace is fiting (replayable)
     # return the fraction of traces that are fiting (replayable)
-    return 1.0 # placeholder only</code></pre>
+    num_fitting_traces = 0
+    for trace in log:
+        if (self.is_fitting(trace)):
+            num_fitting_traces += 1
+    return (num_fitting_traces / len(log))</code></pre>
 </details>
 </dd>
 <dt id="nfa.Nfa.print"><code class="name flex">
@@ -1643,14 +2803,16 @@ initialize the attributes and sets the label passed during instance creation.</p
     -------
     None.
 
-    &#34;&#34;&#34;          
+    &#34;&#34;&#34;
     print(&#34;Start place: &#34; + self.start_place.label + str(self.places.index(self.start_place)))
     for place in self.places:
         print(&#34;Place: &#34; + place.label + &#34;_&#34; + str(self.places.index(place)))
         if place in self.end_places:
             print(&#34;Endplace&#34;)
         for trans in place.transitions:
-            print(&#34;&#34; + trans.start_place.label + &#34;_&#34; + str(self.places.index(trans.start_place)) + &#34; - &#34; + trans.activity + &#34; - &#34; + trans.end_place.label + &#34;_&#34; + str(self.places.index(trans.end_place)))</code></pre>
+            print(&#34;&#34; + trans.start_place.label + &#34;_&#34; + str(self.places.index(
+                trans.start_place)) + &#34; - &#34; + trans.activity + &#34; - &#34; + trans.end_place.label + &#34;_&#34; + str(
+                self.places.index(trans.end_place)))</code></pre>
 </details>
 </dd>
 <dt id="nfa.Nfa.remove_Transition"><code class="name flex">
@@ -1669,7 +2831,7 @@ initialize the attributes and sets the label passed during instance creation.</p
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def remove_Transition(self, transition) :
+<pre><code class="python">def remove_Transition(self, transition):
     &#34;&#34;&#34;
     This function removes a transition from the NFA model.
 
@@ -1682,10 +2844,10 @@ initialize the attributes and sets the label passed during instance creation.</p
     -------
     None.
 
-    &#34;&#34;&#34; 
-    #input checks
-    for place in self.places :
-        if place == transition.start_place :
+    &#34;&#34;&#34;
+    # input checks
+    for place in self.places:
+        if place == transition.start_place:
             place.transitions.remove(transition)
             break</code></pre>
 </details>
@@ -1706,7 +2868,7 @@ initialize the attributes and sets the label passed during instance creation.</p
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def remove_place(self, place) :
+<pre><code class="python">def remove_place(self, place):
     &#34;&#34;&#34;
     This function removes a place from the NFA model.
 
@@ -1718,8 +2880,8 @@ initialize the attributes and sets the label passed during instance creation.</p
     Returns
     -------
     None.
-    &#34;&#34;&#34; 
-    #check whether place is a Place
+    &#34;&#34;&#34;
+    # check whether place is a Place
 
     self.places.remove(place)</code></pre>
 </details>
@@ -1772,7 +2934,8 @@ sets the string passed as label (place) of that instance and initializes the tra
     __init__ : constructor
        sets the string passed as label (place) of that instance and initializes the transitions list.
 
-    &#34;&#34;&#34; 
+    &#34;&#34;&#34;
+
     def __init__(self, label):
         &#34;&#34;&#34;
         Constructor of class Place.
@@ -1788,10 +2951,70 @@ sets the string passed as label (place) of that instance and initializes the tra
         -------
         None.
 
-        &#34;&#34;&#34;       
+        &#34;&#34;&#34;
         self.label = label
         self.transitions = []</code></pre>
 </details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="nfa.PlaceCombined" href="#nfa.PlaceCombined">PlaceCombined</a></li>
+</ul>
+</dd>
+<dt id="nfa.PlaceCombined"><code class="flex name class">
+<span>class <span class="ident">PlaceCombined</span></span>
+<span>(</span><span>label)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This class represents a place in NFA.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>label</code></strong> :&ensp;<code>str</code></dt>
+<dd>name of the node / place</dd>
+<dt><strong><code>transitions</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>collection of transition to other places</dd>
+</dl>
+<h2 id="methods">Methods</h2>
+<p><strong>init</strong> : constructor
+sets the string passed as label (place) of that instance and initializes the transitions list.</p>
+<p>Constructor of class Place.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>label</code></strong> :&ensp;<code>str</code></dt>
+<dd>any label passed by the user is set in this variable</dd>
+<dt><strong><code>transitions</code></strong> :&ensp;<code>list</code> of <code>str</code></dt>
+<dd>collection of transitions to other places</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PlaceCombined(Place):
+    def __init__(self, label):
+        &#34;&#34;&#34;
+        Constructor of class Place.
+
+        Parameters
+        ----------
+        label : str
+            any label passed by the user is set in this variable
+        transitions: list of str
+            collection of transitions to other places
+
+        Returns
+        -------
+        None.
+
+        &#34;&#34;&#34;
+        super().__init__(label)
+        self.model_place = None
+        self.trace_place = None</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="nfa.Place" href="#nfa.Place">Place</a></li>
+</ul>
 </dd>
 <dt id="nfa.SpecialActivities"><code class="flex name class">
 <span>class <span class="ident">SpecialActivities</span></span>
@@ -1816,7 +3039,7 @@ sets the string passed as label (place) of that instance and initializes the tra
     Epsilon: str
         stores the value of epsilon
 
-    &#34;&#34;&#34; 
+    &#34;&#34;&#34;
 
     EPSILON = &#39;\u03B5&#39;</code></pre>
 </details>
@@ -1880,8 +3103,8 @@ sets the values of activity, start place of the activity and its end place.</p>
     __init__ : constructor
        sets the values of activity, start place of the activity and its end place.
 
-    &#34;&#34;&#34; 
-    
+    &#34;&#34;&#34;
+
     def __init__(self, activity, start_place, end_place):
         &#34;&#34;&#34;
         Constructor of class Transition that sets values of the instance.
@@ -1899,11 +3122,60 @@ sets the values of activity, start place of the activity and its end place.</p>
         -------
         None.
 
-        &#34;&#34;&#34;         
+        &#34;&#34;&#34;
         self.activity = activity
         self.start_place = start_place
         self.end_place = end_place</code></pre>
 </details>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="nfa.TransitionWithCost" href="#nfa.TransitionWithCost">TransitionWithCost</a></li>
+</ul>
+</dd>
+<dt id="nfa.TransitionWithCost"><code class="flex name class">
+<span>class <span class="ident">TransitionWithCost</span></span>
+<span>(</span><span>activity, start_place, end_place, cost, alignment_element)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>This class represents transition / edge in NFA model.</p>
+<h2 id="attributes">Attributes</h2>
+<dl>
+<dt><strong><code>activity</code></strong> :&ensp;<code>str </code></dt>
+<dd>the event that needs to happen in order to transition from start to end place</dd>
+<dt><strong><code>start_place</code></strong> :&ensp;<code>str</code></dt>
+<dd>connected start place of the transition</dd>
+<dt><strong><code>end_place</code></strong> :&ensp;<code>str</code></dt>
+<dd>end place where the transition leads to</dd>
+</dl>
+<h2 id="methods">Methods</h2>
+<p><strong>init</strong> : constructor
+sets the values of activity, start place of the activity and its end place.</p>
+<p>Constructor of class Transition that sets values of the instance.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>activity</code></strong> :&ensp;<code>str</code></dt>
+<dd>alphabet reflecting one activity of the instance from event log</dd>
+<dt><strong><code>start_place</code></strong> :&ensp;<code>str</code></dt>
+<dd>start state of the activity at hand.</dd>
+<dt><strong><code>end_place</code></strong> :&ensp;<code>str</code></dt>
+<dd>end state of the activity at hand.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>None.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TransitionWithCost(Transition):
+    def __init__(self, activity, start_place, end_place, cost, alignment_element):
+        super().__init__(activity, start_place, end_place)
+        self.cost = cost
+        self.alignment_element = alignment_element</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="nfa.Transition" href="#nfa.Transition">Transition</a></li>
+</ul>
 </dd>
 </dl>
 </section>
@@ -1916,13 +3188,17 @@ sets the values of activity, start place of the activity and its end place.</p>
 <ul id="index">
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="two-column">
+<li><code><a title="nfa.convert_from_regex" href="#nfa.convert_from_regex">convert_from_regex</a></code></li>
 <li><code><a title="nfa.expression" href="#nfa.expression">expression</a></code></li>
 <li><code><a title="nfa.factor" href="#nfa.factor">factor</a></code></li>
 <li><code><a title="nfa.konkat" href="#nfa.konkat">konkat</a></code></li>
 <li><code><a title="nfa.konkatonate_nfas" href="#nfa.konkatonate_nfas">konkatonate_nfas</a></code></li>
 <li><code><a title="nfa.nfa_from_activity" href="#nfa.nfa_from_activity">nfa_from_activity</a></code></li>
+<li><code><a title="nfa.nfa_from_trace" href="#nfa.nfa_from_trace">nfa_from_trace</a></code></li>
 <li><code><a title="nfa.prod" href="#nfa.prod">prod</a></code></li>
+<li><code><a title="nfa.re_expression_check" href="#nfa.re_expression_check">re_expression_check</a></code></li>
 <li><code><a title="nfa.star_nfa" href="#nfa.star_nfa">star_nfa</a></code></li>
+<li><code><a title="nfa.trace_check" href="#nfa.trace_check">trace_check</a></code></li>
 <li><code><a title="nfa.unite_nfas" href="#nfa.unite_nfas">unite_nfas</a></code></li>
 </ul>
 </li>
@@ -1930,10 +3206,14 @@ sets the values of activity, start place of the activity and its end place.</p>
 <ul>
 <li>
 <h4><code><a title="nfa.Nfa" href="#nfa.Nfa">Nfa</a></code></h4>
-<ul class="two-column">
+<ul class="">
 <li><code><a title="nfa.Nfa.add_Transition" href="#nfa.Nfa.add_Transition">add_Transition</a></code></li>
 <li><code><a title="nfa.Nfa.add_place" href="#nfa.Nfa.add_place">add_place</a></code></li>
-<li><code><a title="nfa.Nfa.convert_from_regex" href="#nfa.Nfa.convert_from_regex">convert_from_regex</a></code></li>
+<li><code><a title="nfa.Nfa.align_trace" href="#nfa.Nfa.align_trace">align_trace</a></code></li>
+<li><code><a title="nfa.Nfa.compute_alignments" href="#nfa.Nfa.compute_alignments">compute_alignments</a></code></li>
+<li><code><a title="nfa.Nfa.construct_combined_nfa" href="#nfa.Nfa.construct_combined_nfa">construct_combined_nfa</a></code></li>
+<li><code><a title="nfa.Nfa.dijkstra_info_of_place" href="#nfa.Nfa.dijkstra_info_of_place">dijkstra_info_of_place</a></code></li>
+<li><code><a title="nfa.Nfa.dijkstra_on_combined_nfa" href="#nfa.Nfa.dijkstra_on_combined_nfa">dijkstra_on_combined_nfa</a></code></li>
 <li><code><a title="nfa.Nfa.is_fitting" href="#nfa.Nfa.is_fitting">is_fitting</a></code></li>
 <li><code><a title="nfa.Nfa.log_fittness" href="#nfa.Nfa.log_fittness">log_fittness</a></code></li>
 <li><code><a title="nfa.Nfa.print" href="#nfa.Nfa.print">print</a></code></li>
@@ -1945,6 +3225,9 @@ sets the values of activity, start place of the activity and its end place.</p>
 <h4><code><a title="nfa.Place" href="#nfa.Place">Place</a></code></h4>
 </li>
 <li>
+<h4><code><a title="nfa.PlaceCombined" href="#nfa.PlaceCombined">PlaceCombined</a></code></h4>
+</li>
+<li>
 <h4><code><a title="nfa.SpecialActivities" href="#nfa.SpecialActivities">SpecialActivities</a></code></h4>
 <ul class="">
 <li><code><a title="nfa.SpecialActivities.EPSILON" href="#nfa.SpecialActivities.EPSILON">EPSILON</a></code></li>
@@ -1952,6 +3235,9 @@ sets the values of activity, start place of the activity and its end place.</p>
 </li>
 <li>
 <h4><code><a title="nfa.Transition" href="#nfa.Transition">Transition</a></code></h4>
+</li>
+<li>
+<h4><code><a title="nfa.TransitionWithCost" href="#nfa.TransitionWithCost">TransitionWithCost</a></code></h4>
 </li>
 </ul>
 </li>

@@ -382,13 +382,41 @@ class Nfa:
                 num_fitting_traces += 1
         return (num_fitting_traces / len(log))
 
-    def compute_alignments(self, log):
+    def compute_alignments(self, log): # done
+        """
+        This function computes optimal alignments for each trace of the given log.
+
+        Parameters
+        ----------
+        log : list of list of strings
+            instances/traces taken from event log.
+        
+        Returns
+        -------
+        alignments: list of list of tuples of strings
+            list of alignments where each alignmeent is represented by a list of tuples. The first item of the tuple is the move on the trace and the second item is the move on model.
+        """
         alignments = []
         for trace in log:
             alignments.append(self.align_trace(trace))
         return alignments
 
-    def align_trace(self, trace):
+    def align_trace(self, trace): #done
+        """
+        This function calculates the alignment for the given trace.
+
+        Parameters
+        ----------
+        trace : list of strings
+            instance taken from event log.
+        
+        Returns
+        -------
+        alignment: list of tuples of strings
+            The first item of the tuple is move on trace and the second item is move on model.
+        cost: integer
+            number of not synchronized moves.
+        """
         if self.is_fitting(trace):
             #create a perfectly fitting alignment
             al = []
@@ -404,7 +432,22 @@ class Nfa:
         alignment, cost = self.dijkstra_on_combined_nfa(combined_nfa)
         return (alignment, cost)
 
-    def dijkstra_on_combined_nfa(self, comb_nfa):
+    def dijkstra_on_combined_nfa(self, comb_nfa):  #done
+        """
+        This function performs dijkstra algorithm on comb_nfa to find the optimal alignment.
+
+        Parameters
+        ----------
+        comb_nfa : Nfa object
+            nfa that consists of places of type PlaceCombined and transitions with cost associated with them.
+        
+        Returns
+        -------
+        alignment: list of tuples of string
+            The first item of the tuple is move on trace and the second is move on model.
+        cost_alignment: integer
+            number of not synchronized moves.
+        """
         infinity = float('inf') # xxx optimize as floats are big in memory
         #initialize
         place_info_list = []
@@ -464,14 +507,42 @@ class Nfa:
 
 
 
-    def dijkstra_info_of_place(self, info_list, place):
+    def dijkstra_info_of_place(self, info_list, place): #done
+        """
+        A helper function which returns information stored by the dijkstra algo for the given place. 
+
+        Parameters
+        ----------
+        info_list : list of lists
+            list of information about places that dijkstra algo has created so far.
+        place : Place object
+            the place one is interested in getting the information about.
+        
+        Returns
+        -------
+        info: list
+            a list containing the place as first element, cost as the second element, previous place in the shortest path as the third element and alignment used to go to the given place as the fourth element.
+        """
         for info in info_list:
             if(info[0] == place):
                 return info
         return None
 
 
-    def construct_combined_nfa(self, trace):
+    def construct_combined_nfa(self, trace):  #done
+        """
+        This function returns/creates an nfa that simulates a parallel execution of the nfa and an nfa that only accepts the given trace.
+
+        Parameters
+        ----------
+        trace : list of strings
+            instance taken from event log.
+        
+        Returns
+        -------
+        combined_nfa: Nfa object
+            nfa that simulates a parallel execution of the nfa and an nfa that only accepts the given trace.
+        """
         trace_nfa = nfa_from_trace(trace)
         
         combined_nfa = Nfa("combined")
@@ -558,7 +629,20 @@ class Nfa:
         
         return combined_nfa
 
-def nfa_from_trace(trace):
+def nfa_from_trace(trace):  #done
+    """
+    This function creates an nfa that only accepts the given trace.
+
+    Parameters
+    ----------
+    trace : list of strings
+        instance taken from event log.
+
+    Returns
+    -------
+    trace_nfa : NFA object
+        nfa that only accepts the given trace.
+    """
     #xxx empty traces are not supported
     trace_nfa = Nfa("trace_nfa")
     p_start = Place("t_s")
@@ -840,7 +924,20 @@ def nfa_from_activity(activity):
     return base_nfa
 
 
-def trace_check(trace):
+def trace_check(trace): #done
+    """
+    Fucntion that checks whether the given trace is valid or not.
+
+    Parameters
+    ----------
+    trace : list of strings
+        instance taken from event log.
+
+    Returns
+    -------
+    bool
+        true if the given trace fulfills criteria for trace and false in case it does not.
+    """
     if not isinstance(trace, list):
         print("Input is not a list")
         return False
@@ -854,14 +951,27 @@ def trace_check(trace):
 
     return True
 
-def re_expression_check(trace):
+def re_expression_check(reg): #done
+    """
+    Fucntion that checks whether the input is a regular expression.
+
+    Parameters
+    ----------
+    reg : list of characters
+        regular expressions that will be validated.
+
+    Returns
+    -------
+    bool
+        true if given list of strings fulfills crtieria of reg expression and false if it does not.
+    """
     special_characters = ["+", "*", "|", ".", "(", ")"]
     count1 = 0
 
-    if not isinstance(trace, list):
+    if not isinstance(reg, list):
         print("Input is not a list")
         return False
-    for i in trace:
+    for i in reg:
         if (i.isalnum() or i in special_characters) and not len(i) == 1:
             print("Only single characters are allowed")
             return False
