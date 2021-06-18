@@ -22,6 +22,8 @@ class TestNfa(unittest.TestCase):
         self.myNFA.add_Transition(self.t3)
         self.t4 = Transition("c", self.p3, self.p4)
         self.myNFA.add_Transition(self.t4)
+    def tearDown(self) :
+        pass
     def test_add_Place(self):
         p5 = Place("Go")
         self.myNFA.add_place(p5, False, True)
