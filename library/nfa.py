@@ -214,7 +214,7 @@ class Nfa:
 
         # check whether place allready exist
         self.places.append(place)
-        if is_start_place:
+        if is_start_place and (self.start_place is None):
             # check whether allready a start place is defined
             self.start_place = place
         if is_end_place:
@@ -855,7 +855,7 @@ def trace_check(trace):
     return True
 
 def re_expression_check(trace):
-    special_characters = ["+", "*", "|", ".", "(", ")"]
+    special_characters = ["+", "*", "|", ".", "(", ")","-"]
     count1 = 0
 
     if not isinstance(trace, list):
@@ -871,7 +871,7 @@ def re_expression_check(trace):
             return False
         if i == "(":
             count1 += 1
-        if i == ")":
+        if i == ")" :
             count1 -= 1
         if count1 < 0:
             print("Invalid Expression: Missing opening bracket")
@@ -900,8 +900,8 @@ t3 = Transition("b", p2, p3)
 myNFA.add_Transition(t3)
 t4 = Transition("c", p3, p4)
 myNFA.add_Transition(t4)
-#
-# print(myNFA.places)
+
+print(myNFA.places)
 # print(myNFA.transitions)
 #
 # print(myNFA.is_fitting(["a", "b", "c"]))  # True
