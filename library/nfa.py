@@ -506,7 +506,6 @@ class Nfa:
         return (alignment, cost_alignment)
 
 
-
     def dijkstra_info_of_place(self, info_list, place): #done
         """
         A helper function which returns information stored by the dijkstra algo for the given place. 
@@ -991,6 +990,117 @@ def re_expression_check(reg): #done
         return False
     return True
 
+# new optimal alignment algorithm ############################################################################################################################################
+
+def dijkstra_has_unvisited_places(dijkstra_visited_places, trace_length):
+    for dejure_place in dijkstra_visited_places:
+        if(dijkstra_visited_places[dejure_place] < trace_length):
+            return True
+    return False
+
+
+def optimal_alignment_nfa(dejure, trace):
+    """
+    This function performs dijkstra algorithm on the dejure nfa and the trace to find the optimal alignment.
+
+    Parameters
+    ----------
+    dejure : Nfa object
+        nfa that consists of places of type PlaceCombined and transitions with cost associated with them.
+    
+    Returns
+    -------
+    alignment: list of tuples of string
+        The first item of the tuple is move on trace and the second is move on model.
+    cost_alignment: integer
+        number of not synchronized moves.
+    """
+    infinity = float('inf') # xxx optimize as floats are big in memory
+    #initialize
+    dijkstra_place_info = {}
+    dijkstra_visited_places = {} 
+
+    for place in dejure.places:
+        #no places visited yet
+        dijkstra_visited_places[place] = -1
+
+        #fill the place info
+        for i in range(len(trace)+1): #here the +1 is needed because the index len(trace) represents the end state of the implicit trace nfa
+            dijkstra_place_info[(place, i)] = [infinity, None, None] # Format: [cost, predecessor, (ModelMove, LogMove)] - more memory efficient than dict
+    #initial cost for start place is 0
+    dijkstra_place_info[(dejure.start_place, 0)][0] = 0
+
+    while (dijkstra_has_unvisited_places(dijkstra_visited_places, len(trace))):
+
+        #select current place (dejureplace and index of trace) that has the lowest cost and was not yet visited
+        current_place = None
+        current_place_cost = infinity
+        current_place_trace_move = None
+        for dejure_place in dijkstra_visited_places:
+            if(dijkstra_visited_places[dejure_place] < len(trace)): #not visited
+                if(dijkstra_place_info[(dejure_place, dijkstra_visited_places[dejure_place] + 1)][0] < current_place_cost): #lower cost
+                    current_place = (dejure_place, dijkstra_visited_places[dejure_place] + 1)
+                    current_place_cost = dijkstra_place_info[current_place][0]
+                    current_place_trace_move = None
+                    if(dijkstra_visited_places[dejure_place] + 1 < len(trace)):
+                        current_place_trace_move = trace[dijkstra_visited_places[dejure_place] + 1]
+
+        #xxx check wether current_place cost is lower than infinity because otherwise not connected nfa
+
+        #check for all transitions if other places can be reached cheaper
+        #- move on log only
+        if(current_place[1] < len(trace)):
+            log_move_target = (current_place[0], current_place[1]+1)
+            log_move_target_cost_via_current_place = dijkstra_place_info[current_place][0] + 1 #the cost of a move on log only is 1
+            if(log_move_target_cost_via_current_place < dijkstra_place_info[log_move_target][0]):
+                #update dijkstra place info because a cheaper way to a place has been found
+                dijkstra_place_info[log_move_target][0] = log_move_target_cost_via_current_place #cost
+                dijkstra_place_info[log_move_target][1] = current_place #predecessor
+                dijkstra_place_info[log_move_target][2] = (current_place_trace_move, '>>')
+        #- move on model only and synchronous moves
+        for trans in current_place[0].transitions:
+            dejure_transition_target = trans.end_place
+            #- move on model only
+            model_move_target = (dejure_transition_target, current_place[1])
+            model_move_target_cost_via_current_place = dijkstra_place_info[current_place][0] + 1  #the cost of a move on model only is 1
+            if(model_move_target_cost_via_current_place < dijkstra_place_info[model_move_target][0]):
+                #update dijkstra place info because a cheaper way to a place has been found
+                dijkstra_place_info[model_move_target][0] = model_move_target_cost_via_current_place #cost
+                dijkstra_place_info[model_move_target][1] = current_place #predecessor
+                dijkstra_place_info[model_move_target][2] = ('>>', trans.activity)
+            #- synchrounous move
+            if(current_place[1] < len(trace)):
+                if(trans.activity == current_place_trace_move):
+                    sync_move_target = (dejure_transition_target, current_place[1]+1)
+                    sync_move_target_cost_via_current_place = dijkstra_place_info[current_place][0] #synchronous moves have no cost associated to them
+                    if(sync_move_target_cost_via_current_place < dijkstra_place_info[sync_move_target][0]):
+                        #update dijkstra place info because a cheaper way to a place has been found
+                        dijkstra_place_info[sync_move_target][0] = sync_move_target_cost_via_current_place #cost
+                        dijkstra_place_info[sync_move_target][1] = current_place #predecessor
+                        dijkstra_place_info[sync_move_target][2] = (trans.activity, current_place_trace_move)
+
+        #remove the current selected place from list of not visited places
+        dijkstra_visited_places[current_place[0]] += 1
+    
+    #return the alignments along the cheapest path to an accepting place
+    #find closest accepting place
+    closest_accepting_place = (dejure.end_places[0], len(trace)) # xxx there must be an end place in dejure nfa
+    cost_to_closest_acc_place = dijkstra_place_info[closest_accepting_place][0]
+    for dejure_end_place in dejure.end_places:
+        if(dijkstra_place_info[(dejure_end_place, len(trace))][0] < cost_to_closest_acc_place):
+            closest_accepting_place = (dejure_end_place, len(trace))
+            cost_to_closest_acc_place = dijkstra_place_info[closest_accepting_place][0]
+
+    # recreate the path to closest accepting place by going back from closest accepting place to the start place
+    alignment = []
+    place_we_are_at = closest_accepting_place
+    cost_alignment = cost_to_closest_acc_place
+    while place_we_are_at != (dejure.start_place, 0):
+        alignment.insert(0, dijkstra_place_info[place_we_are_at][2]) #insert move that was used to get from predecessor to place we are at
+        place_we_are_at = dijkstra_place_info[place_we_are_at][1] #set predecessor to place we are at
+    
+    return (alignment, cost_alignment)
+
 # Test section
 
 myNFA = Nfa("TestNFA")
@@ -1047,9 +1157,12 @@ print(myNFA.places)
 
 # combined nfa test
 myTrace = ["a", "b", "b", "b", "c", "z"]
-#print(myNFA.construct_combined_nfa(myTrace))
+print(myNFA.construct_combined_nfa(myTrace))
 print(myNFA.align_trace(myTrace))
+print(optimal_alignment_nfa(myNFA, myTrace))
 myTrace = ["a", "z", "b", "b", "c"]
 print(myNFA.align_trace(myTrace))
+print(optimal_alignment_nfa(myNFA, myTrace))
 myTrace = ["a", "z", "b", "b"]
 print(myNFA.align_trace(myTrace))
+print(optimal_alignment_nfa(myNFA, myTrace))
