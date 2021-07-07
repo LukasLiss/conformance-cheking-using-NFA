@@ -772,7 +772,6 @@ def factor(regex):
     NFA : NFA object
         returns the NFA model defined by the regular expression interpreted as factor part.
     """
-    # testing push
     if (len(regex) > 0 and regex[0].isalpha()):
         activity = regex.pop(0)
         activity_nfa = nfa_from_activity(activity)
@@ -780,7 +779,7 @@ def factor(regex):
     if (len(regex) > 0 and regex[0] == "("):
         regex.pop(0)
         sub_nfa = expression(regex)
-        if (len(regex) > 0 and regex[0] != "("):
+        if (len(regex) > 0 and regex[0] != ")"):
             print("Error: Was expecting a closing parenthesis but recived: " + regex[0])
         regex.pop(0)
         return sub_nfa
@@ -890,12 +889,11 @@ def star_nfa(nfa):
     star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, p_end))
     # connect new start to the start of the nfa
     star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_start, nfa.start_place))
-    # connect new end to the start of the nfa
-    star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, p_end, nfa.start_place))
 
     # connect accepting places of the nfa to the new end place
     for acc_place in nfa.end_places:
         star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_place, p_end))
+        star_nfa.add_Transition(Transition(SpecialActivities.EPSILON, acc_place, nfa.start_place))
 
     return star_nfa
 
@@ -1065,9 +1063,14 @@ def optimal_alignment_nfa(dejure, trace):
             model_move_target_cost_via_current_place = dijkstra_place_info[current_place][0] + 1  #the cost of a move on model only is 1
             if(model_move_target_cost_via_current_place < dijkstra_place_info[model_move_target][0]):
                 #update dijkstra place info because a cheaper way to a place has been found
-                dijkstra_place_info[model_move_target][0] = model_move_target_cost_via_current_place #cost
-                dijkstra_place_info[model_move_target][1] = current_place #predecessor
-                dijkstra_place_info[model_move_target][2] = ('>>', trans.activity)
+                if(trans.activity == SpecialActivities.EPSILON):
+                    dijkstra_place_info[model_move_target][0] = dijkstra_place_info[current_place][0] #epsilon moves on model only have no cost
+                    dijkstra_place_info[model_move_target][1] = current_place #predecessor
+                    dijkstra_place_info[model_move_target][2] = None #epsilon moves should not appear in the alignment
+                else:
+                    dijkstra_place_info[model_move_target][0] = model_move_target_cost_via_current_place #cost
+                    dijkstra_place_info[model_move_target][1] = current_place #predecessor
+                    dijkstra_place_info[model_move_target][2] = ('>>', trans.activity)
             #- synchrounous move
             if(current_place[1] < len(trace)):
                 if(trans.activity == current_place_trace_move):
@@ -1096,7 +1099,8 @@ def optimal_alignment_nfa(dejure, trace):
     place_we_are_at = closest_accepting_place
     cost_alignment = cost_to_closest_acc_place
     while place_we_are_at != (dejure.start_place, 0):
-        alignment.insert(0, dijkstra_place_info[place_we_are_at][2]) #insert move that was used to get from predecessor to place we are at
+        if(dijkstra_place_info[place_we_are_at][2] != None):
+            alignment.insert(0, dijkstra_place_info[place_we_are_at][2]) #insert move that was used to get from predecessor to place we are at
         place_we_are_at = dijkstra_place_info[place_we_are_at][1] #set predecessor to place we are at
     
     return (alignment, cost_alignment)
@@ -1134,19 +1138,19 @@ print(myNFA.places)
 #
 # print(myNFA.is_fitting(["a"]))  # True
 #
-# myRegexNfa = expression(["a", "*", "|", "(", "c", ".", "d", ")", "|", "(", "e", ".", "f", ")"])
-# myRegexNfa.print()
-#
-# print("Regex: ")
-# print(myRegexNfa.is_fitting(["a", "a"]))  # True
-# print(myRegexNfa.is_fitting(["a"]))  # True
-# print(myRegexNfa.is_fitting([]))  # True
-# print(myRegexNfa.is_fitting(["c", "d"]))  # True
-# print(myRegexNfa.is_fitting(["e", "f"]))  # True
-# print(myRegexNfa.is_fitting(["a", "c"]))  # False
-# print(myRegexNfa.is_fitting(["a", "c", "d"]))  # False
-# print(myRegexNfa.is_fitting(["x"]))  # False
-# print(myRegexNfa.is_fitting(["c"]))  # False
+myRegexNfa = expression(["a", "*", "|", "(", "c", ".", "d", ")", "|", "(", "e", ".", "f", ")"])
+myRegexNfa.print()
+
+print("Regex: ")
+print(myRegexNfa.is_fitting(["a", "a"]))  # True
+print(myRegexNfa.is_fitting(["a"]))  # True
+print(myRegexNfa.is_fitting([]))  # True
+print(myRegexNfa.is_fitting(["c", "d"]))  # True
+print(myRegexNfa.is_fitting(["e", "f"]))  # True
+print(myRegexNfa.is_fitting(["a", "c"]))  # False
+print(myRegexNfa.is_fitting(["a", "c", "d"]))  # False
+print(myRegexNfa.is_fitting(["x"]))  # False
+print(myRegexNfa.is_fitting(["c"]))  # False
 
 # nfa from trace test
 # myTrace = ["a", "b", "b", "b", "c", "z"]
@@ -1156,13 +1160,45 @@ print(myNFA.places)
 # print(myNfa.is_fitting(myOtherTrace)) # False
 
 # combined nfa test
-myTrace = ["a", "b", "b", "b", "c", "z"]
-print(myNFA.construct_combined_nfa(myTrace))
-print(myNFA.align_trace(myTrace))
-print(optimal_alignment_nfa(myNFA, myTrace))
-myTrace = ["a", "z", "b", "b", "c"]
-print(myNFA.align_trace(myTrace))
-print(optimal_alignment_nfa(myNFA, myTrace))
-myTrace = ["a", "z", "b", "b"]
-print(myNFA.align_trace(myTrace))
-print(optimal_alignment_nfa(myNFA, myTrace))
+# myTrace = ["a", "b", "b", "b", "c", "z"]
+# print(myNFA.construct_combined_nfa(myTrace))
+# print(myNFA.align_trace(myTrace))
+# print(optimal_alignment_nfa(myNFA, myTrace))
+# myTrace = ["a", "z", "b", "b", "c"]
+# print(myNFA.align_trace(myTrace))
+# print(optimal_alignment_nfa(myNFA, myTrace))
+# myTrace = ["a", "z", "b", "b"]
+# print(myNFA.align_trace(myTrace))
+# print(optimal_alignment_nfa(myNFA, myTrace))
+
+# print("Tests with epsilon transitions in nfa:")
+
+# myNFA = Nfa("TestNFA")
+# p1 = Place("Greating")
+# myNFA.add_place(p1, True)
+# p2 = Place("Start Small Talk")
+# myNFA.add_place(p2)
+# p3 = Place("End Small Talk")
+# myNFA.add_place(p3)
+# p4 = Place("Good Bye")
+# myNFA.add_place(p4, False, True)
+# t1 = Transition("a", p1, p2)
+# myNFA.add_Transition(t1)
+# t2 = Transition("b", p2, p2)
+# myNFA.add_Transition(t2)
+# t3 = Transition(SpecialActivities.EPSILON, p2, p3)
+# myNFA.add_Transition(t3)
+# t4 = Transition("c", p3, p4)
+# myNFA.add_Transition(t4)
+
+# myTrace = ["a", "c"]
+# print(optimal_alignment_nfa(myNFA, myTrace))
+
+print("Test alignment with regex")
+#myRegexNfa = expression(["a", "*", "|", "(", "c", ".", "d", ")", "|", "(", "e", ".", "f", ")"])
+myRegexNfa = expression(["a", "*",])
+myRegexNfa.print()
+print(":")
+print(optimal_alignment_nfa(myRegexNfa,["x", "a", "a"]))
+print(myRegexNfa.align_trace(["a", "x"]))
+
