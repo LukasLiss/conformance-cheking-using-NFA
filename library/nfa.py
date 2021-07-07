@@ -1061,10 +1061,12 @@ def optimal_alignment_nfa(dejure, trace):
             #- move on model only
             model_move_target = (dejure_transition_target, current_place[1])
             model_move_target_cost_via_current_place = dijkstra_place_info[current_place][0] + 1  #the cost of a move on model only is 1
+            if(trans.activity == SpecialActivities.EPSILON):
+                model_move_target_cost_via_current_place = dijkstra_place_info[current_place][0]  #the cost of a epsilon move on model only is 0
             if(model_move_target_cost_via_current_place < dijkstra_place_info[model_move_target][0]):
                 #update dijkstra place info because a cheaper way to a place has been found
                 if(trans.activity == SpecialActivities.EPSILON):
-                    dijkstra_place_info[model_move_target][0] = dijkstra_place_info[current_place][0] #epsilon moves on model only have no cost
+                    dijkstra_place_info[model_move_target][0] = model_move_target_cost_via_current_place
                     dijkstra_place_info[model_move_target][1] = current_place #predecessor
                     dijkstra_place_info[model_move_target][2] = None #epsilon moves should not appear in the alignment
                 else:
@@ -1199,6 +1201,6 @@ print("Test alignment with regex")
 myRegexNfa = expression(["a", "*",])
 myRegexNfa.print()
 print(":")
-print(optimal_alignment_nfa(myRegexNfa,["x", "a", "a"]))
+print(optimal_alignment_nfa(myRegexNfa,["a"]))
 print(myRegexNfa.align_trace(["a", "x"]))
 
