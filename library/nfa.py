@@ -1050,17 +1050,6 @@ def optimal_alignment_nfa(dejure, trace):
                         current_place_trace_move = None
                         if(i < len(trace)):
                             current_place_trace_move = trace[i]
-        
-        #xxx curent by old method
-        old_current_place = None
-        old_current_cost = infinity
-        for pl in old_not_visited_places:
-            if(dijkstra_place_info[pl][0] < old_current_cost):
-                old_current_place = pl
-                old_current_cost = dijkstra_place_info[pl][0]
-        #print("Old: ", (old_current_place[0].label, old_current_place[1])," - ", dijkstra_place_info[old_current_place][0], " New: ", (current_place[0].label, current_place[1]), " - ", dijkstra_place_info[current_place][0])
-
-        #current_place = old_current_place
 
         #xxx check wether current_place cost is lower than infinity because otherwise not connected nfa
 
@@ -1109,9 +1098,6 @@ def optimal_alignment_nfa(dejure, trace):
 
         #remove the current selected place from list of not visited places
         dijkstra_not_visited_places[current_place[0]].remove(current_place[1])
-
-        #xxx old current
-        old_not_visited_places.remove(current_place)
     
     #return the alignments along the cheapest path to an accepting place
     #find closest accepting place
