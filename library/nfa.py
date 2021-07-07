@@ -680,7 +680,7 @@ def convert_from_regex(regex):
     return expression(regex)
 
 
-# Grammer used to describe the accepted regular expression:
+# Grammer used to describe the accepted regular expression: 
 # Expression := Konkat { "|" Konkat}
 # Konkat := Prod {(".", "") Prod}  - until now the . is a must
 # Prod := Factor ("*", "")
@@ -990,9 +990,9 @@ def re_expression_check(reg): #done
 
 # new optimal alignment algorithm ############################################################################################################################################
 
-def dijkstra_has_unvisited_places(dijkstra_visited_places, trace_length):
-    for dejure_place in dijkstra_visited_places:
-        if(dijkstra_visited_places[dejure_place] < trace_length):
+def dijkstra_has_unvisited_places(dijkstra_not_visited_places):
+    for dejure_place in dijkstra_not_visited_places:
+        if(len(dijkstra_not_visited_places[dejure_place]) > 0):
             return True
     return False
 
@@ -1016,11 +1016,13 @@ def optimal_alignment_nfa(dejure, trace):
     infinity = float('inf') # xxx optimize as floats are big in memory
     #initialize
     dijkstra_place_info = {}
-    dijkstra_visited_places = {} 
+    dijkstra_not_visited_places = {} 
 
     for place in dejure.places:
         #no places visited yet
-        dijkstra_visited_places[place] = -1
+        dijkstra_not_visited_places[place] = []
+        for i in range(len(trace) + 1):
+            dijkstra_not_visited_places[place].append(i)
 
         #fill the place info
         for i in range(len(trace)+1): #here the +1 is needed because the index len(trace) represents the end state of the implicit trace nfa
@@ -1028,20 +1030,37 @@ def optimal_alignment_nfa(dejure, trace):
     #initial cost for start place is 0
     dijkstra_place_info[(dejure.start_place, 0)][0] = 0
 
-    while (dijkstra_has_unvisited_places(dijkstra_visited_places, len(trace))):
+    #xxx current by old method
+    old_not_visited_places = []
+    for place in dejure.places:
+        for i in range(len(trace) + 1):
+            old_not_visited_places.append((place, i))
+
+    while (dijkstra_has_unvisited_places(dijkstra_not_visited_places)):
 
         #select current place (dejureplace and index of trace) that has the lowest cost and was not yet visited
         current_place = None
         current_place_cost = infinity
         current_place_trace_move = None
-        for dejure_place in dijkstra_visited_places:
-            if(dijkstra_visited_places[dejure_place] < len(trace)): #not visited
-                if(dijkstra_place_info[(dejure_place, dijkstra_visited_places[dejure_place] + 1)][0] < current_place_cost): #lower cost
-                    current_place = (dejure_place, dijkstra_visited_places[dejure_place] + 1)
-                    current_place_cost = dijkstra_place_info[current_place][0]
-                    current_place_trace_move = None
-                    if(dijkstra_visited_places[dejure_place] + 1 < len(trace)):
-                        current_place_trace_move = trace[dijkstra_visited_places[dejure_place] + 1]
+        for dejure_place in dijkstra_not_visited_places:
+                for i in dijkstra_not_visited_places[dejure_place]:
+                    if(dijkstra_place_info[(dejure_place, i)][0] < current_place_cost): #lower cost
+                        current_place = (dejure_place, i)
+                        current_place_cost = dijkstra_place_info[current_place][0]
+                        current_place_trace_move = None
+                        if(i < len(trace)):
+                            current_place_trace_move = trace[i]
+        
+        #xxx curent by old method
+        old_current_place = None
+        old_current_cost = infinity
+        for pl in old_not_visited_places:
+            if(dijkstra_place_info[pl][0] < old_current_cost):
+                old_current_place = pl
+                old_current_cost = dijkstra_place_info[pl][0]
+        #print("Old: ", (old_current_place[0].label, old_current_place[1])," - ", dijkstra_place_info[old_current_place][0], " New: ", (current_place[0].label, current_place[1]), " - ", dijkstra_place_info[current_place][0])
+
+        #current_place = old_current_place
 
         #xxx check wether current_place cost is lower than infinity because otherwise not connected nfa
 
@@ -1055,6 +1074,7 @@ def optimal_alignment_nfa(dejure, trace):
                 dijkstra_place_info[log_move_target][0] = log_move_target_cost_via_current_place #cost
                 dijkstra_place_info[log_move_target][1] = current_place #predecessor
                 dijkstra_place_info[log_move_target][2] = (current_place_trace_move, '>>')
+                #print("used: ", (current_place_trace_move, '>>'), " to go from ", (current_place[0].label, current_place[1]), " to ",  (log_move_target[0].label, log_move_target[1]), "with cost: ", log_move_target_cost_via_current_place)
         #- move on model only and synchronous moves
         for trans in current_place[0].transitions:
             dejure_transition_target = trans.end_place
@@ -1069,10 +1089,12 @@ def optimal_alignment_nfa(dejure, trace):
                     dijkstra_place_info[model_move_target][0] = model_move_target_cost_via_current_place
                     dijkstra_place_info[model_move_target][1] = current_place #predecessor
                     dijkstra_place_info[model_move_target][2] = None #epsilon moves should not appear in the alignment
+                    #print("used: N ", ('>>', trans.activity), " to go from ", (current_place[0].label, current_place[1]), " to ",  (model_move_target[0].label, model_move_target[1]), "with cost: ", model_move_target_cost_via_current_place)
                 else:
                     dijkstra_place_info[model_move_target][0] = model_move_target_cost_via_current_place #cost
                     dijkstra_place_info[model_move_target][1] = current_place #predecessor
                     dijkstra_place_info[model_move_target][2] = ('>>', trans.activity)
+                    #print("used: ", ('>>', trans.activity), " to go from ", (current_place[0].label, current_place[1]), " to ",  (model_move_target[0].label, model_move_target[1]), "with cost: ", model_move_target_cost_via_current_place)
             #- synchrounous move
             if(current_place[1] < len(trace)):
                 if(trans.activity == current_place_trace_move):
@@ -1083,9 +1105,13 @@ def optimal_alignment_nfa(dejure, trace):
                         dijkstra_place_info[sync_move_target][0] = sync_move_target_cost_via_current_place #cost
                         dijkstra_place_info[sync_move_target][1] = current_place #predecessor
                         dijkstra_place_info[sync_move_target][2] = (trans.activity, current_place_trace_move)
+                        #print("used: ", (trans.activity, current_place_trace_move), " to go from ", (current_place[0].label, current_place[1]), " to ",  (sync_move_target[0].label, sync_move_target[1]), "with cost: ", sync_move_target_cost_via_current_place)
 
         #remove the current selected place from list of not visited places
-        dijkstra_visited_places[current_place[0]] += 1
+        dijkstra_not_visited_places[current_place[0]].remove(current_place[1])
+
+        #xxx old current
+        old_not_visited_places.remove(current_place)
     
     #return the alignments along the cheapest path to an accepting place
     #find closest accepting place
@@ -1140,19 +1166,19 @@ print(myNFA.places)
 #
 # print(myNFA.is_fitting(["a"]))  # True
 #
-myRegexNfa = expression(["a", "*", "|", "(", "c", ".", "d", ")", "|", "(", "e", ".", "f", ")"])
-myRegexNfa.print()
+# myRegexNfa = expression(["a", "*", "|", "(", "c", ".", "d", ")", "|", "(", "e", ".", "f", ")"])
+# myRegexNfa.print()
 
-print("Regex: ")
-print(myRegexNfa.is_fitting(["a", "a"]))  # True
-print(myRegexNfa.is_fitting(["a"]))  # True
-print(myRegexNfa.is_fitting([]))  # True
-print(myRegexNfa.is_fitting(["c", "d"]))  # True
-print(myRegexNfa.is_fitting(["e", "f"]))  # True
-print(myRegexNfa.is_fitting(["a", "c"]))  # False
-print(myRegexNfa.is_fitting(["a", "c", "d"]))  # False
-print(myRegexNfa.is_fitting(["x"]))  # False
-print(myRegexNfa.is_fitting(["c"]))  # False
+# print("Regex: ")
+# print(myRegexNfa.is_fitting(["a", "a"]))  # True
+# print(myRegexNfa.is_fitting(["a"]))  # True
+# print(myRegexNfa.is_fitting([]))  # True
+# print(myRegexNfa.is_fitting(["c", "d"]))  # True
+# print(myRegexNfa.is_fitting(["e", "f"]))  # True
+# print(myRegexNfa.is_fitting(["a", "c"]))  # False
+# print(myRegexNfa.is_fitting(["a", "c", "d"]))  # False
+# print(myRegexNfa.is_fitting(["x"]))  # False
+# print(myRegexNfa.is_fitting(["c"]))  # False
 
 # nfa from trace test
 # myTrace = ["a", "b", "b", "b", "c", "z"]
@@ -1198,9 +1224,12 @@ print(myRegexNfa.is_fitting(["c"]))  # False
 
 print("Test alignment with regex")
 #myRegexNfa = expression(["a", "*", "|", "(", "c", ".", "d", ")", "|", "(", "e", ".", "f", ")"])
-myRegexNfa = expression(["a", "*",])
-myRegexNfa.print()
-print(":")
-print(optimal_alignment_nfa(myRegexNfa,["a"]))
-print(myRegexNfa.align_trace(["a", "x"]))
+# myRegexNfa = expression(["a", "*",])
+# myRegexNfa.print()
+# print(":")
+# print(optimal_alignment_nfa(myRegexNfa,["a", "a"]))
 
+myNFA = expression(["a", ".", "(", "b", "*", ")", ".", "(", "(", "c", ".", "d", ")", "*", ")" ])
+print(myNFA.is_fitting(["a", "b", "b"]))  # True
+print(optimal_alignment_nfa(myNFA, ["a", "b", "b"]))
+print(optimal_alignment_nfa(myNFA, ["a", "b", "b", "c", "d", "c", "d", "c"]))
