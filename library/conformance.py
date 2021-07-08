@@ -1,12 +1,42 @@
 from library.nfa import SpecialActivities, Nfa, Place, PlaceCombined, Transition, TransitionWithCost
 
 def dijkstra_has_unvisited_places(dijkstra_not_visited_places):
+    """
+    A helping function that checks wether the dijkstra algorithm is already done.
+
+    Parameters
+    ----------
+    dijkstra_not_visited_places: dictonairy
+        a dictonairy that contains a list of not seen inxedes of the trace for each place of a nfa model
+    
+    Returns
+    -------
+    bool
+        true if there are still places for the dijkstra algorithm to explore, false otherwise.
+    """
     for dejure_place in dijkstra_not_visited_places:
         if(len(dijkstra_not_visited_places[dejure_place]) > 0):
             return True
     return False
 
 def optimal_alignment_log_on_nfa(nfa_model, log):
+    """
+    This function performs dijkstra algorithm on the nfa model and each trace of the log to find the optimal alignment for each trace.
+
+    Parameters
+    ----------
+    nfa_model : Nfa object
+        nfa that describes the behaviour the trace should be aligned to.
+    log : list of list of string
+        the log that contains all the traces that should be aligned with the model
+    
+    Returns
+    -------
+    alignment: list of tuples of string
+        The first item of the tuple is move on trace and the second is move on model.
+    cost_alignment: integer
+        number of not synchronized moves.
+    """
     alignments = []
     for trace in log:
         alignments.append(optimal_alignment_trace_on_nfa(nfa_model, trace))
@@ -14,12 +44,15 @@ def optimal_alignment_log_on_nfa(nfa_model, log):
 
 def optimal_alignment_trace_on_nfa(nfa_model, trace):
     """
-    This function performs dijkstra algorithm on the dejure nfa and the trace to find the optimal alignment.
+    This function performs dijkstra algorithm on the nfa model and the trace to find the optimal alignment.
 
     Parameters
     ----------
     nfa_model : Nfa object
-        nfa that consists of places of type PlaceCombined and transitions with cost associated with them.
+        nfa that describes the behaviour the trace should be aligned to.
+    
+    trace : list of strings
+        the trace that should be aligned with the model
     
     Returns
     -------
@@ -137,7 +170,7 @@ def optimal_alignment_trace_on_nfa(nfa_model, trace):
 def is_trace_fitting(nfa_model, trace):
 
     """
-    This function checks if the given trace mathces the model. It replays the trace on the model and checks whether it ends up in an accepting end state.
+    This function checks if the given trace matches the model. It replays the trace on the model and checks whether it ends up in an accepting end state.
 
     Parameters
     ----------
