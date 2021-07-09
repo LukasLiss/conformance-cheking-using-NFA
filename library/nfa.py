@@ -49,6 +49,7 @@ class Place:
         self.label = label
         self.transitions = []
 
+
 class PlaceCombined(Place):
     def __init__(self, label):
         """
@@ -113,11 +114,13 @@ class Transition:
         self.start_place = start_place
         self.end_place = end_place
 
+
 class TransitionWithCost(Transition):
     def __init__(self, activity, start_place, end_place, cost, alignment_element):
         super().__init__(activity, start_place, end_place)
         self.cost = cost
         self.alignment_element = alignment_element
+
 
 class Nfa:
     """
@@ -279,6 +282,7 @@ class Nfa:
                 place.transitions.remove(transition)
                 break
 
+
 def nfa_from_regex(regex):
     """
     Fucntion that creates and returns the NFA based on the given regular expression.
@@ -293,6 +297,9 @@ def nfa_from_regex(regex):
     NFA : NFA object
         the final model that describes the same accepted language as regular expression.
     """
+    input_regex_check_flag = re_expression_check(regex)
+    if not input_regex_check_flag:
+        exit()
     return expression(regex)
 
 
@@ -352,6 +359,7 @@ def konkat(regex):
         list_of_prods.append(prod(regex))
     return konkatonate_nfas(list_of_prods)
 
+
 def prod(regex):
     """
     It returns the NFA model defined by the regular expression interpreted as a product(* operator) part.
@@ -371,6 +379,7 @@ def prod(regex):
         regex.pop(0)
         return star_nfa(factor_nfa)
     return (factor_nfa)
+
 
 def factor(regex):
     """
@@ -535,7 +544,7 @@ def nfa_from_activity(activity):
     return base_nfa
 
 
-def trace_check(trace): #done
+def trace_check(trace):  # done
     """
     Fucntion that checks whether the given trace is valid or not.
 
@@ -553,16 +562,15 @@ def trace_check(trace): #done
         print("Input is not a list")
         return False
     for i in trace:
+        i = i.replace(" ", "")
         if not i.isalnum():
             print("Only alphanumeric values are allowed")
-            return False
-        if i.isalnum and not len(i) == 1:
-            print("Only single characters are allowed")
             return False
 
     return True
 
-def re_expression_check(reg): #done
+
+def re_expression_check(reg):  # done
     """
     Fucntion that checks whether the input is a regular expression.
 
@@ -576,7 +584,7 @@ def re_expression_check(reg): #done
     bool
         true if given list of strings fulfills crtieria of reg expression and false if it does not.
     """
-    special_characters = ["+", "*", "|", ".", "(", ")","-"]
+    special_characters = ["*", "|", ".", "(", ")"]
     count1 = 0
 
     if not isinstance(reg, list):
@@ -588,11 +596,11 @@ def re_expression_check(reg): #done
             return False
 
         if not i.isalnum() and i not in special_characters:
-            print("Only alphanumeric values with given set of special characters [ + | * . ( ) ] are allowed")
+            print("Only alphanumeric values with given set of special characters [| * . ( ) ] are allowed")
             return False
         if i == "(":
             count1 += 1
-        if i == ")" :
+        if i == ")":
             count1 -= 1
         if count1 < 0:
             print("Invalid Expression: Missing opening bracket")
@@ -600,4 +608,14 @@ def re_expression_check(reg): #done
     if count1 != 0:
         print("Invalid Expression: Closing bracket not found")
         return False
+    return True
+
+
+def log_check(log):
+    for value in log:
+       check = trace_check(value)
+       if not check:
+           exit()
+
+
     return True
