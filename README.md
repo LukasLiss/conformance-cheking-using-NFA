@@ -35,7 +35,7 @@ The nfa is intended to accept arbitrary many a, or c followed by d, or e followe
 ### Example 2: These operations work also on logs instead of traces:
 
 `from library.nfa import Nfa, Place, Transition, nfa_from_regex` <br>
-`1example_log = [["a"], ["a", "b"], ["a", "b", "b"], ["a", "c", "d"], ["x"], ["x", "y"], ["y"], ["w"], ["k"], ["q"]]` <br>
+`example_log = [["a"], ["a", "b"], ["a", "b", "b"], ["a", "c", "d"], ["x"], ["x", "y"], ["y"], ["w"], ["k"], ["q"]]` <br>
 The percentage of fiting traces of an example log L is:  0.4<br>
 
 <br>
