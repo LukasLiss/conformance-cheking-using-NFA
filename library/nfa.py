@@ -352,7 +352,6 @@ def konkat(regex):
         list_of_prods.append(prod(regex))
     return konkatonate_nfas(list_of_prods)
 
-
 def prod(regex):
     """
     It returns the NFA model defined by the regular expression interpreted as a product(* operator) part.
@@ -372,7 +371,6 @@ def prod(regex):
         regex.pop(0)
         return star_nfa(factor_nfa)
     return (factor_nfa)
-
 
 def factor(regex):
     """

@@ -19,9 +19,6 @@ t4 = Transition("good by", p3, p4)
 myNFA.add_Transition(t4)
 
 # The small talk nfa requires a "hello" then at least one "small talk" and one "good by" in the end
-nfaactivity = nfa.nfa_from_activity("a")
-for pl in nfaactivity.places:
-    print(pl.label)
 print("\nCheck wether traces are perfectly fitting with the Small Talk Nfa: \n")
 current_Trace = ["hello", "small talk", "good by"]
 print("Trace: ", current_Trace, " is fitting: ", conformance.is_trace_fitting(myNFA, current_Trace))  # True
