@@ -1,6 +1,5 @@
 from library.nfa import Nfa, Place, Transition, nfa_from_regex
-from library import conformance
-
+from library import conformance, nfa
 myNFA = Nfa("Small Talk Nfa")
 p1 = Place("Greating")
 myNFA.add_place(p1, True)
@@ -20,6 +19,9 @@ t4 = Transition("good by", p3, p4)
 myNFA.add_Transition(t4)
 
 # The small talk nfa requires a "hello" then at least one "small talk" and one "good by" in the end
+nfaactivity = nfa.nfa_from_activity("a")
+for pl in nfaactivity.places:
+    print(pl.label)
 print("\nCheck wether traces are perfectly fitting with the Small Talk Nfa: \n")
 current_Trace = ["hello", "small talk", "good by"]
 print("Trace: ", current_Trace, " is fitting: ", conformance.is_trace_fitting(myNFA, current_Trace))  # True
@@ -46,6 +48,7 @@ print(conformance.optimal_alignment_trace_on_nfa(myNFA, current_Trace))
 
 print("\nOne can create an Nfa easily from a regular expression:\n")
 myRegexNfa = nfa_from_regex(["a", "*", "|", "(", "c", ".", "d", ")", "|", "(", "e", ".", "f", ")"])
+print(myRegexNfa)
 print("Here we used: ", ["a", "*", "|", "(", "c", ".", "d", ")", "|", "(", "e", ".", "f", ")"], " as the regular expression. The nfa is intended to accept arbitrary many a, or c followed by d, or e followed by f")
 print("By computing alignments for some traces we can see that this work correctly:\n")
 current_Trace = ["a", "a"]

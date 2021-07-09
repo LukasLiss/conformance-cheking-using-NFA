@@ -1,4 +1,5 @@
 import unittest
+import conformance
 import nfa
 from nfa import Nfa, SpecialActivities
 from nfa import Place
@@ -72,85 +73,84 @@ class TestNfa(unittest.TestCase):
         self.assertEqual(self.p4.transitions, [t5])
         self.myNFA.remove_Transition(t5)
         self.assertEqual(self.p4.transitions, [])
-    def test_is_fitting(self):
-            self.assertTrue(self.myNFA.is_fitting(["a", "b", "c"]))
-            self.assertTrue(self.myNFA.is_fitting(["a", "b", "b", "b", "c"]))
-            self.assertFalse(self.myNFA.is_fitting(["a", "a", "b", "c"]))
-            self.assertFalse(self.myNFA.is_fitting(["a", "c"]))
-            self.assertFalse(self.myNFA.is_fitting(["a", "b"]))
-            p5 = Place("End")
-            self.myNFA.add_place(p5, False, True)
-            t5 = Transition("d", self.p3, p5)
-            self.myNFA.add_Transition(t5)
-            self.assertFalse(self.myNFA.is_fitting(["a"]))
-            self.assertTrue(self.myNFA.is_fitting(["a", "b", "d"]))
-            self.assertTrue(self.myNFA.is_fitting(["a", "b", "b", "b", "d"]))
-            self.assertFalse(self.myNFA.is_fitting(["a", "a", "b", "d"]))
-            self.assertFalse(self.myNFA.is_fitting(["a", "d"]))
-            self.assertFalse(self.myNFA.is_fitting(["a", "e"]))
-            p6 = Place("End")
-            self.myNFA.add_place(p6, False, True)
-            t6 = Transition("e", self.p2, p6)
-            self.myNFA.add_Transition(t6)
-            self.assertTrue(self.myNFA.is_fitting(["a", "e"]))
-            self.assertTrue(self.myNFA.is_fitting(["a", "b","e"]))
-            self.assertTrue(self.myNFA.is_fitting(["a", "b","b", "e"]))
-            self.assertFalse(self.myNFA.is_fitting(["a", "b", "c", "e"]))
-            self.myNFA.add_Transition(Transition(SpecialActivities.EPSILON, self.p2, self.p4))
-            self.assertTrue(self.myNFA.is_fitting(["a"]))
-
-    def test_log_fittness(self):
-        log1 = [["a", "b", "c"],["a", "b", "b", "b", "c"],["a", "a", "b", "c"],["a", "b", "c", "e"],["a", "c"],["a", "e"]]
-        self.assertEqual(self.myNFA.log_fittness(log1),2/6)
-        log2 =[["a", "b", "c"],["a", "b", "b", "b", "c"],["a", "a", "b", "c"],["a", "b", "c", "e"],["a", "c"],["a", "e"],["a", "d"],["a"],["a", "b","e"],["a", "b", "c", "e"],["a","c","d","e"]]
-        p5 = Place("End")
-        self.myNFA.add_place(p5, False, True)
-        t5 = Transition("d", self.p3, p5)
-        self.myNFA.add_Transition(t5)
-        p6 = Place("End")
-        self.myNFA.add_place(p6, False, True)
-        t6 = Transition("e", self.p2, p6)
-        self.myNFA.add_Transition(t6)
-        self.myNFA.add_Transition(Transition(SpecialActivities.EPSILON, self.p2, self.p4))
-        self.assertEqual(self.myNFA.log_fittness(log1), 3/6)
-        self.assertEqual(self.myNFA.log_fittness(log2), 5/11)
-
     def test_re_expression_check(self):
-        self.assertTrue(nfa.re_expression_check(["a", "b", "b", "b", "c"]))
-        self.assertFalse(nfa.re_expression_check(["a","b","\\"]))
-        self.assertTrue(nfa.re_expression_check(["a", "*", "b", "+", "c"]))
-        self.assertFalse(nfa.re_expression_check(["["]))
-        self.assertFalse(nfa.re_expression_check(["(","a","b","c","("]))
-        self.assertTrue(nfa.re_expression_check(["a", "*", "b", "+", "c"]))
-        self.assertFalse(nfa.re_expression_check(["[","0", "-", "9", "]","+","+"]))
-        self.assertTrue(nfa.re_expression_check(["a", "*", "b", "+", "c"]))
-        self.assertFalse(nfa.re_expression_check(["[", ".", "*"]))
-        self.assertTrue(nfa.re_expression_check(["(", "A", "-", "Z", "a", "-", "z","0","-","9",")"]))
+        test_regexs = [["a", "b", "b", "b", "c"],["a", "*", "b", "+", "c"],["a", "+", "b", "|", "c"],
+                       ["(", "A", "-", "Z", "a", "-", "z","0","-","9",")"],["a","b","\\"],
+                       ["(","a","b","c","("],["["],["[", ".", "*"]]
+        for i in range(4):
+            self.assertTrue(nfa.re_expression_check(test_regexs[i]))
+        for i in range(4,8):
+            self.assertFalse(nfa.re_expression_check(test_regexs[i]))
 
     def test_expression(self):
         myRegexNfa = nfa.expression(["a", "*", "|", "(", "c", ".", "d", ")", "|", "(", "e", ".", "f", ")"])
-        self.assertTrue(myRegexNfa.is_fitting(["a", "a","a"]))
-        self.assertTrue(myRegexNfa.is_fitting(["a"]))
-        self.assertTrue(myRegexNfa.is_fitting([]))
-        self.assertTrue(myRegexNfa.is_fitting(["c", "d"]))
-        self.assertTrue(myRegexNfa.is_fitting(["e", "f"]))
-        self.assertFalse(myRegexNfa.is_fitting(["a", "c"]))
-        self.assertFalse(myRegexNfa.is_fitting(["a", "c", "d"]))
-        self.assertFalse(myRegexNfa.is_fitting(["x"]))
-        self.assertFalse(myRegexNfa.is_fitting(["c"]))
+        test_Traces = [["a", "a","a"],["a"],[],["c", "d"],["e", "f"],["a", "c"],["a", "c", "d"],["x"],["c"]]
+        for i in range(5):
+            self.assertTrue(conformance.is_trace_fitting(myRegexNfa, test_Traces[i]))
+        for i in range(5, 9):
+            self.assertFalse(conformance.is_trace_fitting(myRegexNfa, test_Traces[i]))
 
-    def test_nfa_from_trace(self):
+    def test_nfa_from_regex(self):
+        regex = (["a", "*", "|", "(", "b", ".", "c", ")", "|", "(", "d", ".", "e", ")"])
+        test_Traces = [["a", "b"],["a","b","b","b","b","b","c","z'"],["a", "b", "c", "d", "e"],["a","a","a"],[],["b","c"],
+                       ["d","e"]]
+        myNfa = nfa.nfa_from_regex(regex)
+        for i in range(3):
+            self.assertFalse(conformance.is_trace_fitting(myNfa, test_Traces[i]))
+        for i in range(3,7):
+            self.assertTrue(conformance.is_trace_fitting(myNfa, test_Traces[i]))
+
+
+
+    def test_trace_check(self):
         myTrace = ["a", "b", "b", "b", "c", "z"]
-        trace1 = ["a", "b"]
-        trace2 = ["a","b","b","b","b","b","c","z'"]
-        myNfa = nfa.nfa_from_trace(myTrace)
-        self.assertTrue(myNfa.is_fitting(myTrace))
-        self.assertFalse(myNfa.is_fitting(trace1))
-        self.assertFalse(myNfa.is_fitting(trace2))
-    def test_align_trace(self):
-        myTrace = ["a", "b", "b", "b", "c", "z"]
-        self.assertEqual(self.myNFA.align_trace(myTrace),([('a', 'a'), ('b', 'b'), ('b', 'b'), ('b', 'b'), ('c', 'c'), ('z', '>>')], 1))
-        myTrace = ["a", "z", "b", "b", "c"]
-        self.assertEqual(self.myNFA.align_trace(myTrace),([('a', 'a'), ('z', '>>'), ('b', 'b'), ('b', 'b'), ('c', 'c')], 1))
-        myTrace = ["a", "z", "b", "b"]
-        self.assertEqual(self.myNFA.align_trace(myTrace),([('a', 'a'), ('z', '>>'), ('b', 'b'), ('b', 'b'), ('>>', 'c')], 2))
+        self.assertTrue(nfa.trace_check(myTrace))
+        myTrace = ["a", "*", "b", "/", "c", "z"]
+        self.assertFalse(nfa.trace_check(myTrace))
+        myTrace = ["a", "b", "b", "b", "b", "b", "cc", "z'"]
+        self.assertFalse(nfa.trace_check(myTrace))
+        myTrace = ["a", "b", "b", "0", "b", "1", "c", "z"]
+        self.assertTrue(nfa.trace_check(myTrace))
+    def test_nfa_from_activity(self):
+        myNfa = nfa.nfa_from_activity("a")
+        trace = ["a"]
+        self.assertTrue(conformance.is_trace_fitting(myNfa, trace))
+    def test_star_nfa(self):
+        test_Traces = [["a","b","c"],["a","b","c","a","b","c"],["a","b","b","b","c","a","b","c"],
+                       ["a", "b", "b", "b", "c", "a", "b","b", "c","a","b","c"],[],["a","b","c","a","c"],["a", "b"]]
+        star_NFA = nfa.star_nfa(self.myNFA)
+        for i in range(5):
+            self.assertTrue(conformance.is_trace_fitting(star_NFA, test_Traces[i]))
+        for i in range(5, 7):
+            self.assertFalse(conformance.is_trace_fitting(star_NFA, test_Traces[i]))
+    def test_konkatonate_nfas(self):
+        firstNFA = nfa.expression(["(", "e", ".", "f", ")"])
+        secondNFA = self.myNFA
+        concatNFA = nfa.konkatonate_nfas([secondNFA,firstNFA])
+        test_Traces = [["a", "b", "c","e","f"],["a", "b", "b", "b", "c","e","f"],["a", "b", "b", "c","e","f"],[],
+                       ["e","f"],["a", "b", "c", "e"],["a", "b","c"]]
+        for i in range(3):
+            self.assertTrue(conformance.is_trace_fitting(concatNFA, test_Traces[i]))
+        for i in range(3, 7):
+            self.assertFalse(conformance.is_trace_fitting(concatNFA, test_Traces[i]))
+
+    def test_unite_nfas(self):
+        firstNFA = nfa.expression(["d", "*", "|","(", "e", ".", "f", ")"])
+        secondNFA = self.myNFA
+        unionNFA = nfa.unite_nfas([secondNFA, firstNFA])
+        test_Traces = [["a", "b", "c"],["a", "b", "b", "b", "c"],["a", "b", "b", "c"],["d","d","d"],
+                  ["e", "f"],["d"],[],["a", "b", "c","d","d","d"],["a", "b", "c", "e", "f"],
+                  ["a", "b","b","c", "d"]]
+        for i in range(7):
+            self.assertTrue(conformance.is_trace_fitting(unionNFA, test_Traces[i]))
+        for i in range(8, 10):
+            self.assertFalse(conformance.is_trace_fitting(unionNFA, test_Traces[i]))
+
+
+
+
+
+
+
+
+
