@@ -75,12 +75,12 @@ class TestNfa(unittest.TestCase):
         self.assertEqual(self.p4.transitions, [])
 
     def test_re_expression_check(self):
-        test_regexs = [["a", "b", "b", "b", "c"],["a", "*", "b", "+", "c"],["a", "+", "b", "|", "c"],
+        test_regexs = [["a", "b", "b", "b", "c"],["a", "*", "b", ".", "c"],["a", ".", "b", "|", "c"],
                        ["(", "A", "-", "Z", "a", "-", "z","0","-","9",")"],["a","b","\\"],
                        ["(","a","b","c","("],["["],["[", ".", "*"]]
-        for i in range(4):
+        for i in range(3):
             self.assertTrue(nfa.re_expression_check(test_regexs[i]))
-        for i in range(4,8):
+        for i in range(3,8):
             self.assertFalse(nfa.re_expression_check(test_regexs[i]))
 
     def test_expression(self):
@@ -100,8 +100,6 @@ class TestNfa(unittest.TestCase):
             self.assertFalse(conformance.is_trace_fitting(myNfa, test_Traces[i]))
         for i in range(3,7):
             self.assertTrue(conformance.is_trace_fitting(myNfa, test_Traces[i]))
-
-
 
     def test_trace_check(self):
         myTrace = ["a", "b", "b", "b", "c", "z"]
@@ -142,7 +140,7 @@ class TestNfa(unittest.TestCase):
             self.assertTrue(conformance.is_trace_fitting(myNFA, test_Traces[i]))
         for i in range(1, 4):
             self.assertFalse(conformance.is_trace_fitting(myNFA, test_Traces[i]))
-            
+
     def test_star_nfa(self):
         test_Traces = [["a","b","c"],["a","b","c","a","b","c"],["a","b","b","b","c","a","b","c"],
                        ["a", "b", "b", "b", "c", "a", "b","b", "c","a","b","c"],[],["a","b","c","a","c"],["a", "b"]]
