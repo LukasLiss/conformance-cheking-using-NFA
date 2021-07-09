@@ -174,6 +174,8 @@ def is_trace_fitting(nfa_model, trace):
 
     Parameters
     ----------
+    nfa_model : NFA object
+        An Nfa describing the wanted behavior, the trace should be aligned to.
     trace : list of str
         activities of a trace/an instance taken from event log.
     
@@ -214,6 +216,8 @@ def __is_subtrace_fitting(nfa_model, current_place, trace):
 
     Parameters
     ----------
+    nfa_model : NFA object
+        An Nfa describing the wanted behavior, the trace should be aligned to.
     currrent_place: Place object
         place in NFA model that should be used as the initial place to start replaying the trace from
     trace : list of str
@@ -254,6 +258,8 @@ def log_fittness(nfa_model, log):
 
     Parameters
     ----------
+    nfa_model : NFA object
+        An Nfa describing the wanted behavior, the trace should be aligned to.
     log : list of list of strings
         instances/traces taken from event log.
     
