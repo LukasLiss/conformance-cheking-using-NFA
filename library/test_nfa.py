@@ -127,8 +127,22 @@ class TestNfa(unittest.TestCase):
         trace2 = ["a","b"]
         self.assertTrue(conformance.is_trace_fitting(myNfa, trace1))
         self.assertFalse(conformance.is_trace_fitting(myNfa, trace2))
-    def test_
-
+    def test_prod(self):
+        regex = (["a", "*", "|", "(", "b", ".", "c", ")", "|", "(", "d", ".", "e", ")"])
+        myNfa = nfa.prod(regex)
+        test_Traces = [["a"], ["a", "a"],["a","a","a"],["b","c"]]
+        for i in range(3):
+            self.assertTrue(conformance.is_trace_fitting(myNfa, test_Traces[i]))
+        for i in range(3, 4):
+            self.assertFalse(conformance.is_trace_fitting(myNfa, test_Traces[i]))
+    def test_konkat(self):
+        myNFA = nfa.konkat(["(", "e", ".", "f", ")"])
+        test_Traces = [["e", "f"], ["a", "a", "a"], ["b", "c"],["e"],["f"]]
+        for i in range(1):
+            self.assertTrue(conformance.is_trace_fitting(myNFA, test_Traces[i]))
+        for i in range(1, 4):
+            self.assertFalse(conformance.is_trace_fitting(myNFA, test_Traces[i]))
+            
     def test_star_nfa(self):
         test_Traces = [["a","b","c"],["a","b","c","a","b","c"],["a","b","b","b","c","a","b","c"],
                        ["a", "b", "b", "b", "c", "a", "b","b", "c","a","b","c"],[],["a","b","c","a","c"],["a", "b"]]
