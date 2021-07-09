@@ -2,8 +2,51 @@
 
 The goal of this project is to implement conformance checking in python with no dependencies. For this purpose, we have converted the regular expressions into NFAs, checked their fitness and have computed the optimal  alignments. This has been achieved keeping in view the optimality conditions for memory usage and runtime. The edge cases are catered by exhaustive testing including both manual and unit testing.
 
+## Usage
+Users can use the required module as per their project requirement by importing the library using the following code snippet:
 
-## Implementation
+`from library.nfa import Nfa, Place, Transition, nfa_from_regex` <br>
+`from library import conformance, nfa` <br>
+
+
+## Example
+
+### Example 1: Creation of NFA from Regular Expression
+
+One can create an Nfa easily from a regular expression as shown in the example below:
+
+`from library.nfa import Nfa, Place, Transition, nfa_from_regex` <br>
+`myRegexNfa = nfa_from_regex(["a", "*", "|", "(", "c", ".", "d", ")", "|", "(", "e", ".", "f", ")"])` <br>
+
+The nfa is intended to accept arbitrary many a, or c followed by d, or e followed by f. By computing alignments for some traces we can see that this work correctly:
+
+([('a', 'a'), ('a', 'a')], 0) <br>
+([('a', 'a'), ('a', 'a'), ('a', 'a'), ('a', 'a')], 0) <br>
+([('c', 'c'), ('d', 'd')], 0) <br>
+([('e', 'e'), ('f', 'f')], 0) <br>
+([('a', 'a'), ('c', '>>')], 1) <br>
+([('c', 'c'), ('d', 'd'), ('c', '>>'), ('d', '>>')], 2) <br>
+([('c', '>>'), ('f', '>>')], 2) <br>
+
+**A more complex regular expression**:<br>
+
+([('a', 'a'), ('x', '>>'), ('b', 'b'), ('b', 'b'), ('y', '>>'), ('c', 'c'), ('d', 'd'), ('c', 'c'), ('d', 'd'), ('c', '>>')], 3)<br>
+
+### Example 2: These operations work also on logs instead of traces:
+
+`from library.nfa import Nfa, Place, Transition, nfa_from_regex` <br>
+`1example_log = [["a"], ["a", "b"], ["a", "b", "b"], ["a", "c", "d"], ["x"], ["x", "y"], ["y"], ["w"], ["k"], ["q"]]` <br>
+The percentage of fiting traces of an example log L is:  0.4<br>
+
+<br>
+An alignment for a different log can look like the following:<br><br>
+
+`from library.nfa import Nfa, Place, Transition, nfa_from_regex` <br>
+`example_log_2 = [["a"], ["a", "c", "d"], ["b"], ["a", "c"]]`
+
+[([('a', 'a')], 0), ([('a', 'a'), ('c', 'c'), ('d', 'd')], 0), ([('>>', 'a'), ('b', 'b')], 1), ([('a', 'a'), ('c', '>>')], 1)]
+
+## Implementation Concepts
 
 
 ### Nfa data model
@@ -156,39 +199,6 @@ As synchronous moves have no cost, but the others have, it will find the cheapes
 And when both original nfas are accepting the path then the path is an alignment.
 Therefore we find the optimal alignment with this method.
 
-## Example
-
-### Example 1: Creation of NFA from Regular Expression
-
-One can create an Nfa easily from a regular expression as shown in the example below:
-
-from library.nfa import Nfa, Place, Transition, nfa_from_regex
-myRegexNfa = nfa_from_regex(["a", "*", "|", "(", "c", ".", "d", ")", "|", "(", "e", ".", "f", ")"])
-
-The nfa is intended to accept arbitrary many a, or c followed by d, or e followed by f. By computing alignments for some traces we can see that this work correctly:
-
-([('a', 'a'), ('a', 'a')], 0)
-([('a', 'a'), ('a', 'a'), ('a', 'a'), ('a', 'a')], 0)
-([('c', 'c'), ('d', 'd')], 0)
-([('e', 'e'), ('f', 'f')], 0)
-([('a', 'a'), ('c', '>>')], 1)
-([('c', 'c'), ('d', 'd'), ('c', '>>'), ('d', '>>')], 2)
-([('c', '>>'), ('f', '>>')], 2)
-
-**A more complex regular expression**:
-
-([('a', 'a'), ('x', '>>'), ('b', 'b'), ('b', 'b'), ('y', '>>'), ('c', 'c'), ('d', 'd'), ('c', 'c'), ('d', 'd'), ('c', '>>')], 3)
-
-### Example 2: These operations work also on logs instead of traces:
-
-example_log = [["a"], ["a", "b"], ["a", "b", "b"], ["a", "c", "d"], ["x"], ["x", "y"], ["y"], ["w"], ["k"], ["q"]]
-The percentage of fiting traces of an example log L is:  0.4
-
-<br>
-An alignment for a different log can look like the following:
-example_log_2 = [["a"], ["a", "c", "d"], ["b"], ["a", "c"]]
-
-[([('a', 'a')], 0), ([('a', 'a'), ('c', 'c'), ('d', 'd')], 0), ([('>>', 'a'), ('b', 'b')], 1), ([('a', 'a'), ('c', '>>')], 1)]
 
 ## Documentation
 
