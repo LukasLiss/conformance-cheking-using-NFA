@@ -73,6 +73,7 @@ class TestNfa(unittest.TestCase):
         self.assertEqual(self.p4.transitions, [t5])
         self.myNFA.remove_Transition(t5)
         self.assertEqual(self.p4.transitions, [])
+
     def test_re_expression_check(self):
         test_regexs = [["a", "b", "b", "b", "c"],["a", "*", "b", "+", "c"],["a", "+", "b", "|", "c"],
                        ["(", "A", "-", "Z", "a", "-", "z","0","-","9",")"],["a","b","\\"],
@@ -115,6 +116,33 @@ class TestNfa(unittest.TestCase):
         myNfa = nfa.nfa_from_activity("a")
         trace = ["a"]
         self.assertTrue(conformance.is_trace_fitting(myNfa, trace))
+    def test_factor(self):
+        myNfa = nfa.factor(["c"])
+        trace1 = ["c"]
+        trace2 = ["a"]
+        self.assertTrue(conformance.is_trace_fitting(myNfa, trace1))
+        self.assertFalse(conformance.is_trace_fitting(myNfa, trace2))
+        myNfa = nfa.factor(["(", "b", ".", "c", ")"])
+        trace1 = ["b","c"]
+        trace2 = ["a","b"]
+        self.assertTrue(conformance.is_trace_fitting(myNfa, trace1))
+        self.assertFalse(conformance.is_trace_fitting(myNfa, trace2))
+    def test_prod(self):
+        regex = (["a", "*", "|", "(", "b", ".", "c", ")", "|", "(", "d", ".", "e", ")"])
+        myNfa = nfa.prod(regex)
+        test_Traces = [["a"], ["a", "a"],["a","a","a"],["b","c"]]
+        for i in range(3):
+            self.assertTrue(conformance.is_trace_fitting(myNfa, test_Traces[i]))
+        for i in range(3, 4):
+            self.assertFalse(conformance.is_trace_fitting(myNfa, test_Traces[i]))
+    def test_konkat(self):
+        myNFA = nfa.konkat(["(", "e", ".", "f", ")"])
+        test_Traces = [["e", "f"], ["a", "a", "a"], ["b", "c"],["e"],["f"]]
+        for i in range(1):
+            self.assertTrue(conformance.is_trace_fitting(myNFA, test_Traces[i]))
+        for i in range(1, 4):
+            self.assertFalse(conformance.is_trace_fitting(myNFA, test_Traces[i]))
+            
     def test_star_nfa(self):
         test_Traces = [["a","b","c"],["a","b","c","a","b","c"],["a","b","b","b","c","a","b","c"],
                        ["a", "b", "b", "b", "c", "a", "b","b", "c","a","b","c"],[],["a","b","c","a","c"],["a", "b"]]

@@ -1,4 +1,4 @@
-from library.nfa import SpecialActivities, Nfa, Place, PlaceCombined, Transition, TransitionWithCost
+from library.nfa import SpecialActivities, Nfa, Place, PlaceCombined, Transition, TransitionWithCost, trace_check, log_check
 
 def dijkstra_has_unvisited_places(dijkstra_not_visited_places):
     """
@@ -61,6 +61,9 @@ def optimal_alignment_trace_on_nfa(nfa_model, trace):
     cost_alignment: integer
         number of not synchronized moves.
     """
+    input_trace_check_flag = trace_check(trace)
+    if not input_trace_check_flag:
+        exit()
     infinity = float('inf') # xxx optimize as floats are big in memory
     #initialize
     dijkstra_place_info = {}
@@ -270,6 +273,9 @@ def log_fittness(nfa_model, log):
     """
     # Check for each trace in the log wether the trace is fiting (replayable)
     # return the fraction of traces that are fiting (replayable)
+    input_log_check_flag = log_check(log)
+    if not input_log_check_flag:
+        exit()
     num_fitting_traces = 0
     for trace in log:
         if (is_trace_fitting(nfa_model, trace)):
