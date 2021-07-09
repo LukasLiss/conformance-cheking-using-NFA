@@ -45,7 +45,6 @@ print(conformance.optimal_alignment_trace_on_nfa(myNFA, current_Trace))
 
 print("\nOne can create an Nfa easily from a regular expression:\n")
 myRegexNfa = nfa_from_regex(["a", "*", "|", "(", "c", ".", "d", ")", "|", "(", "e", ".", "f", ")"])
-print(myRegexNfa)
 print("Here we used: ", ["a", "*", "|", "(", "c", ".", "d", ")", "|", "(", "e", ".", "f", ")"], " as the regular expression. The nfa is intended to accept arbitrary many a, or c followed by d, or e followed by f")
 print("By computing alignments for some traces we can see that this work correctly:\n")
 current_Trace = ["a", "a"]
