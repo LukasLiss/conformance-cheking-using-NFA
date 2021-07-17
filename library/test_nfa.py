@@ -90,15 +90,28 @@ class TestNfa(unittest.TestCase):
             self.assertTrue(conformance.is_trace_fitting(myRegexNfa, test_Traces[i]))
         for i in range(5, 9):
             self.assertFalse(conformance.is_trace_fitting(myRegexNfa, test_Traces[i]))
-
+    #
+    # def test_nfa_from_regex(self):
+    #     regex = (["a", "*", "|", "(", "b", ".", "c", ")", "|", "(", "d", ".", "e", ")"])
+    #     test_Traces = [["a", "b"],["a","b","b","b","b","b","c","z'"],["a", "b", "c", "d", "e"],["a","a","a"],[],["b","c"],
+    #                    ["d","e"]]
+    #     myNfa = nfa.nfa_from_regex(regex)
+    #     for i in range(3):
+    #         self.assertFalse(conformance.is_trace_fitting(myNfa, test_Traces[i]))
+    #     for i in range(3,7):
+    #         self.assertTrue(conformance.is_trace_fitting(myNfa, test_Traces[i]))
     def test_nfa_from_regex(self):
-        regex = (["a", "*", "|", "(", "b", ".", "c", ")", "|", "(", "d", ".", "e", ")"])
-        test_Traces = [["a", "b"],["a","b","b","b","b","b","c","z'"],["a", "b", "c", "d", "e"],["a","a","a"],[],["b","c"],
-                       ["d","e"]]
+        regex = ["(","a",".","b","*",".","c",".","d","*",".","e",".","f","*",".","g","|","a","b","*","i","j","*","k","l","*","m","g",")"]
+        test_Traces = []
+        r = open("D:\\DataSets\small_DataSet.txt", "r")
+        for str in r:
+            test_Traces.append(list(str.rstrip()))
+        r.close()
         myNfa = nfa.nfa_from_regex(regex)
-        for i in range(3):
-            self.assertFalse(conformance.is_trace_fitting(myNfa, test_Traces[i]))
-        for i in range(3,7):
+        print(conformance.optimal_alignment_trace_on_nfa(myNfa, test_Traces[0]))
+        for i in range(500):
+            print(i)
+            print(test_Traces[i])
             self.assertTrue(conformance.is_trace_fitting(myNfa, test_Traces[i]))
 
     def test_trace_check(self):

@@ -1,5 +1,6 @@
 from library.nfa import Nfa, Place, Transition, nfa_from_regex
 from library import conformance, nfa
+import exrex
 myNFA = Nfa("Small Talk Nfa")
 p1 = Place("Greating")
 myNFA.add_place(p1, True)
@@ -74,3 +75,4 @@ print("\nThe percentage of fiting traces of an example log L is: ", conformance.
 print("\nAn alignment for a different log can look like the following:\n")
 example_log_2 = [["a"], ["a", "c", "d"], ["b"], ["a", "c"]]
 print(conformance.optimal_alignment_log_on_nfa(myRegexNfa, example_log_2))
+print('\n'.join(exrex.generate('This is (a (code|cake|test)|an (apple|elf|output))\.')))
