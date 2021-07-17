@@ -101,6 +101,7 @@ class TestNfa(unittest.TestCase):
         for i in range(3,7):
             self.assertTrue(conformance.is_trace_fitting(myNfa, test_Traces[i]))
 
+
     def test_trace_check(self):
         myTrace = ["a", "b", "b", "b", "c", "z"]
         self.assertTrue(nfa.trace_check(myTrace))
