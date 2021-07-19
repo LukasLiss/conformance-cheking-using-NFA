@@ -6,8 +6,8 @@ regex = ["(", "a", ".", "b", "*", ".", "c", ".", "d", "*", ".", "e", ".", "f", "
 myNfa = nfa.nfa_from_regex(regex)
 def log_elements():
     test_Traces = []
-    file = open("D:\\DataSets\elements.txt", "r")
-    f_log = open("D:\\DataSets\elements_log.txt", "a+")
+    file = open("elements.txt", "r")
+    f_log = open("elements_log.txt", "a+")
     for number,strng in  enumerate(file):
         #the other approach
         #conformance.optimal_alignment_trace_on_nfa(myNfa, list(strng.rstrip()))
@@ -29,7 +29,7 @@ regex = ["(", "a", ".", "b", "*", ".", "c", ".", "d", "*", ".", "e", ".", "f", "
      "*",".", "k",".", "l", "*","." ,"m",".", "g", ")"]
 myNfa = nfa.nfa_from_regex(regex)
 test_Traces = []
-file = open("D:\\DataSets\small_DataSet.txt", "r")
+file = open("small_DataSet.txt", "r")
 for number,str in  enumerate(file):
     #the other approach
     #conformance.optimal_alignment_trace_on_nfa(myNfa, list(str.rstrip()))
@@ -45,7 +45,7 @@ regex = ["(", "a", ".", "b", "*", ".", "c", ".", "d", "*", ".", "e", ".", "f", "
      "*",".", "k",".", "l", "*","." ,"m",".", "g", ")"]
 myNfa = nfa.nfa_from_regex(regex)
 test_Traces = []
-file = open("D:\\DataSets\mimi_DataSet.txt", "r")
+file = open("medium_DataSet.txt", "r")
 for number,str in  enumerate(file):
     #the other approach
     #conformance.optimal_alignment_trace_on_nfa(myNfa, list(str.rstrip()))
@@ -61,7 +61,7 @@ regex = ["(", "a", ".", "b", "*", ".", "c", ".", "d", "*", ".", "e", ".", "f", "
      "*",".", "k",".", "l", "*","." ,"m",".", "g", ")"]
 myNfa = nfa.nfa_from_regex(regex)
 test_Traces = []
-file = open("D:\\DataSets\large_DataSet.txt", "r")
+file = open("large_DataSet.txt", "r")
 for number,str in  enumerate(file):
     #the other approach
     #conformance.optimal_alignment_trace_on_nfa(myNfa, list(str.rstrip()))
@@ -72,13 +72,13 @@ for number,trace in enumerate(test_Traces):
     conformance.optimal_alignment_trace_on_nfa(myNfa,trace)
 file.close()
     """
-# f_log = open("D:\\DataSets\Evaluation_log.txt", "a+")
-# #small_time = timeit.timeit(setup = setup_code, stmt= small_statement,number=1)
+f_log = open("Evaluation_log.txt", "a+")
+small_time = timeit.timeit(setup = setup_code, stmt= small_statement,number=1)
 # #medium_time = timeit.timeit(setup = setup_code, stmt= medium_statement,number=1)
 #
 # large_time = timeit.timeit(setup = setup_code, stmt= large_statement,number=1)
 # print(medium_time)
-# #f_log.write("time_small "+ str(round(small_time,2)) + '\n')
+f_log.write("time_small "+ str(round(small_time,2)) + '\n')
 # #f_log.write("time_medium " + str(round(medium_time, 2)) + '\n')
 # f_log.write("memory_large "+large_time + '\n')
 log_elements()
